@@ -1,0 +1,126 @@
+<!DOCTYPE html><html lang="en" dir="ltr"><head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>Homenet Spaces API</title>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6/jquery.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/themes/ui-lightness/jquery.ui.all.css">
+<style>
+body { font-family: "trebuchet ms","helvetica","arial","verdana","sans-serif"; font-size: 12pt; overflow-y: scroll; }
+#selectable .ui-selecting { background: #feca40; }
+#selectable .ui-selected { background: #f39814; color: white; }
+#selectable { list-style-type: none; margin: 0; padding: 0; width: 552px; }
+#selectable li { border: 1px solid #aaa; float: left; font-size: .9em; height: 18px; margin: 3px; padding: 0.4em; width: 120px; }
+h1 { background: #feca40; padding: 0.4em; text-align: center; user-select: none; -khtml-user-select: none; -moz-user-select: none; -webkit-user-select: none; }
+#fields { cursor: default; float: left; user-select: none; -khtml-user-select: none; -moz-user-select: none; -webkit-user-select: none; width: 560px; }
+#misc { float: right; text-align: right; user-select: none; -khtml-user-select: none; -moz-user-select: none; -webkit-user-select: none; width: 560px; }
+#search, #user_id, #callback, #jsonlink {border: 2px solid #999; border-radius: 5px; -khtml-border-radius: 5px; -moz-border-radius: 5px; -opera-border-radius: 5px; -webkit-border-radius: 5px; font-size: 14pt; height: 30px; margin: 0 0 10px 10px; outline: none; padding: 0 4px 0 4px; width: 310px;}
+#jsonlink { background-color: #ebebe4; }
+#suggestcontainer { background-color: #fff; border: 1px solid rgb(139, 191, 222); border-bottom-left-radius: 4px; border-bottom-right-radius: 4px; -khtml-border-bottom-left-radius: 4px; -khtml-border-bottom-right-radius: 4px; -moz-border-radius-bottomleft: 4px; -moz-border-radius-bottomright: 4px; -webkit-border-bottom-left-radius: 4px; -webkit-border-bottom-right-radius: 4px; display: none; position: absolute; right: 12px; text-align: left; top: 140px; width: 312px; z-index: 220; }
+#suggestcontainer > div { max-height: 400px; margin: 5px; overflow: auto; }
+#suggestcontainer #suggest { margin: 5px; }
+#suggestcontainer .link { background-color: rgb(210,231,242); border: 1px solid rgb(139,191,222); color: #777; cursor: pointer; display: block; height: 30px; line-height: 30px; padding: 0; text-decoration: none;  }
+#suggestcontainer .link:hover { background-color: rgb(187,217,236); }
+.jsonlink { visibility: hidden; }
+#output { clear: both; font-size: 0.8em; padding-top: 10px; white-space: pre-wrap; word-wrap: break-word; }
+</style>
+</head>
+<body>
+<h1>Homenet Spaces API</h1>
+<div id="fields">
+<ol id="selectable">
+<li>User Id</li>
+<li>Username</li>
+<li>Last Login</li>
+<li>Date Joined</li>
+<li>First Name</li>
+<li>Middle Name</li>
+<li>Last Name</li>
+<li>Email</li>
+<li>Gender</li>
+<li>Birth Month</li>
+<li>Birth Day</li>
+<li>Birth Year</li>
+<li>Hometown</li>
+<li>Current City</li>
+<li>Community</li>
+<li>Hobbies</li>
+<li>Hits</li>
+<li>Logins</li>
+<li>Rank</li>
+<li>xRank</li>
+<li>xRatings</li>
+<li>Voters</li>
+<li>Friends</li>
+<li>Website</li>
+<li>Status</li>
+<li>Mood</li>
+<li>Default Image</li>
+<li>Setting Language</li>
+</ol>
+</div>
+<div id="misc">
+<div class="search">Search Users<input type="text" id="search"><div id="suggestcontainer"><div><div id="suggest"></div></div></div></div>
+<div class="user_id">User Id's<input type="text" id="user_id" placeholder="1,3,160 or 1-200"></div>
+<div class="callback">JSONP Callback<input type="text" id="callback" placeholder="hnsapi"></div>
+<div class="jsonlink">JSON Link<input type="text" id="jsonlink"></div>
+<div class="submit"><input type="submit" value="Get JSON" id="getJSON"></div>
+</div>
+<div id="output"></div>
+<script>
+var dC = {
+	"url": "json.php",
+	"fields": [],
+	"json": {}
+};
+
+$(document).ready(function() {
+function getJSON() {
+	$.ajax({type:"GET",url:dC.url,dataType:"html",data:{id:$.trim($("#user_id").val()),fields:encodeURI(dC.fields.join().toLowerCase().replace(/\s/g,"_")),callback:$.trim($("#callback").val())},success:function(responseData) {
+		if (responseData) {
+			$("#output").html(responseData);
+			$("#jsonlink").val(this.url);
+			$(".jsonlink").css('visibility','visible');
+			// dC.json = parseJSON(responseData);
+			// alert(dC.json[3].user_id);
+		}
+	}});
+}
+
+$("#search").keyup(function() {
+	if ($.trim(this.value) != "") {
+		$.ajax({type:"GET",url:"suggest2.php",data:{q:this.value,apikey:"hnsap"},dataType:"html",success:function(responseData) {
+			if (responseData) {
+				$("#suggestcontainer").show();
+				$("#suggest").html(responseData);
+			}
+		}});
+	} else $("#suggestcontainer").hide();
+});
+
+$("#suggest .link").live('click',function() {
+	if ($.trim($("#user_id").val()) == "") $("#user_id").val($(this).attr('id'));
+	else $("#user_id").val($("#user_id").val() + "," + $(this).attr('id'));
+	$("#search").val('').focus();
+	$("#suggestcontainer").hide();
+});
+
+$("input:submit").button().click(function() { getJSON(); return false; });
+$("input#jsonlink").hover(function() { $(this).select(); });
+
+$("#selectable").selectable({
+	stop: function() {
+		dC.fields = [];
+		$(".ui-selected",this).each(function() {
+			dC.fields.push($(this).html());
+		});
+	}
+});
+});
+
+function parseJSON(data) {
+	return (new Function('return ' + data))();
+}
+</script>
+</body>
+</html>
+

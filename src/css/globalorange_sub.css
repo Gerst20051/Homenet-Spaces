@@ -1,0 +1,160 @@
+/* Orange Theme Sub */
+
+/* Begin Homepage */
+
+div#home_pagecontent {
+}
+
+/* End Homepage */
+/* Begin Members */
+
+div#members_pagecontent {
+}
+
+/** Begin More Info */
+
+.moreinfo {
+background-color: #ccccff;
+border: 1px solid #5084c1;
+}
+
+.moreinfo a {
+color: #004080;
+}
+
+.moreinfo a.close {
+color: #004080;
+}
+
+.moreinfo a:hover {
+color: #6398d1;
+}
+
+.moreinfo .closespan {
+background-color: #5084c1;
+}
+
+.moreinfo .header {
+}
+
+.moreinfo .splash {
+background-color: #6398d1;
+}
+
+.moreinfo .splash div {
+}
+
+/* End More Info **/
+/** Begin Customize Profile */
+
+div#customizeprofile_pagecontent {
+}
+
+div#customizeprofile_pagecontent textarea#user_style {
+}
+
+div#customizeprofile_pagecontent .globalthemes {
+}
+
+div#customizeprofile_pagecontent .globalthemes .themelinks {
+}
+
+div#customizeprofile_pagecontent .globalthemes .themecode {
+}
+
+div#customizeprofile_pagecontent .globalthemes .themecode textarea {
+}
+
+div#customizeprofile_pagecontent .globalthemes .themecode .global {
+}
+
+div#customizeprofile_pagecontent .globalthemes .themecode .blue {
+}
+
+div#customizeprofile_pagecontent .globalthemes .themecode .orange {
+}
+
+div#customizeprofile_pagecontent .globalthemes .themecode .green {
+}
+
+div#customizeprofile_pagecontent .globalthemes .themecode .yellow {
+}
+
+div#customizeprofile_pagecontent .globalthemes .themecode .red {
+}
+
+div#customizeprofile_pagecontent .globalthemes .themecode .black {
+}
+
+/* End Customize Profile **/
+/** Begin User Profile */
+
+#defaultuserimage {
+}
+
+/*** Begin Voters */
+
+#voters {
+background-color: #ccccff;
+border: 1px solid #5084c1;
+}
+
+#voters a {
+color: #004080;
+}
+
+#voters a.close {
+color: #004080;
+}
+
+#voters a:hover {
+color: #6398d1;
+}
+
+#voters .closespan {
+background-color: #5084c1;
+}
+
+#voters .header {
+}
+
+#voters .splash {
+background-color: #6398d1;
+}
+
+/* End Voters ***/
+/* End User Profile **/
+/* Begin User Profile Lite View **/
+/*** Begin Voters */
+
+#voters_lite {
+background-color: #ccccff;
+border: 1px solid #5084c1;
+}
+
+#voters_lite a {
+color: #004080;
+}
+
+#voters_lite a.close {
+color: #004080;
+}
+
+#voters_lite a:hover {
+color: #6398d1;
+}
+
+#voters_lite .closespan {
+background-color: #5084c1;
+}
+
+#voters_lite .header {
+}
+
+#voters_lite .splash {
+background-color: #6398d1;
+}
+
+/* End Voters ***/
+/* End User Profile Lite View **/
+/* End Members */

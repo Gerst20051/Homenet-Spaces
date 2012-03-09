@@ -1,0 +1,31 @@
+<?xml version="1.0" ?>
+<rss version="2.0">
+<channel>
+    <title>Homenet Spaces | Montly Updates</title>
+    <link>http://homenetspaces.tk</link>
+    <description>Homenet Spaces | Monthly Updates</description>
+    <language>en-us</language>
+    <pubDate>Mon, 15 Jun 2009 15:26:30 GMT</pubDate>
+<item>
+      <title>Groups</title>
+      <description>We are working on groups! Thanks for your patience.</description>
+      <link>http://homenetspaces.tk/rss/</link>
+      <author>homenetspaces@yahoo.com (Andrew Gerst)</author>
+      <pubDate>Mon, 15 Jun 2009 15:26:30 GMT</pubDate>
+</item>
+<item>
+      <title>RSS Feeds</title>
+      <description>RSS Feeds are up and running. If you are interested in our monthly updates feel free to subscribe!</description>
+      <link>http://homenetspaces.tk/rss/</link>
+      <author>homenetspaces@yahoo.com (Andrew Gerst)</author>
+      <pubDate>Mon, 11 May 2009 13:49:05 GMT</pubDate>
+</item>
+<item>
+      <title>Important Announcement - RSS Feeds!</title>
+      <description>We now support RSS Feeds. If you are interested in our monthly updates feel free to subscribe!</description>
+      <link>http://homenetspaces.tk/rss/</link>
+      <author>homenetspaces@yahoo.com (Andrew Gerst)</author>
+      <pubDate>Mon, 11 May 2009 13:49:05 GMT</pubDate>
+</item>
+</channel>
+</rss>
