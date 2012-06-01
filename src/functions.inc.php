@@ -69,4 +69,3 @@ class securityimage {
 
 $secim = new securityimage();
 ?>
-?>

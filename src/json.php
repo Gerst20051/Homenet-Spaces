@@ -19,7 +19,7 @@ if (isset($ref) && !empty($ref) && isset($_GET['apikey']) && !empty($_GET['apike
 	if (!isset($_GET['apikey']) || empty($_GET['apikey'])) die(error("API Key Error!",true));
 	elseif (!isset($ref) || empty($ref)) die(error("HTTP Referer Error!",true));
 }
-$mysql = mysql_connect('localhost','root','comwiz05');
+$mysql = mysql_connect('localhost','root','');
 if (!$mysql) die(error(mysql_error(),true));
 mysql_select_db('hns');
 
@@ -83,21 +83,5 @@ Options:
 ** ID = Specific User
 ** FIELDS = WHAT DATA
 ** Available Fields = {user_id} username, last_login, date_joined, firstname, middlename, lastname, email, gender, birth_month, birth_day, birth_year, hometown, current_city, community, hobbies, hits, logins, rank, xrank, xratings, voters, friends, website, status, mood, default_image, setting_language 
-*/
-/*
-Going Back to the Server
-
-So let's say you have a system in place that allows you to update the text property and PHP will update Twitter accordingly. That means we can update the object that PHP originally provided us with, update the values of some properties, and send it back to PHP.
-
-myTweets.text = "My New Text"
-
-When you finish with updates such as the former, you can then serialize the object back into a JSON string and send it in a POST request back to PHP. There are many jquery plugins to do this, or if you prefer a little lower level, JSON.org offers a parser for the converting.
-
-mySerializedTweets = JSON.stringify(myTweets);
-$.post("twitter.php",{page: submit, obj: mySerializedTweets});
-
-Now, PHP can receive the JSON string and convert it back into the associative array you started with.
-
-$myTweets = json_decode($_POST['obj']);
 */
 ?>
