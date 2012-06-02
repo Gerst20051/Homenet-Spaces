@@ -1,0 +1,46 @@
+December 2010 Changes
+
+1. Started Trying To Restore Homenet Spaces
+2. Created Backup and Change Logs (Nov/Dec 2009 Updates Added)
+3. Added Security Code is case-sensitive Error
+4. Changed header-registererrors_header to Unable to create your account instead of update account information
+5. Added Domain Name OLDHNS.TK For Old Website
+6. Added Old Homenet Spaces Files
+7. Removed Most Comments From Code
+8. Refined & Minified A Significant Amount Of Code
+9. Added jQuery & Functions JavaScript File To Each Page
+10. Changed It To Trim Password
+12. Added Star, Show Hide, And Update Captcha Scripts To Functions JS File
+13. Added Border Radius To Navigation Suggest Container
+14. Added Border Radius To Homepage
+
+
+---------------------------------------------------------------------
+
+Need To Fix:
+
+1. Chat Bar
+2. Online Friends + Chat
+3. Fix Copyright Year
+4. Width Javascript
+5. Bottom & Top of Page jQuery Scroll
+6. View All Friends / Comments
+7. View File Type Images
+8. View Files Format / Layout
+9. Security Code Scripts
+10. Popup / Display Scripts
+11. Username & Password Can't Be Same
+12. Groups / Forums Improvements
+13. Username / Password Alignment In Header
+14. HnS Updates Format / Files
+15. Member Files
+16. Profile Link In Navigation On Pages
+17. Homepage Curved Corners
+18. Curved Corners In Search HnS Dropdown
+19. Go Button Alignment In Navigation
+20. Headers On Each Page Like Profiles
+21. Language File Improvements
+22. Update Language Files - header-registererrors_header
+23. Birthday Dropdown
+24. Add Middle Name Support For Members Suggest Search
+25. Can't Befriend Admin Nor Yourself
