@@ -68,7 +68,7 @@ $TEXT['header-logininc_error_link'] = "click here";
 
 $TEXT['header-updateerrors_header'] = "Unable to update the account information.";
 $TEXT['header-updateerrors_listheader'] = "Please fix the following:";
-$TEXT['header-registererrors_header'] = "Unable to create your account.";
+$TEXT['header-registererrors_header'] = "Unable to update the account information.";
 $TEXT['header-registererrors_listheader'] = "Please fix the following:";
 $TEXT['header-creategrouperrors_header'] = "Unable to create group.";
 $TEXT['header-creategrouperrors_listheader'] = "Please fix the following:";

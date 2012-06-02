@@ -2,6 +2,7 @@
 require ("lang.inc.php");
 include ("auth.inc.php");
 include ("db.member.inc.php");
+include ("bimage.inc.php");
 
 function ucname($string) {
 $string = ucwords(strtolower($string));
@@ -16,8 +17,9 @@ return $string;
 }
 
 if (isset($_POST['update']) && $_POST['update'] == 'Update') {
+// filter incoming values
 $username = (isset($_POST['username'])) ? trim($_POST['username']) : '';
-$password = (isset($_POST['password'])) ? trim($_POST['password']) : '';
+$password = (isset($_POST['password'])) ? $_POST['password'] : '';
 $password_ver = (isset($_POST['password_ver'])) ? $_POST['password_ver'] : '';
 $password_old = (isset($_POST['password_old'])) ? $_POST['password_old'] : '';
 $fullname = (isset($_POST['fullname'])) ? trim(ucname($_POST['fullname'])) : '';
@@ -56,19 +58,74 @@ $setting_theme = (isset($_POST['setting_theme'])) ? trim($_POST['setting_theme']
 $setting_language = (isset($_POST['setting_language'])) ? trim($_POST['setting_language']) : '';
 $txtsecuritycode = (isset($_POST['txtsecuritycode'])) ? trim($_POST['txtsecuritycode']) : '';
 
-$query = 'SELECT username FROM login WHERE user_id = ' . (int)$_SESSION['user_id'] . ' AND username = "' . mysql_real_escape_string($_SESSION['username'], $db) . '"';
+/* make sure the username and user_id is a valid pair (we don't want people to 
+try and manipulate the form to hack someone else's account!) */
+
+// check if username is already registered
+$query = 'SELECT
+username
+FROM
+login
+WHERE
+user_id = ' . (int)$_SESSION['user_id'] . '
+AND
+username = "' . mysql_real_escape_string($_SESSION['username'], $db) . '"';
 $result = mysql_query($query, $db) or die(mysql_error());
 
 if (mysql_num_rows($result) == 0) {
-include ("break_out_form.inc.php");
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//<?php echo $TEXT['global-dtdlang']; ?>" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?php echo $TEXT['global-lang']; ?>" lang="<?php echo $TEXT['global-lang']; ?>" dir="<?php echo $TEXT['global-text_dir']; ?>">
+
+<head>
+<title><?php echo $TEXT['homepage-headertitle']; ?></title>
+<meta http-equiv="content-type" content="text/html; charset=<?php echo $TEXT['global-charset']; ?>" />
+<meta name="author" content="Homenet Spaces Andrew Gerst" />
+<meta name="copyright" content="© Homenet Spaces" />
+<meta name="keywords" content="Homenet, Spaces, The, Place, To, Be, Creative, Andrew, Gerst, Free, Profiles, Information, Facts" />
+<meta name="description" content="Welcome to Homenet Spaces we offer you a free profile with many cool and interesting things! This is the place to be creative!" />
+<meta name="revisit-after" content="7 days" />
+<meta name="googlebot" content="index, follow, all" />
+<meta name="robots" content="index, follow, all" />
+<link rel="stylesheet" type="text/css" href="css/global.css" media="all" />
+<script type="text/javascript" src="cs.js"></script>
+<script type="text/javascript" src="nav.js"></script>
+<script type="text/javascript" src="suggest.js"></script>
+<style type="text/css">
+body { 
+	background: url(<?php echo $bimage; ?>) repeat; 
+	background-position : 50% 140px; 
+	}
+</style>
+</head>
+
+<body>
+<?php
+include ("hd.inc.php");
+?>
+<!-- Begin page content -->
+<div class="pagecontent">
+<p><strong>Don't try to break out form!</strong></p>
+</div>
+<!-- End page content -->
+<?php
+include ("ft.inc.php");
+?>
+</body>
+
+</html>
+<?php
 mysql_free_result($result);
 die();
 }
 
 mysql_free_result($result);
+
 $header_updateerrors = array();
 
-if (empty($fullname)) $header_updateerrors[] = 'Full Name cannot be blank.';
+if (empty($fullname)) {
+$header_updateerrors[] = 'Full Name cannot be blank.';
+}
 
 if (empty($email)) {
 $header_updateerrors[] = 'Email Address cannot be blank.';
@@ -79,46 +136,97 @@ $header_updateerrors[] = 'Email Address should be in correct form.';
 }
 }
 
-if (empty($gender)) $header_updateerrors[] = 'Gender cannot be blank.';
-if ($birth_month == 0 && $birth_day == 0 && $birth_year == 0) $header_updateerrors[] = 'Birth Date cannot be blank.';
-elseif ($birth_month == 0) $header_updateerrors[] = 'Birth Month cannot be blank.';
-elseif ($birth_day == 0) $header_updateerrors[] = 'Birth Day cannot be blank.';
-elseif ($birth_year == 0) $header_updateerrors[] = 'Birth Year cannot be blank.';
+if (empty($gender)) {
+$header_updateerrors[] = 'Gender cannot be blank.';
+}
 
-if (empty($hometown)) $header_updateerrors[] = 'Hometown cannot be blank.';
-if (empty($community)) $header_updateerrors[] = 'Community cannot be blank.';
-if (empty($hobbies)) $header_updateerrors[] = 'Hobbies cannot be blank.';
-if ($security_question1 == $security_question2) $header_registererrors[] = 'Security Questions cannot be the same.';
-if (empty($security_question1) || ($security_question1 == 0)) $header_updateerrors[] = 'Security Question 1 cannot be blank.';
-if (empty($security_answer1)) $header_updateerrors[] = 'Security Answer 1 cannot be blank.';
-if (empty($security_question2) || ($security_question2 == 0)) $header_updateerrors[] = 'Security Question 2 cannot be blank.';
-if (empty($security_answer2)) $header_updateerrors[] = 'Security Answer 2 cannot be blank.';
+if ($birth_month == 0 && $birth_day == 0 && $birth_year == 0) {
+$header_updateerrors[] = 'Birth Date cannot be blank.';
+} elseif ($birth_month == 0) {
+$header_updateerrors[] = 'Birth Month cannot be blank.';
+} elseif ($birth_day == 0) {
+$header_updateerrors[] = 'Birth Day cannot be blank.';
+} elseif ($birth_year == 0) {
+$header_updateerrors[] = 'Birth Year cannot be blank.';
+}
+
+if (empty($hometown)) {
+$header_updateerrors[] = 'Hometown cannot be blank.';
+}
+
+if (empty($community)) {
+$header_updateerrors[] = 'Community cannot be blank.';
+}
+
+if (empty($hobbies)) {
+$header_updateerrors[] = 'Hobbies cannot be blank.';
+}
+
+if ($security_question1 == $security_question2) {
+$header_registererrors[] = 'Security Questions cannot be the same.';
+}
+
+if (empty($security_question1) || ($security_question1 == 0)) {
+$header_updateerrors[] = 'Security Question 1 cannot be blank.';
+}
+
+if (empty($security_answer1)) {
+$header_updateerrors[] = 'Security Answer 1 cannot be blank.';
+}
+
+if (empty($security_question2) || ($security_question2 == 0)) {
+$header_updateerrors[] = 'Security Question 2 cannot be blank.';
+}
+
+if (empty($security_answer2)) {
+$header_updateerrors[] = 'Security Answer 2 cannot be blank.';
+}
 
 if (!empty($password)) {
-if (empty($password_ver)) $header_updateerrors[] = 'Please confirm your new password.';
-if (empty($password_old)) $header_updateerrors[] = 'Please verify your old password.';
+if (empty($password_ver)) {
+$header_updateerrors[] = 'Please confirm your new password.';
+}
+
+if (empty($password_old)) {
+$header_updateerrors[] = 'Please verify your old password.';
+}
 
 if (!empty($password_ver) && !empty($password_old)) {
 if ($password != $password_ver) {
 $header_updateerrors[] = 'Both of your new passwords need to match.';
 } else {
-$query = 'SELECT username, password FROM login WHERE username = "' . mysql_real_escape_string($_SESSION['username'], $db) . '" AND password = PASSWORD("' . mysql_real_escape_string($password_old, $db) . '")';
+$query = 'SELECT username, password
+FROM
+login
+WHERE ' .
+'username = "' . mysql_real_escape_string($_SESSION['username'], $db) .
+'" AND ' .
+'password = PASSWORD("' . mysql_real_escape_string($password_old, $db) . '")';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 
-if (mysql_num_rows($result) == 0) $header_updateerrors[] = 'Your old password is not correct.';
+if (mysql_num_rows($result) == 0) {
+$header_updateerrors[] = 'Your old password is not correct.';
+}
 }
 }
 
-if ($username == $password) $header_registererrors[] = 'Username & Password Cannot Be The Same.';
+if ($username == $password) {
+$header_registererrors[] = 'Username & Password Cannot Be The Same.';
+}
 }
 
-if (empty($privacy)) $header_updateerrors[] = 'Privacy cannot be blank.';
+if (empty($privacy)) {
+$header_updateerrors[] = 'Privacy cannot be blank.';
+}
 
 if ($profile_song_artist != null && $profile_song_name != null) {
 $songname = $profile_song_artist . " - " . $profile_song_name;
 
-if (!empty($profile_song_history)) $profile_song_history .= ", " . $songname;
-else $profile_song_history = $songname;
+if (!empty($profile_song_history)) {
+$profile_song_history .= ", " . $songname;
+} else {
+$profile_song_history = $songname;
+}
 
 /*
 $profile_song_letter = substr($profile_song_artist, 1, 1);
@@ -142,13 +250,15 @@ $footer_updateerrors[] = 'We Don\'t Have Any Songs From ' . $profile_song_artist
 */
 }
 
-if ($_POST['txtsecuritycode'] != $_SESSION['SECURITY_CODE']) {
+// check to see if security codes match
+if ($_POST['txtsecuritycode'] == $_SESSION['SECURITY_CODE']) {
+} else {
 $header_updateerrors[] = ' Security Code cannot be incorrect.';
-$footer_updateerrors[] = '<div><strong style="color: #f33; weight: bold;">Security Code cannot be incorrect.</strong></div>';
+$footer_updateerrors[] = '<p><strong style="color : #ff3333; weight : bold; ">Security Code cannot be incorrect.</strong></p>';
 }
 
 if (count($header_updateerrors) > 0) {
-} else {
+} else { // no errors so enter the data into the database
 list($firstname, $middlename, $lastname) = split(' ', $fullname);
 if (!$lastname) {
 $lastname = $middlename;
@@ -156,7 +266,11 @@ unset($middlename);
 }
 
 if (!empty($password) && !empty($password_ver) && !empty($password_old)) {
-$query = 'UPDATE login SET password = PASSWORD("' . mysql_real_escape_string($password, $db) . '") WHERE user_id = ' . $_SESSION['user_id'] . ' LIMIT 1';
+$query = 'UPDATE login SET
+password = PASSWORD("' . mysql_real_escape_string($password, $db) . '")
+WHERE
+user_id = ' . $_SESSION['user_id'] . '
+LIMIT 1';
 mysql_query($query, $db) or die(mysql_error());
 }
 
@@ -217,25 +331,59 @@ $_SESSION['setting_vmode'] = $setting_vmode;
 $_SESSION['setting_theme'] = $setting_theme;
 $_SESSION['setting_language'] = $setting_language;
 
-$query = 'SELECT rank FROM info WHERE user_id = ' . $_SESSION['user_id'];
+$query = 'SELECT
+rank
+FROM
+info
+WHERE
+user_id = ' . $_SESSION['user_id'];
 $result = mysql_query($query, $db) or die(mysql_error());
 $row = mysql_fetch_array($result);
 extract($row);
 mysql_free_result($result);
 
-$expire = (time() + (60 * 60 * 24 * 30 * 12));
 $rank = ($row['rank'] + 100);
 
-$query = 'UPDATE info SET rank = ' . $rank . ' WHERE user_id = ' . $_SESSION['user_id'];
+$query = 'UPDATE info SET
+rank = ' . $rank . '
+WHERE
+user_id = ' . $_SESSION['user_id'];
 mysql_query($query, $db) or die(mysql_error());
 
-if ($_SESSION['setting_vmode'] == 1) $redirect = "m_index.php";
-if (!isset($_COOKIE['hnsmaintheme'])) setcookie('hnsmaintheme', $_SESSION['setting_theme'], $expire);
-if (isset($_COOKIE['hnsmaintheme']) && ($_COOKIE['hnsmaintheme'] != $_SESSION['setting_theme'])) setcookie('hnsmaintheme', $_SESSION['setting_theme'], $expire);
+// check mode
+if ($_SESSION['setting_vmode'] == 1) {
+$redirect = "m_index.php";
+}
 
-$expire = (time() + (60 * 60 * 24 * 30));
-if (!isset($_COOKIE['hnslanguage'])) setcookie('hnslanguage', $_SESSION['setting_language'], $expire);
-if (isset($_COOKIE['hnslanguage']) && ($_COOKIE['hnslanguage'] != $_SESSION['setting_language'])) setcookie('hnslanguage', $_SESSION['setting_language'], $expire);
+// check theme
+if (!isset($_COOKIE['hnsmaintheme'])) {
+// cookie may expire 365 days from now (given in seconds)
+$expire = time() + (60 * 60 * 24 * 30 * 12);
+
+setcookie('hnsmaintheme', $_SESSION['setting_theme'], $expire);
+}
+
+if (isset($_COOKIE['hnsmaintheme']) && ($_COOKIE['hnsmaintheme'] != $_SESSION['setting_theme'])) {
+// cookie may expire 365 days from now (given in seconds)
+$expire = time() + (60 * 60 * 24 * 30 * 12);
+
+setcookie('hnsmaintheme', $_SESSION['setting_theme'], $expire);
+}
+
+// check language
+if (!isset($_COOKIE['hnslanguage'])) {
+// cookie may expire 30 days from now (given in seconds)
+$expire = time() + (60 * 60 * 24 * 30);
+
+setcookie('hnslanguage', $_SESSION['setting_language'], $expire);
+}
+
+if (isset($_COOKIE['hnslanguage']) && ($_COOKIE['hnslanguage'] != $_SESSION['setting_language'])) {
+// cookie may expire 30 days from now (given in seconds)
+$expire = time() + (60 * 60 * 24 * 30);
+
+setcookie('hnslanguage', $_SESSION['setting_language'], $expire);
+}
 
 require ("lang/" . $_SESSION['setting_language'] . ".php");
 ?>
@@ -245,12 +393,29 @@ require ("lang/" . $_SESSION['setting_language'] . ".php");
 <head>
 <title><?php echo $TEXT['global-headertitle'] . " | " . $TEXT['homepage-headertitle']; ?></title>
 <meta http-equiv="content-type" content="text/html; charset=<?php echo $TEXT['global-charset']; ?>" />
-<script type="text/javascript" src="jquery.js"></script>
-<script type="text/javascript" src="javascript.php"></script>
+<meta name="author" content="Homenet Spaces Andrew Gerst" />
+<meta name="copyright" content="© Homenet Spaces" />
+<meta name="keywords" content="Homenet, Spaces, The, Place, To, Be, Creative, Andrew, Gerst, Free, Profiles, Information, Facts" />
+<meta name="description" content="Welcome to Homenet Spaces we offer you a free profile with many cool and interesting things! This is the place to be creative!" />
+<meta name="revisit-after" content="7 days" />
+<meta name="googlebot" content="index, follow, all" />
+<meta name="robots" content="index, follow, all" />
+<link rel="stylesheet" type="text/css" href="css/global.css" media="all" />
+<script type="text/javascript" src="cs.js"></script>
+<script type="text/javascript" src="nav.js"></script>
+<script type="text/javascript" src="suggest.js"></script>
+<style type="text/css">
+body { 
+	background: url(<?php echo $bimage; ?>) repeat; 
+	background-position : 50% 140px; 
+	}
+</style>
 </head>
 
 <body>
-<?php include ("hd.inc.php"); ?>
+<?php
+include ("hd.inc.php");
+?>
 <!-- Begin page content -->
 <div class="pagecontent">
 <p><strong>Your account information has been updated.</strong></p>
@@ -259,7 +424,9 @@ require ("lang/" . $_SESSION['setting_language'] . ".php");
 <p><a href="update_account.php">Click here</a> to update your account.</p>
 </div>
 <!-- End page content -->
-<?php include ("ft.inc.php"); ?>
+<?php
+include ("ft.inc.php");
+?>
 </body>
 
 </html>
@@ -267,11 +434,20 @@ require ("lang/" . $_SESSION['setting_language'] . ".php");
 die();
 }
 } else {
-$query = 'SELECT * FROM login u JOIN info i ON u.user_id = i.user_id WHERE username = "' . mysql_real_escape_string($_SESSION['username'], $db) . '" LIMIT 1';
+$query = 'SELECT * FROM
+login u
+JOIN
+info i
+ON
+u.user_id = i.user_id
+WHERE
+username = "' . mysql_real_escape_string($_SESSION['username'], $db) . '"
+LIMIT 1';
 $result = mysql_query($query, $db) or die(mysql_error());
 $row = mysql_fetch_assoc($result);
 extract($row);
 mysql_free_result($result);
+
 $fullname = $row['firstname'] . " " . $row['middlename'] . " " . $row['lastname'];
 }
 ?>
@@ -281,101 +457,123 @@ $fullname = $row['firstname'] . " " . $row['middlename'] . " " . $row['lastname'
 <head>
 <title><?php echo $TEXT['global-headertitle'] . " | " . $TEXT['homepage-headertitle']; ?></title>
 <meta http-equiv="content-type" content="text/html; charset=<?php echo $TEXT['global-charset']; ?>" />
-<script type="text/javascript" src="jquery.js"></script>
-<script type="text/javascript" src="javascript.php"></script>
+<meta name="author" content="Homenet Spaces Andrew Gerst" />
+<meta name="copyright" content="© Homenet Spaces" />
+<meta name="keywords" content="Homenet, Spaces, The, Place, To, Be, Creative, Andrew, Gerst, Free, Profiles, Information, Facts" />
+<meta name="description" content="Welcome to Homenet Spaces we offer you a free profile with many cool and interesting things! This is the place to be creative!" />
+<meta name="revisit-after" content="7 days" />
+<meta name="googlebot" content="index, follow, all" />
+<meta name="robots" content="index, follow, all" />
+<link rel="stylesheet" type="text/css" href="css/global.css" media="all" />
+<script type="text/javascript" src="cs.js"></script>
+<script type="text/javascript" src="nav.js"></script>
+<script type="text/javascript" src="suggest.js"></script>
+<script type="text/javascript">
+<!--
+function updatecaptchaimg() {
+document.captchaimg.src = document.captchaimg.src + '?';
+}
+-->
+</script>
 <style type="text/css">
-td {
-vertical-align: top;
-}
+td { 
+	vertical-align : top; 
+	}
 
-div.pagecontent table td.label {
-padding: 6px;
-text-align: right;
-}
+div.pagecontent table td.label { 
+	padding : 6px; 
+	text-align : right; 
+	}
 
-div.pagecontent table td.label label {
-position: relative;
-top: 4px;
-}
+div.pagecontent table td.label label { 
+	position : relative; 
+	top : 4px; 
+	}
 
-div.pagecontent table td.input {
-padding: 6px;
-text-align: left;
-}
+div.pagecontent table td.input { 
+	padding : 6px; 
+	text-align : left; 
+	}
 
 div.pagecontent input[type="text"] {
-font-size: 14pt;
-height: 25px;
-letter-spacing: 2px;
-line-height: 25px;
-}
+	font-size : 14pt; 
+	height : 25px; 
+	letter-spacing : 2px; 
+	line-height : 25px; 
+	}
 
 div.pagecontent input[type="password"] {
-font-size: 14pt;
-height: 25px;
-letter-spacing: 2px;
-line-height: 25px;
-}
+	font-size : 14pt; 
+	height : 25px; 
+	letter-spacing : 2px; 
+	line-height : 25px; 
+	}
 
 div.pagecontent input[type="submit"] {
-font-size: 13pt;
-height: 36px;
-letter-spacing: 2px;
-line-height: 29px;
-}
+	font-size : 13pt; 
+	height : 36px; 
+	letter-spacing : 2px; 
+	line-height : 29px; 
+	}
 
 div.pagecontent input[type="button"] {
-font-size: 13pt;
-height: 36px;
-letter-spacing: 2px;
-line-height: 29px;
-}
+	font-size : 13pt; 
+	height : 36px; 
+	letter-spacing : 2px; 
+	line-height : 29px; 
+	}
 
 div.pagecontent input[type="reset"] {
-font-size: 13pt;
-height: 36px;
-letter-spacing: 2px;
-line-height: 29px;
-}
+	font-size : 13pt; 
+	height : 36px; 
+	letter-spacing : 2px; 
+	line-height : 29px; 
+	}
 
 div.pagecontent input[type="radio"] {
-font-size: 14pt;
-height: 25px;
-letter-spacing: 2px;
-line-height: 25px;
-}
+	font-size : 14pt; 
+	height : 25px; 
+	letter-spacing : 2px; 
+	line-height : 25px; 
+	}
 
-div.pagecontent table td.input span.radio {
-left: 2px;
-position: relative;
-top: -6.5px;
-}
+div.pagecontent table td.input span.radio { 
+	left : 2px; 
+	position : relative; 
+	top : -6.5px; 
+	}
 
-div.pagecontent textarea#away_message {
-font-size: 14px;
-padding: 10px;
-text-align: left;
-}
+div.pagecontent textarea#away_message { 
+	font-size : 14px; 
+	padding : 10px; 
+	text-align : left; 
+	}
 
-div.pagecontent textarea#about_me {
-font-size: 14px;
-padding: 10px;
-text-align: left;
-}
+div.pagecontent textarea#about_me { 
+	font-size : 14px; 
+	padding : 10px; 
+	text-align : left; 
+	}
+</style>
+<style type="text/css">
+body { 
+	background: url(<?php echo $bimage; ?>) repeat; 
+	background-position : 50% 140px; 
+	}
 </style>
 </head>
 
 <body>
-<?php include ("hd.inc.php"); ?>
+<?php
+include ("hd.inc.php");
+?>
 <!-- Begin page content -->
 <div class="pagecontent">
-<div id="pageheader" class="pageheader2"><div class="heading">
-Update Account Information
-</div></div>
+<h1>Update Account Information</h1>
 <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
-<fieldset style="margin: 0 auto; width: 75%;">
+<fieldset style="margin : 0 auto; width : 75%; ">
 <legend>Personal Information&nbsp;</legend>
-<table style="margin-bottom: 10px; margin-top: 10px;">
+<table style="margin-bottom : 10px; margin-top : 10px; ">
 <tr>
 <td class="label"><label for="fullname">Full Name:</label></td>
 <td class="input"><input type="text" name="fullname" id="fullname" size="32" maxlength="40" value="<?php echo $fullname; ?>" /></td>
@@ -569,20 +767,17 @@ Update Account Information
 </tr>
 <tr>
 <td class="label"><label for="hobbies">Hobbies / Interests:</label></td>
-<td class="input"><select name="hobbies[]" id="hobbies" size="10" multiple="multiple">
+<td class="input"><select name="hobbies[]" id="hobbies" size="10" style="width : 150px; " multiple="multiple">
 <?php
-$hobbies_list = array('Aircraft Spotting','Airbrushing','Airsofting','Acting','Aeromodeling','Amateur Astronomy','Amateur Radio','Animals/Pets/Dogs','Arts','Astrology','Astronomy','Backgammon','Badminton','Baseball','Basketball','Beach/Sun Tanning','Beachcombing','Beadwork','Beatboxing','Becoming A Child Advocate','Bell Ringing','Belly Dancing','Bicycling','Billiards','Biology','Bird Watching','Birding','BMX','Blacksmithing','Blogging','Board Games','Boating','Body Building','Bonsai Tree','Boomerangs','Bowling','Brewing Beer','Bridge Building','Bringing Food To The Disabled','Building A House For Habitat For Humanity','Building Dollhouses','Bungee Jumping','Butterfly Watching','Button Collecting',
-'Cake Decorating','Calculus','Call of Duty','Calligraphy','Camping','Candle Making','Canoeing','Car Racing','Casino Gambling','Cave Diving','Celebrating Your Favorite Pastimes/Collections','Checkers','Cheerleading','Chemistry','Chess','Church/Church Activities','Cigar Smoking','Cloud Watching','Coin Collecting','Collecting','Collecting Antiques','Collecting Artwork','Collecting Music Albums','Compose Music','Computer Activities','Cooking','Cosplay','Crafts','Crafts (Unspecified)','Crochet','Crocheting','Cross-Stitch','Crossword Puzzles','Dancing','Darts','Dating','Dating Online','Diecast Collectibles','Digital Photography','Dolls','Dominoes','Drawing','Dumpster Diving','Eating Out','Educational Courses','Electronics','Embroidery','Entertaining','Exercise (Aerobics, Weights)',
-'Fast Cars','Fencing','Fishing','Flying','Football','Four Wheeling','Freecell','Freshwater Aquariums','Frisbee Golf (Frolf)','Games','Gardening','Garage Saleing','Genealogy','Geocaching','Ghost Hunting','Glowsticking','Going To Movies','Golfing','Go Kart Racing','Grip Strength','Guitar','Handwriting Analysis','Hang Gliding','Hiking','History','Home Brewing','Home Repair','Home Theater','Horseback Riding','Hot Air Ballooning','Hula Hooping','Hunting','Illusion','Internet','Jet Engines','Jewelry Making','Jigsaw Puzzles','Juggling','Keep A Journal','Kayaking','Kitchen Chemistry','Kites','Kite Boarding','Knitting','Knotting',
-'Lasers','Lawn Darts','Learning A Foreign Language','Learning An Instrument','Learning To Pilot A Plane','Leathercrafting','Legos','Listening To Music','Macram&eacute;','Magic','Making Model Cars','Matchstick Modeling','Mathematics','Meditation','Microscopy','Minesweeper','Mixed Martial Arts','Metal Detecting','Model Rockets','Modeling Ships','Models','Motorcycle Racing','Motorcycles','Mountain Biking','Mountain Climbing','Musical Instruments','Needlepoint',
-'Online Gambling','Origami','Other than listed','Owning An Antique Car','Pac-Man','Painting','Paintball','Papermaking','Papermache','Parachuting','People Watching','Photography','Piano','Pinball','Pinochle','Playing Cards','Playing Music','Playing Poker','Playing Team Sports','Pottery','Puppetry','Pyrotechnics','Quilting','Rafting','Railfans','R/C Boats','R/C Cars','R/C Helicopters','R/C Planes','Read Ghost Stories','Reading','Reading To The Elderly','Relaxing','Renting Movies','Rescuing Abused Or Abandoned Animals','Reviving Old Interests','Robotics','Rock Climbing','Rock Collecting','Rockets','Rocking AIDS Babies','Rubik&apos;s Cubes','Running',
-'Saltwater Aquariums','School','Scrapbooking','Scuba Diving','Sewing','Shark Fishing','Shopping','Singing','Singing In Choir','Skateboarding','Sketching','Skeet Shooting','Skiing','Sky Diving','Sleeping','Smoking Pipes','Snorkeling','Soap Making','Soccer','Socializing With Friends/Neighbors','Solitaire','Spelunkering','Spending Time With Family/Kids','Spider Solitaire','Stamp Collecting','Storytelling','String Figures','Surf Fishing','Swimming',
-'Tea Tasting','Tennis','Tesla Coils','Tetris','Texting','Textiles','Theater','Tic-Tac-Toe','Tombstone Rubbing','Tool Collecting','Toy Collecting','Train Collecting','Train Spotting','Traveling','Treasure Hunting','Trekkie','Tug Of War','Tutoring Children','Urban Exploration','Vacation','Video Games','Volunteer','Walking','Warhammer','Watching Sporting Events','Watching TV','Websites','Windsurfing','Wine Making','Woodworking','Working','Working In A Food Pantry','Working On Cars','Writing','Writing Music','Writing Songs','Yoga','YoYo');
+$hobbies_list = array('Biking', 'Computers', 'Cooking', 'Dancing', 'Exercise', 'Flying', 'Gaming', 'Golfing', 'Hiking', 'Hunting', 'Internet', 'Reading', 'Running', 'School', 'Singing', 'Skiing', 'Swimming', 'Traveling', 'Other than listed', 'Websites');
 $hobbies = explode(', ', $hobbies);
 
 foreach ($hobbies_list as $hobby) {
-if (in_array($hobby, $hobbies)) echo '<option value="' . $hobby . '" selected="selected">' . $hobby . '</option>';
-else echo '<option value="' . $hobby . '">' . $hobby . '</option>';
+if (in_array($hobby, $hobbies)) {
+echo '<option value="' . $hobby . '" selected="selected">' . $hobby . '</option>';
+} else {
+echo '<option value="' . $hobby . '">' . $hobby . '</option>';
+}
 }
 ?>
 </select>
@@ -604,17 +799,17 @@ else echo '<option value="' . $hobby . '">' . $hobby . '</option>';
 </table>
 </fieldset>
 <br /><br />
-<fieldset style="margin: 0 auto; width: 75%;">
+<fieldset style="margin : 0 auto; width : 75%; ">
 <legend>Login Credentials&nbsp;</legend>
-<table style="margin-bottom: 10px; margin-top: 10px;">
+<table style="margin-bottom : 10px; margin-top : 10px; ">
 <tr>
 <td class="label"><label for="username">Username:</label></td>
 <td class="input"><input type="text" name="username" id="username" size="32" maxlength="20" value="<?php echo $_SESSION['username']; ?>" disabled="disabled" /></td>
 </tr>
 </table>
-<fieldset style="margin: 0 auto; margin-bottom: 10px; width: 75%;">
+<fieldset style="margin : 0 auto; margin-bottom : 10px; width : 75%; ">
 <legend>Change Password&nbsp;</legend>
-<table style="margin-bottom: 10px; margin-top: 10px;">
+<table style="margin-bottom : 10px; margin-top : 10px; ">
 <tr>
 <td class="label"><label for="password">New Password:</label></td>
 <td class="input"><input type="password" name="password" id="password" size="32" maxlength="20" value="" />
@@ -631,18 +826,18 @@ else echo '<option value="' . $hobby . '">' . $hobby . '</option>';
 </td>
 </tr>
 </table>
-<div style="margin-bottom: 10px;">
+<div style="margin-bottom : 10px; ">
 <small class="formreminder">( Leave blank if you're not changing your password )</small>
 </div>
 </fieldset>
 </fieldset>
 <br /><br />
-<fieldset style="margin: 0 auto; width: 75%;">
+<fieldset style="margin : 0 auto; width : 75%; ">
 <legend>Security Questions&nbsp;</legend>
-<div style="margin: 0 auto; margin-bottom: 10px; margin-top: 10px;">
-<fieldset style="margin: 0 auto; width: 90%;">
+<div style="margin : 0 auto; margin-bottom : 10px; margin-top : 10px; ">
+<fieldset style="margin : 0 auto; width : 90%; ">
 <legend>Question 1&nbsp;</legend>
-<table style="margin: 0 auto; margin-bottom: 10px; margin-top: 10px;">
+<table style="margin : 0 auto; margin-bottom : 10px; margin-top : 10px; ">
 <tr>
 <td class="label"><label for="security_question1">Question:</label></td>
 <td class="input">
@@ -670,9 +865,9 @@ else echo '<option value="' . $hobby . '">' . $hobby . '</option>';
 </table>
 </fieldset>
 <br />
-<fieldset style="margin: 0 auto; width: 90%;">
+<fieldset style="margin : 0 auto; width : 90%; ">
 <legend>Question 2&nbsp;</legend>
-<table style="margin: 0 auto; margin-bottom: 10px; margin-top: 10px;">
+<table style="margin : 0 auto; margin-bottom : 10px; margin-top : 10px; ">
 <tr>
 <td class="label"><label for="security_question2">Question:</label></td>
 <td class="input">
@@ -702,9 +897,9 @@ else echo '<option value="' . $hobby . '">' . $hobby . '</option>';
 </div>
 </fieldset>
 <br /><br />
-<fieldset style="margin: 0 auto; width: 75%;">
+<fieldset style="margin : 0 auto; width : 75%; ">
 <legend>Privacy&nbsp;</legend>
-<table style="margin-bottom: 10px; margin-top: 10px;">
+<table style="margin-bottom : 10px; margin-top : 10px; ">
 <tr>
 <td class="label"><label for="privacy">Who Can View Your Profile:</label></td>
 <td class="input">
@@ -729,9 +924,9 @@ else echo '<option value="' . $hobby . '">' . $hobby . '</option>';
 </table>
 </fieldset>
 <br /><br />
-<fieldset style="margin: 0 auto; width: 75%;">
+<fieldset style="margin : 0 auto; width : 75%; ">
 <legend>Preferences&nbsp;</legend>
-<table style="margin-bottom: 10px; margin-top: 10px;">
+<table style="margin-bottom : 10px; margin-top : 10px; ">
 <tr>
 <td class="label"><label for="pref_song_astart">User Profile Music Autostart:</label></td>
 <td class="input">
@@ -739,11 +934,35 @@ else echo '<option value="' . $hobby . '">' . $hobby . '</option>';
 <input type="radio" name="pref_song_astart" id="pref_song_astart" value="1" onclick="showMe6('pref_psong_offon')" <?php if ($pref_song_astart == "1") { echo 'checked="checked"'; } ?> /><span class="radio">False</span>
 </td>
 </tr>
+<script type="text/javascript">
+<!--
+function showMe4 (it) {
+var vis = document.getElementById(it).style.display
+if (vis == "") {
+document.getElementById(it).style.display = "none";
+} else {
+document.getElementById(it).style.display = "none";
+}
+}
+
+function showMe6 (it) {
+var vis = document.getElementById(it).style.display
+if (vis == "") {
+document.getElementById(it).style.display = "";
+} else {
+document.getElementById(it).style.display = "";
+}
+}
+//-->
+</script>
 <?php
-if ($pref_song_astart == 1) echo '<tr id="pref_psong_offon" style="">';
-else echo '<tr id="pref_psong_offon" style="display: none;">';
+if ($pref_song_astart == 1) {
+echo '<tr id="pref_psong_offon" style="">';
+} else {
+echo '<tr id="pref_psong_offon" style="display : none; ">';
+}
 ?>
-<td class="label"><label for="pref_psong_astart" style="color: #f00;">Only Autostart My Profile Music:</label></td>
+<td class="label"><label for="pref_psong_astart" style="color : #ff0000; ">Only Autostart My Profile Music:</label></td>
 <td class="input">
 <input type="radio" name="pref_psong_astart" id="pref_psong_astart" value="1" <?php if ($pref_psong_astart == "1") { echo 'checked="checked"'; } ?> /><span class="radio">True</span>
 <input type="radio" name="pref_psong_astart" id="pref_psong_astart" value="0" <?php if ($pref_psong_astart == "0") { echo 'checked="checked"'; } ?> /><span class="radio">False</span>
@@ -757,10 +976,13 @@ else echo '<tr id="pref_psong_offon" style="display: none;">';
 </td>
 </tr>
 <?php
-if ($pref_upstyle == 1) echo '<tr id="pref_pupstyle_offon" style="">';
-else echo '<tr id="pref_pupstyle_offon" style="display: none;">';
+if ($pref_upstyle == 1) {
+echo '<tr id="pref_pupstyle_offon" style="">';
+} else {
+echo '<tr id="pref_pupstyle_offon" style="display : none; ">';
+}
 ?>
-<td class="label"><label for="pref_pupstyle" style="color : #f00; ">Only Show My Profile Style:</label></td>
+<td class="label"><label for="pref_pupstyle" style="color : #ff0000; ">Only Show My Profile Style:</label></td>
 <td class="input">
 <input type="radio" name="pref_pupstyle" id="pref_pupstyle" value="1" <?php if ($pref_pupstyle == "1") { echo 'checked="checked"'; } ?> /><span class="radio">True</span>
 <input type="radio" name="pref_pupstyle" id="pref_pupstyle" value="0" <?php if ($pref_pupstyle == "0") { echo 'checked="checked"'; } ?> /><span class="radio">False</span>
@@ -774,14 +996,14 @@ else echo '<tr id="pref_pupstyle_offon" style="display: none;">';
 </td>
 </tr>
 </table>
-<div style="margin-bottom: 10px;">
+<div style="margin-bottom : 10px; ">
 <small class="formreminder">( Settings When Viewing Other Members Profiles )</small>
 </div>
 </fieldset>
 <br /><br />
-<fieldset style="margin: 0 auto; width: 75%;">
+<fieldset style="margin : 0 auto; width : 75%; ">
 <legend>Settings&nbsp;</legend>
-<table style="margin-bottom: 10px; margin-top: 10px;">
+<table style="margin-bottom : 10px; margin-top : 10px; ">
 <tr>
 <td class="label"><label for="setting_vmode">Viewing Mode:</label></td>
 <td class="input">
@@ -815,14 +1037,14 @@ else echo '<tr id="pref_pupstyle_offon" style="display: none;">';
 </td>
 </tr>
 </table>
-<div style="margin-bottom: 10px;">
+<div style="margin-bottom : 10px; ">
 <small class="formreminder">( General Settings &amp; Viewing Mode )</small>
 </div>
 </fieldset>
 <br /><br />
-<fieldset style="margin: 0 auto; width: 75%;">
+<fieldset style="margin : 0 auto; width : 75%; ">
 <legend>Away Message&nbsp;</legend>
-<table style="margin: 0 auto; margin-bottom: 10px; margin-top: 10px;">
+<table style="margin : 0 auto; margin-bottom : 10px; margin-top : 10px; ">
 <tr>
 <td> </td>
 <td>
@@ -832,14 +1054,14 @@ else echo '<tr id="pref_pupstyle_offon" style="display: none;">';
 </td>
 </tr>
 </table>
-<div style="margin-bottom: 10px;">
+<div style="margin-bottom : 10px; ">
 <small class="formreminder">( Set this message when you are away on vacation )</small>
 </div>
 </fieldset>
 <br /><br />
-<fieldset style="margin: 0 auto; width: 75%;">
+<fieldset style="margin : 0 auto; width : 75%; ">
 <legend>About Me&nbsp;</legend>
-<table style="margin: 0 auto; margin-bottom: 10px; margin-top: 10px;">
+<table style="margin : 0 auto; margin-bottom : 10px; margin-top : 10px; ">
 <tr>
 <td> </td>
 <td>
@@ -851,14 +1073,14 @@ else echo '<tr id="pref_pupstyle_offon" style="display: none;">';
 </table>
 </fieldset>
 <br /><br />
-<fieldset style="margin: 0 auto; width: 75%;">
+<fieldset style="margin : 0 auto; width : 75%; ">
 <legend>Profile Song&nbsp;</legend>
-<table style="margin-bottom: 10px; margin-top: 10px;">
+<table style="margin-bottom : 10px; margin-top : 10px; ">
 <tr>
 <td class="label">
 </td>
 <td class="input">
-<a href="media/mp/" target="_blank" style="margin-left: 10px; position: relative; text-decoration: none; top: -1px;">Browse The Music Place</a>
+<a href="media/mp/" target="_blank" style="margin-left : 10px; position : relative;  text-decoration : none; top : -1px; ">Browse The Music Place</a>
 </td>
 </tr>
 <tr>
@@ -896,20 +1118,20 @@ else echo '<tr id="pref_pupstyle_offon" style="display: none;">';
 </div>
 </fieldset>
 <br /><br />
-<fieldset style="margin: 0 auto; width: 75%;">
+<fieldset style="margin : 0 auto; width : 75%; ">
 <legend>Security Code&nbsp;</legend>
-<table style="margin: 0 auto; margin-bottom: 10px; margin-top: 10px;">
+<table style="margin : 0 auto; margin-bottom : 10px; margin-top : 10px; ">
 <tr>
-<td><input type="text" name="txtsecuritycode" size="14" maxlength="7" value="" style="font-size: 18pt; height: 30px; letter-spacing: 2px; line-height: 30px; margin-right: 5px; text-align: center;" /></td>
+<td><input type="text" name="txtsecuritycode" size="14" maxlength="7" value="" style="font-size : 18pt; height : 30px; letter-spacing : 2px; line-height : 30px; margin-right : 5px; text-align : center; " /></td>
 <td><img name="captchaimg" alt="Security Code" src="captcha_securityimage.php" /></td>
-<td><a onclick="javascript:updatecaptchaimg();"><img src="i/captcha/arrow_refresh.png" alt="Refresh Code" style="border-width: 0; margin-left: 5px; margin-top: 7px;" /></a></td>
+<td><a onclick="javascript:updatecaptchaimg();"><img src="i/captcha/arrow_refresh.png" alt="Refresh Code" style="border-width : 0px; margin-left : 5px; margin-top : 7px; " /></a></td>
 </tr>
 </table>
 <br />
 <div>
 <input type="hidden" name="profile_song_history" value="<?php echo $profile_song_history; ?>" />
 <input type="submit" name="update" value="Update" />
-<input type="button" id="cancel" value="Cancel"  onclick="history.go(-1);" />
+<input type="button" id="cancel" value="Cancel"  onclick="history.go(-1); " />
 <input type="reset" id="reset" value="Reset" />
 </div>
 <br />
@@ -921,7 +1143,9 @@ else echo '<tr id="pref_pupstyle_offon" style="display: none;">';
 </span>
 </div>
 <!-- End page content -->
-<?php include ("ft.inc.php"); ?>
+<?php
+include ("ft.inc.php");
+?>
 </body>
 
 </html>

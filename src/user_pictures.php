@@ -7,19 +7,37 @@ die();
 }
 
 session_start();
+
 require ("lang.inc.php");
 include ("db.member.inc.php");
 include ("db.om.inc.php");
 include ("login.inc.php");
+include ("bimage.inc.php");
 
-$query = 'SELECT user_id FROM login WHERE user_id = ' . $user_id;
+// check if user id is registered
+$query = 'SELECT
+user_id
+FROM
+login
+WHERE
+user_id = ' . $user_id;
 $result = mysql_query($query, $db) or die(mysql_error());
 
-if (mysql_num_rows($result) == 0) header('location: members.php');
+if (mysql_num_rows($result) == 0) {
+header('location: members.php');
+}
 
 $user_id = $_GET['id'];
-$query = 'SELECT * FROM login u JOIN info i ON u.user_id = i.user_id WHERE u.user_id = ' . $user_id;
+$query = 'SELECT * FROM
+login u
+JOIN
+info i
+ON
+u.user_id = i.user_id
+WHERE
+u.user_id = ' . $user_id;
 $result = mysql_query($query, $db) or die(mysql_error($db));
+
 $row = mysql_fetch_array($result);
 extract($row);
 mysql_free_result($result);
@@ -36,17 +54,34 @@ header('refresh: 3; url=login.php?redirect=' . $_SERVER['PHP_SELF'] . "?" . $_SE
 <head>
 <title><?php echo $TEXT['global-headertitle'] . " | " . $TEXT['homepage-headertitle']; ?></title>
 <meta http-equiv="content-type" content="text/html; charset=<?php echo $TEXT['global-charset']; ?>" />
-<script type="text/javascript" src="jquery.js"></script>
-<script type="text/javascript" src="javascript.php"></script>
+<meta name="author" content="Homenet Spaces Andrew Gerst" />
+<meta name="copyright" content="© Homenet Spaces" />
+<meta name="keywords" content="Homenet, Spaces, The, Place, To, Be, Creative, Andrew, Gerst, Free, Profiles, Information, Facts" />
+<meta name="description" content="Welcome to Homenet Spaces | This is the place to be creative! Feel free to add yourself to our wonderful community by registering! " />
+<meta name="revisit-after" content="7 days" />
+<meta name="googlebot" content="index, follow, all" />
+<meta name="robots" content="index, follow, all" />
+<link rel="stylesheet" type="text/css" href="css/global.css" media="all" />
+<script type="text/javascript" src="cs.js"></script>
+<script type="text/javascript" src="nav.js"></script>
+<script type="text/javascript" src="suggest.js"></script>
+<style type="text/css">
+body { 
+	background: url(<?php echo $bimage; ?>) repeat; 
+	background-position : 50% 140px; 
+	}
+</style>
 </head>
 
 <body>
-<?php include ("hd.inc.php"); ?>
+<?php
+include ("hd.inc.php");
+?>
 <!-- Begin page content -->
 <div class="pagecontent">
 <?php
-echo '<form name="counter" style="margin: 0;"><p><strong style="color: #f33; font-weight: bold;">You will be redirected to the login page in
-<input type="text" size="1" name="cd" style="background-color: transparent; border: 0; color: #f33; font-weight: bold; width: 12px;">
+echo '<form name="counter" style="margin : 0px; "><p><strong style="color : #ff3333; font-weight : bold; ">You will be redirected to the login page in
+<input type="text" size="1" name="cd" style="background-color : transparent; border : 0px; color : #ff3333; font-weight : bold; width : 12px; ">
 seconds.</strong></p></form>';
 echo '<p>If your browser doesn\'t redirect you properly automatically, ' . '<a href="login.php?redirect=' . $_SERVER['PHP_SELF'] . "?" . $_SERVER['QUERY_STRING'] . '">click here</a>.</p>';
 ?>
@@ -95,8 +130,23 @@ die();
 <head>
 <title><?php echo $username . " ( " . $firstname . " " . $lastname . " ) | " . $TEXT['global-headertitle'] . " | Photo Gallery"; ?></title>
 <meta http-equiv="content-type" content="text/html; charset=<?php echo $TEXT['global-charset']; ?>" />
-<script type="text/javascript" src="jquery.js"></script>
-<script type="text/javascript" src="javascript.php"></script>
+<meta name="author" content="Homenet Spaces Andrew Gerst" />
+<meta name="copyright" content="© Homenet Spaces" />
+<meta name="keywords" content="Homenet, Spaces, The, Place, To, Be, Creative, Andrew, Gerst, Free, Profiles, Information, Facts" />
+<meta name="description" content="Welcome to Homenet Spaces we offer you a free profile with many cool and interesting things! This is the place to be creative!" />
+<meta name="revisit-after" content="7 days" />
+<meta name="googlebot" content="index, follow, all" />
+<meta name="robots" content="index, follow, all" />
+<link rel="stylesheet" type="text/css" href="css/global.css" media="all" />
+<script type="text/javascript" src="cs.js"></script>
+<script type="text/javascript" src="nav.js"></script>
+<script type="text/javascript" src="suggest.js"></script>
+<style type="text/css">
+body { 
+	background: url(<?php echo $bimage; ?>) repeat; 
+	background-position : 50% 140px; 
+	}
+</style>
 <?php
 if (isset($_SESSION['logged']) && ($_SESSION['pref_upstyle'] == 1)) {
 } else {
@@ -114,44 +164,54 @@ if ($user_style != null) {
 </head>
 
 <body id="userpictures_body">
-<?php include ("hd.inc.php"); ?>
+<?php
+include ("hd.inc.php");
+?>
 <!-- Begin page content -->
 <?php
 $hits = ($hits + 1);
 
-$query = 'UPDATE info SET hits = ' . $hits . ' WHERE user_id = ' . $user_id;
+$query = 'UPDATE info SET
+hits = ' . $hits . '
+WHERE
+user_id = ' . $user_id;
 mysql_query($query, $db) or die(mysql_error());
 ?>
 <div id="userpictures_pagecontent" class="pagecontent">
-<span style="float: right; position: relative; right: 17px; top: 0;">
+<span style="float : right; position : relative; right : 17px; top : 0px; ">
 <?php
-if ($row['default_image'] != null) echo '<img src="uploads/' . $row['username'] . '/images/thumb/' . $row['default_image'] . '" id="defaultuserimage" /><br />' . "\n";
-else echo '<img src="i/mem/default.jpg" id="defaultuserimage" /><br />' . "\n";
+if ($row['default_image'] != null) {
+echo '<img src="uploads/' . $row['username'] . '/images/thumb/' . $row['default_image'] . '" id="defaultuserimage" /><br />' . "\n";
+} else {
+echo '<img src="i/mem/default.jpg" id="defaultuserimage" /><br />' . "\n";
+}
 ?>
-<div style="padding: 5px; text-align: left;">
-<div>Status: <?php echo $status; ?></div>
-<div>Mood: <?php echo $mood; ?></div>
+<div style="padding : 5px; text-align : left; ">
+<div>
+Status: <?php echo $status; ?>
+</div>
+<div>
+Mood: <?php echo $mood; ?>
+</div>
 <br />
 </div>
 </span>
+<div>
 <?php
 $user = $row['firstname'] . " " . $row['lastname'];
 $usernamedir = $row['username'] . "/";
 $username = $row['username'];
 
 if ($_SESSION['username'] == $username) {
-echo '<div id="pageheader" class="pageheader2"><div class="heading">';
-echo 'View your Images!';
-echo '</div></div>';
+echo '<span style="float : left; font-size : 36px; padding-left : 20px; ">View your Images!</span>';
 } else {
-echo '<div id="pageheader" class="pageheader2"><div class="heading">';
-echo $user . '\'s Pictures!';
-echo '</div></div>';
+echo '<span style="float : left; font-size : 36px; padding-left : 20px; ">' . $user . '\'s Pictures!</span>';
 }
 ?>
 <br /><br />
 <br />
-<div style="padding-left: 40px; text-align: left;"><a href="view_files.php?id=<?php echo $user_id; ?>">View <?php echo $firstname; ?>'s Files!</a> | <a href="view_files.php?id=<?php echo $user_id; ?>">Shared Files!</a> | <a href="upload_send.php?id=<?php echo $user_id; ?>">Send <?php echo $firstname; ?> Files!</a></div>
+<div style="padding-left : 40px; text-align : left; "><a href="view_files.php?id=<?php echo $user_id; ?>">View <?php echo $firstname; ?>'s Files!</a> | <a href="view_files.php?id=<?php echo $user_id; ?>">Shared Files!</a> | <a href="upload_send.php?id=<?php echo $user_id; ?>">Send <?php echo $firstname; ?> Files!</a></div>
+</div>
 <?php
 $dirpath = "uploads/";
 $imagedir = $dirpath . $usernamedir . 'images/thumb/';
@@ -164,40 +224,52 @@ if ($_SESSION['username'] == $username) {
 while ($image = readdir($images)) {
 if (is_file($imagedir . $image)) {
 if (($image != ".") && ($image != "..") && ($image != "desktop.ini") && ($image != "Thumbs.db") && ($image != "Ehthumbs.db") && ($image != "_derived") && ($image != "_fpclass") && ($image != "_themes") && ($image != "_vti_cnf") && ($image != "_vti_pvt")) {
-$count++;
+$count = ($count + 1);
 
-if ($count == 3) $break = "<div style='clear: both; width: 100%;'>&nbsp;</div>\n";
-elseif ($count == 6) $break = "<div style='clear: both; width: 100%;'>&nbsp;</div>\n";
-elseif ($count == 9) $break = "<div style='clear: both; width: 100%;'>&nbsp;</div>\n";
-elseif ($count == 12) $break = "<div style='clear: both; width: 100%;'>&nbsp;</div>\n";
-else $break = null;
-
-$what .= "<span style='float: left; margin: 15px; text-align: center; width: 200px;'><a href='$mainimagedir$image'><img src='$imagedir$image' id='defaultuserimage' alt='$image' /></a><br /><span style='height: 30px; line-height: 30px;'><a href='update_images.php?make_default=$image' style='text-decoration: none;'>Make Default</a> | <a href='update_images_edit.php?image=$image' style='text-decoration: none;'>Edit</a></span></span>\n" . $break;
-}
-}
-}
+if ($count == 3) {
+$break = "<div style='clear : both; width : 100%; '>&nbsp;</div>\n";
+} elseif ($count == 6) {
+$break = "<div style='clear : both; width : 100%; '>&nbsp;</div>\n";
+} elseif ($count == 9) {
+$break = "<div style='clear : both; width : 100%; '>&nbsp;</div>\n";
+} elseif ($count == 12) {
+$break = "<div style='clear : both; width : 100%; '>&nbsp;</div>\n";
 } else {
+$break = null;
+}
+
+$what .= "<span style='float : left; margin : 15px; text-align : center; width : 200px; '><a href='$mainimagedir$image'><img src='$imagedir$image' id='defaultuserimage' alt='$image' /></a><br /><span style='height : 30px; line-height : 30px; '><a href='update_images.php?make_default=$image' style='text-decoration : none; '>Make Default</a> | <a href='update_images_edit.php?image=$image' style='text-decoration : none; '>Edit</a></span></span>\n" . $break;
+}
+}
+}
+} else { // user isn't viewing their images
 while ($image = readdir($images)) {
 if (is_file($imagedir . $image)) {
 if (($image != ".") && ($image != "..") && ($image != "desktop.ini") && ($image != "Thumbs.db") && ($image != "Ehthumbs.db") && ($image != "_derived") && ($image != "_fpclass") && ($image != "_themes") && ($image != "_vti_cnf") && ($image != "_vti_pvt")) {
-$count++;
+$count = ($count + 1);
 
-if ($count == 3) $break = "<div style='clear: both; width: 100%;'>&nbsp;</div>\n";
-elseif ($count == 6) $break = "<div style='clear: both; width: 100%;'>&nbsp;</div>\n";
-elseif ($count == 9) $break = "<div style='clear: both; width: 100%;'>&nbsp;</div>\n";
-elseif ($count == 12) $break = "<div style='clear: both; width: 100%;'>&nbsp;</div>\n";
-else $break = null;
+if ($count == 3) {
+$break = "<div style='clear : both; width : 100%; '>&nbsp;</div>\n";
+} elseif ($count == 6) {
+$break = "<div style='clear : both; width : 100%; '>&nbsp;</div>\n";
+} elseif ($count == 9) {
+$break = "<div style='clear : both; width : 100%; '>&nbsp;</div>\n";
+} elseif ($count == 12) {
+$break = "<div style='clear : both; width : 100%; '>&nbsp;</div>\n";
+} else {
+$break = null;
+}
 
-$what .= "<span style='float: left; margin: 15px; text-align: center; width: 200px;'><a href='$mainimagedir$image'><img src='$imagedir$image' id='defaultuserimage' alt='$image' /></a></span>\n" . $break;
+$what .= "<span style='float : left; margin : 15px; text-align : center; width : 200px; '><a href='$mainimagedir$image'><img src='$imagedir$image' id='defaultuserimage' alt='$image' /></a></span>\n" . $break;
 }
 }
 }
 }
 ?>
-<div style="display: block; margin-left: 3.5%; text-align: center; width: 720px;">
+<div style="display : block; margin-left : 3.5%; text-align : center; width : 720px; ">
 <?php
 echo $what;
-echo "<div style='clear: both; width: 100%;'>&nbsp;</div>\n";
+echo "<div style='clear : both; width : 100%; '>&nbsp;</div>\n";
 ?>
 </div>
 </div>

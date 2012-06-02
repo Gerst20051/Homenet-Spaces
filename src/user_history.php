@@ -2,6 +2,7 @@
 require ("lang.inc.php");
 include ("auth.inc.php");
 include ("db.member.inc.php");
+include ("bimage.inc.php");
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//<?php echo $TEXT['global-dtdlang']; ?>" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?php echo $TEXT['global-lang']; ?>" lang="<?php echo $TEXT['global-lang']; ?>" dir="<?php echo $TEXT['global-text_dir']; ?>">
@@ -9,57 +10,66 @@ include ("db.member.inc.php");
 <head>
 <title><?php echo $TEXT['global-headertitle'] . " | " . $TEXT['homepage-headertitle']; ?></title>
 <meta http-equiv="content-type" content="text/html; charset=<?php echo $TEXT['global-charset']; ?>" />
-<script type="text/javascript" src="jquery.js"></script>
-<script type="text/javascript" src="javascript.php"></script>
+<meta name="author" content="Homenet Spaces Andrew Gerst" />
+<meta name="copyright" content="© Homenet Spaces" />
+<meta name="keywords" content="Homenet, Spaces, The, Place, To, Be, Creative, Andrew, Gerst, Free, Profiles, Information, Facts" />
+<meta name="description" content="Welcome to Homenet Spaces we offer you a free profile with many cool and interesting things! This is the place to be creative!" />
+<meta name="revisit-after" content="7 days" />
+<meta name="googlebot" content="index, follow, all" />
+<meta name="robots" content="index, follow, all" />
+<link rel="stylesheet" type="text/css" href="css/global.css" media="all" />
+<script type="text/javascript" src="cs.js"></script>
+<script type="text/javascript" src="nav.js"></script>
+<script type="text/javascript" src="suggest.js"></script>
 <style type="text/css">
 #star { 
-margin : 0 auto; 
-padding-top : 5px; 
-width : 125px; 
-}
+	margin : 0 auto; 
+	padding-top : 5px; 
+	width : 125px; 
+	}
 
 #star ul.star { 
-background : url('i/sy/st/stars.gif') repeat-x; 
-cursor : pointer; 
-float : left; 
-height : 20px; 
-left : 0px; 
-list-style-type : none; 
-margin : 0px; 
-padding : 0px; 
-position : relative; 
-top : -5px; 
-width : 85px; 
-}
+	background : url('i/sy/st/stars.gif') repeat-x; 
+	cursor : pointer; 
+	float : left; 
+	height : 20px; 
+	left : 0px; 
+	list-style-type : none; 
+	margin : 0px; 
+	padding : 0px; 
+	position : relative; 
+	top : -5px; 
+	width : 85px; 
+	}
 
 #star li { 
-display : block; 
-float : left; 
-height : 20px; 
-left : 0px; 
-margin : 0px; 
-padding : 0px; 
-position : absolute; 
-text-decoration : none; 
-text-indent : -9000px; 
-width : 85px; 
-z-index : 20; 
-}
+	display : block; 
+	float : left; 
+	height : 20px; 
+	left : 0px; 
+	margin : 0px; 
+	padding : 0px; 
+	position : absolute; 
+	text-decoration : none; 
+	text-indent : -9000px; 
+	width : 85px; 
+	z-index : 20; 
+	}
 
 #star li.curr { 
-background : url('i/sy/st/stars.gif') left 25px; 
-font-size : 1px; 
-}
+	background : url('i/sy/st/stars.gif') left 25px; 
+	font-size : 1px; 
+	}
 
 #star div.user { 
-color : #888; 
-float : left; 
-font-family : arial; 
-font-size : 13px; 
-left : 15px; 
-position : relative; 
-width : 30px; 
-}
+	color : #888; 
+	float : left; 
+	font-family : arial; 
+	font-size : 13px; 
+	left : 15px; 
+	position : relative; 
+	width : 30px; 
+	}
 </style>
 <script type="text/javascript">
 function $(v,o) {
@@ -163,24 +173,38 @@ document.onmousemove = '';
 
 star.num = 0;
 </script>
+<style type="text/css">
+body { 
+	background: url(<?php echo $bimage; ?>) repeat; 
+	background-position : 50% 140px; 
+	}
+</style>
 </head>
 
 <body>
-<?php include ("hd.inc.php"); ?>
+<?php
+include ("hd.inc.php");
+?>
 <!-- Begin page content -->
 <div class="pagecontent">
 <?php
-$query = 'SELECT * FROM login u JOIN info i ON u.user_id = i.user_id WHERE username = "' . mysql_real_escape_string($_SESSION['username'], $db) . '"';
+$query = 'SELECT * FROM
+login u
+JOIN
+info i
+ON
+u.user_id = i.user_id
+WHERE
+username = "' . mysql_real_escape_string($_SESSION['username'], $db) . '"';
 $result = mysql_query($query, $db) or die(mysql_error($db));
+
 $row = mysql_fetch_array($result);
 extract($row);
 mysql_free_result($result);
 ?>
-<div id="pageheader" class="pageheader2"><div class="heading">
-Welcome to your Account History!
-</div></div>
+<h1>Welcome to your Account History!</h1>
 <div>
-<fieldset style="margin: 0 auto; width: 75%;">
+<fieldset style="margin : 0 auto; width : 75%; ">
 <legend>Last Login Info&nbsp;</legend>
 <span>
 <?php
@@ -220,7 +244,7 @@ echo "Thanks For Joining :)";
 </div>
 <br />
 <div>
-<fieldset style="margin: 0 auto; width: 75%;">
+<fieldset style="margin : 0 auto; width : 75%; ">
 <legend>Current Login Info&nbsp;</legend>
 <span>
 Your Computer Is: <?php echo $last_login_ip; ?>
@@ -233,18 +257,24 @@ echo '<a href="http://phpweby.com/services/iplocation?ip=' . $last_login_ip . '"
 </div>
 <br />
 <div>
-<fieldset style="margin: 0 auto; width: 75%;">
+<fieldset style="margin : 0 auto; width : 75%; ">
 <legend>Account Summary&nbsp;</legend>
 <span>
 Profile Views: <?php echo $hits; ?>
 <br />
 Logged On
 <?php
-echo " $logins ";
+echo " ";
+echo $logins;
+echo " ";
 
-if ($logins > 1) echo "Times";
-elseif ($logins == 1) echo "Time";
-else echo "Times & Was Hacked :P";
+if ($logins > 1) {
+echo "Times";
+} elseif ($logins == 1) {
+echo "Time";
+} else {
+echo "Times & Was Hacked :P";
+}
 ?>
 <br />
 Date Joined: <?php echo $date_joined; ?>
@@ -253,33 +283,53 @@ Date Joined: <?php echo $date_joined; ?>
 </div>
 <br />
 <div>
-<fieldset style="margin: 0 auto; width: 75%;">
+<fieldset style="margin : 0 auto; width : 75%; ">
 <legend>User Rating / Rank&nbsp;</legend>
 <span>
 xRank:
 <?php
-if ($website != null) $ifexists_website = 1000;
-if ($website != null) $ifexists_customizeprofile = 1000;
-if ($website != null) $ifexists_defualtpic = 1000;
+if ($website != null) {
+$ifexists_website = 1000;
+}
+
+if ($website != null) {
+$ifexists_customizeprofile = 1000;
+}
+
+if ($website != null) {
+$ifexists_defualtpic = 1000;
+}
 
 $xrank = ($rank + ($hits * 2) + ($logins * 5) + ($ifexists_website) + ($ifexists_customizeprofile) + ($ifexists_defaultpic));
 
 if ($logins > 5) {
-if ($logins > 100) { $xrank = ($xrank * 5);
-if ($logins > 200) { $xrank = ($xrank * 10);
-if ($logins > 300) { $xrank = ($xrank * 15);
-if ($logins > 400) { $xrank = ($xrank * 20);
-if ($logins > 500) { $xrank = ($xrank * 25);
+if ($logins > 100) {
+$xrank = ($xrank * 5);
+if ($logins > 200) {
+$xrank = ($xrank * 10);
+if ($logins > 300) {
+$xrank = ($xrank * 15);
+if ($logins > 400) {
+$xrank = ($xrank * 20);
+if ($logins > 500) {
+$xrank = ($xrank * 25);
 }}}}}
 $xrank = ($xrank * 1.0586951);
+} elseif ($logins == 4) {
+$xrank = ($xrank / 2.2452);
+} elseif ($logins == 3) {
+$xrank = ($xrank / 3.1385);
+} elseif ($logins == 2) {
+$xrank = ($xrank / 4.3698);
+} elseif ($logins == 1) {
+$xrank = 0;
+} else {
+$xrank = 0;
 }
-elseif ($logins == 4) $xrank = ($xrank / 2.2452);
-elseif ($logins == 3) $xrank = ($xrank / 3.1385);
-elseif ($logins == 2) $xrank = ($xrank / 4.3698);
-elseif ($logins == 1) $xrank = 0;
-else $xrank = 0;
 
-echo " $xrank ";
+echo " ";
+echo $xrank;
+echo " ";
 ?>
 <br /><br />
 <div id="star">
@@ -291,13 +341,16 @@ echo $width;
 echo 'px; ">';
 ?></li>
 </ul>
-<div style="color: rgb(136, 136, 136);" id="starUser" class="user"><?php echo ($rating); ?>%</div>
+<div style="color: rgb(136, 136, 136); " id="starUser" class="user"><?php echo ($rating); ?>%</div>
 </div>
-<div style="clear: both; color: rgb(136, 136, 136);">
+<div style="clear : both; color: rgb(136, 136, 136); ">
 <?php
+echo "<small>";
 $votes = ($xratings > 0) ? $xratings : 'No';
+echo $votes;
 $vtense = ($xratings == 0 || $xratings > 1) ? ' Votes' : ' Vote';
-echo "<small>$votes$vtense</small>";
+echo $vtense;
+echo "</small>";
 
 if (isset($_GET['rating'])) {
 if (($vote < 0) || ($vote > 100)) {
@@ -315,7 +368,7 @@ echo "</small>";
 </div>
 <br />
 <div>
-<fieldset style="margin: 0 auto; width: 75%;">
+<fieldset style="margin : 0 auto; width : 75%; ">
 <legend>
 <?php
 if ($voters == null) {
@@ -336,8 +389,11 @@ echo " Voters";
 </legend>
 <span>
 <?php
-if ($voters == null) echo "No Voters Are Registered";
-else echo $voters;
+if ($voters == null) {
+echo "No Voters Are Registered";
+} else {
+echo $voters;
+}
 ?>
 </span>
 </fieldset>
@@ -351,4 +407,6 @@ include ("tracking_scripts.inc.php");
 </body>
 
 </html>
-<?php mysql_close($db); ?>
+<?php
+mysql_close($db);
+?>

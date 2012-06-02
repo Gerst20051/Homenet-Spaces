@@ -1,0 +1,1 @@
+UPDATE `groups`.`hnsdevteam` SET `control` = '2009-06-07' WHERE `hnsdevteam`.`type` = 'setting' AND `hnsdevteam`.`name` = 'created' AND `hnsdevteam`.`control` = '2009-06-06' AND `hnsdevteam`.`username` = '' AND `hnsdevteam`.`access_level` = '' AND `hnsdevteam`.`date_joined` = '' AND `hnsdevteam`.`time` = '' AND `hnsdevteam`.`update` = '' LIMIT 1 ;

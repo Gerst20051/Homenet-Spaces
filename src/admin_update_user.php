@@ -3,6 +3,7 @@ require ("lang.inc.php");
 include ("auth.inc.php");
 include ("admin.inc.php");
 include ("db.member.inc.php");
+include ("bimage.inc.php");
 
 function ucname($string) {
 $string = ucwords(strtolower($string));
@@ -17,6 +18,7 @@ return $string;
 }
 
 if (isset($_POST['update']) && $_POST['update'] == 'Update') {
+// filter incoming values
 $username = (isset($_POST['username'])) ? trim($_POST['username']) : '';
 $access_level = (isset($_POST['access_level'])) ? trim($_POST['access_level']) : '';
 $user_id = (isset($_POST['user_id'])) ? $_POST['user_id'] : '';
@@ -55,11 +57,18 @@ $setting_theme = (isset($_POST['setting_theme'])) ? trim($_POST['setting_theme']
 $setting_language = (isset($_POST['setting_language'])) ? trim($_POST['setting_language']) : '';
 $txtsecuritycode = (isset($_POST['txtsecuritycode'])) ? trim($_POST['txtsecuritycode']) : '';
 
-if (isset($_POST['delete'])) {
-$query = 'DELETE FROM info WHERE user_id = ' . $user_id; mysql_query($query, $db) or die(mysql_error());
-$query = 'DELETE FROM login WHERE user_id = ' . $user_id; mysql_query($query, $db) or die(mysql_error());
-$query = 'DELETE FROM hns_desktop WHERE user_id = ' . $user_id; mysql_query($query, $db) or die(mysql_error());
-$query = 'DELETE FROM users_online WHERE user_id = ' . $user_id; mysql_query($query, $db) or die(mysql_error());
+if (isset($_POST['delete'])) { // delete user records
+$query = 'DELETE FROM info WHERE user_id = ' . $user_id;
+mysql_query($query, $db) or die(mysql_error());
+
+$query = 'DELETE FROM login WHERE user_id = ' . $user_id;
+mysql_query($query, $db) or die(mysql_error());
+
+$query = 'DELETE FROM hns_desktop WHERE user_id = ' . $user_id;
+mysql_query($query, $db) or die(mysql_error());
+
+$query = 'DELETE FROM users_online WHERE user_id = ' . $user_id;
+mysql_query($query, $db) or die(mysql_error());
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//<?php echo $TEXT['global-dtdlang']; ?>" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?php echo $TEXT['global-lang']; ?>" lang="<?php echo $TEXT['global-lang']; ?>" dir="<?php echo $TEXT['global-text_dir']; ?>">
@@ -67,19 +76,38 @@ $query = 'DELETE FROM users_online WHERE user_id = ' . $user_id; mysql_query($qu
 <head>
 <title><?php echo $TEXT['global-headertitle'] . " | " . $TEXT['homepage-headertitle']; ?></title>
 <meta http-equiv="content-type" content="text/html; charset=<?php echo $TEXT['global-charset']; ?>" />
-<script type="text/javascript" src="jquery.js"></script>
-<script type="text/javascript" src="javascript.php"></script>
+<meta name="author" content="Homenet Spaces Andrew Gerst" />
+<meta name="copyright" content="© Homenet Spaces" />
+<meta name="keywords" content="Homenet, Spaces, The, Place, To, Be, Creative, Andrew, Gerst, Free, Profiles, Information, Facts" />
+<meta name="description" content="Welcome to Homenet Spaces we offer you a free profile with many cool and interesting things! This is the place to be creative!" />
+<meta name="revisit-after" content="7 days" />
+<meta name="googlebot" content="index, follow, all" />
+<meta name="robots" content="index, follow, all" />
+<link rel="stylesheet" type="text/css" href="css/global.css" media="all" />
+<script type="text/javascript" src="cs.js"></script>
+<script type="text/javascript" src="nav.js"></script>
+<script type="text/javascript" src="suggest.js"></script>
+<style type="text/css">
+body { 
+	background: url(<?php echo $bimage; ?>) repeat; 
+	background-position : 50% 140px; 
+	}
+</style>
 </head>
 
 <body>
-<?php include ("hd.inc.php"); ?>
+<?php
+include ("hd.inc.php");
+?>
 <!-- Begin page content -->
 <div class="pagecontent">
 <p><strong><?php echo $username; ?>'s account has been deleted.</strong></p>
 <p><a href="admin_area.php">Click here</a> to return to the admin area.</a></p>
 </div>
 <!-- End page content -->
-<?php include ("ft.inc.php"); ?>
+<?php
+include ("ft.inc.php");
+?>
 </body>
 
 </html>
@@ -89,12 +117,27 @@ die();
 
 $header_updateerrors = array();
 
-if (empty($username)) $header_updateerrors[] = 'Username cannot be blank.';
-if (preg_match('/[,]/', $username)) $header_registererrors[] = 'Username cannot have commas.';
-if (preg_match('/[ ]/', $username)) $header_registererrors[] = 'Username cannot have spaces.';
-if (preg_match('/[-]/', $username)) $header_registererrors[] = 'Username cannot have dashes.';
-if (preg_match('/[.]/', $username)) $header_registererrors[] = 'Username cannot have periods.';
+if (empty($username)) {
+$header_updateerrors[] = 'Username cannot be blank.';
+}
 
+if (preg_match('/[,]/', $username)) {
+$header_registererrors[] = 'Username cannot have commas.';
+}
+
+if (preg_match('/[ ]/', $username)) {
+$header_registererrors[] = 'Username cannot have spaces.';
+}
+
+if (preg_match('/[-]/', $username)) {
+$header_registererrors[] = 'Username cannot have dashes.';
+}
+
+if (preg_match('/[.]/', $username)) {
+$header_registererrors[] = 'Username cannot have periods.';
+}
+
+// check if username is already registered
 $query = 'SELECT username FROM login WHERE username = "' . $username . '" AND user_id != ' . $user_id;
 $result = mysql_query($query, $db) or die(mysql_error());
 
@@ -105,7 +148,9 @@ $username = '';
 
 mysql_free_result($result);
 
-if (empty($fullname)) $header_updateerrors[] = 'Full Name cannot be blank.';
+if (empty($fullname)) {
+$header_updateerrors[] = 'Full Name cannot be blank.';
+}
 
 if (empty($email)) {
 $header_updateerrors[] = 'Email address cannot be blank.';
@@ -116,36 +161,72 @@ $header_updateerrors[] = 'Email address should be in correct form.';
 }
 }
 
-if (empty($gender)) $header_updateerrors[] = 'Gender cannot be blank.';
-if ($birth_month == 0 && $birth_day == 0 && $birth_year == 0) $header_updateerrors[] = 'Birth Date cannot be blank.';
-elseif ($birth_month == 0) $header_updateerrors[] = 'Birth Month cannot be blank.';
-elseif ($birth_day == 0) $header_updateerrors[] = 'Birth Day cannot be blank.';
-elseif ($birth_year == 0) $header_updateerrors[] = 'Birth Year cannot be blank.';
+if (empty($gender)) {
+$header_updateerrors[] = 'Gender cannot be blank.';
+}
 
-if (empty($hometown)) $header_updateerrors[] = 'Hometown cannot be blank.';
-if (empty($community)) $header_updateerrors[] = 'Community cannot be blank.';
-if (empty($hobbies)) $header_updateerrors[] = 'Hobbies cannot be blank.';
+if ($birth_month == 0 && $birth_day == 0 && $birth_year == 0) {
+$header_updateerrors[] = 'Birth Date cannot be blank.';
+} elseif ($birth_month == 0) {
+$header_updateerrors[] = 'Birth Month cannot be blank.';
+} elseif ($birth_day == 0) {
+$header_updateerrors[] = 'Birth Day cannot be blank.';
+} elseif ($birth_year == 0) {
+$header_updateerrors[] = 'Birth Year cannot be blank.';
+}
+
+if (empty($hometown)) {
+$header_updateerrors[] = 'Hometown cannot be blank.';
+}
+
+if (empty($community)) {
+$header_updateerrors[] = 'Community cannot be blank.';
+}
+
+if (empty($hobbies)) {
+$header_updateerrors[] = 'Hobbies cannot be blank.';
+}
 
 if (isset($_POST['default_pimage'])) {
 $default_image = "";
 } else {
-if (empty($default_image)) $header_updateerrors[] = 'Default Image cannot be blank.';
+if (empty($default_image)) {
+$header_updateerrors[] = 'Default Image cannot be blank.';
+}
 }
 
 if (!empty($password)) {
-if (empty($password_ver)) $header_updateerrors[] = 'Please confirm the new password.';
-if (!empty($password_ver)) if ($password != $password_ver) $header_updateerrors[] = 'Both of the new passwords need to match.';
-if ($username == $password) $header_updateerrors[] = 'Username & Password Cannot Be The Same.';
+if (empty($password_ver)) {
+$header_updateerrors[] = 'Please confirm the new password.';
 }
 
-if (empty($privacy)) $header_updateerrors[] = 'Privacy cannot be blank.';
-if (empty($access_level)) $header_updateerrors[] = 'Access Level cannot be blank.';
+if (!empty($password_ver)) {
+if ($password != $password_ver) {
+$header_updateerrors[] = 'Both of the new passwords need to match.';
+}
+}
+
+if ($username == $password) {
+$header_updateerrors[] = 'Username & Password Cannot Be The Same.';
+}
+}
+
+if (empty($privacy)) {
+$header_updateerrors[] = 'Privacy cannot be blank.';
+}
+
+if (empty($access_level)) {
+$header_updateerrors[] = 'Access Level cannot be blank.';
+}
 
 if (($profile_song_artist != null) && ($profile_song_name != null)) {
 $songname = $profile_song_artist . " - " . $profile_song_name;
 
-if (!empty($profile_song_history)) $profile_song_history .= ", " . $songname;
-else $profile_song_history = $songname;
+if (!empty($profile_song_history)) {
+$profile_song_history .= ", " . $songname;
+} else {
+$profile_song_history = $songname;
+}
 
 /*
 $profile_song_letter = substr($profile_song_artist, 1, 1);
@@ -169,13 +250,15 @@ $footer_updateerrors[] = 'We Don\'t Have Any Songs From ' . $profile_song_artist
 */
 }
 
-if ($_POST['txtsecuritycode'] != $_SESSION['SECURITY_CODE']) {
+// check to see if security codes match
+if ($_POST['txtsecuritycode'] == $_SESSION['SECURITY_CODE']) {
+} else {
 $header_updateerrors[] = 'Security Code cannot be incorrect.';
-$footer_error = '<p><strong style="color: #f33; weight: bold;">Security Code cannot be incorrect.</strong></p>';
+$footer_error = '<p><strong style="color : #ff3333; weight : bold; ">Security Code cannot be incorrect.</strong></p>';
 }
 
 if (count($header_updateerrors) > 0) {
-} else {
+} else { // no errors so enter the data into the database
 list($firstname, $middlename, $lastname) = split(' ', $fullname);
 if (!$lastname) {
 $lastname = $middlename;
@@ -183,7 +266,11 @@ unset($middlename);
 }
 
 if (!empty($password) && !empty($password_ver)) {
-$query = 'UPDATE login SET password = PASSWORD("' . mysql_real_escape_string($password, $db) . '") WHERE user_id = ' . $user_id . ' LIMIT 1';
+$query = 'UPDATE login SET
+password = PASSWORD("' . mysql_real_escape_string($password, $db) . '")
+WHERE
+user_id = ' . $user_id . '
+LIMIT 1';
 mysql_query($query, $db) or die(mysql_error());
 }
 
@@ -234,7 +321,16 @@ user_id = ' . $user_id . '
 LIMIT 1';
 mysql_query($query, $db) or die(mysql_error());
 
-$query = 'SELECT username FROM login u JOIN info i ON u.user_id = i.user_id WHERE u.user_id = ' . $user_id;
+$query = 'SELECT
+username
+FROM
+login u
+JOIN
+info i
+ON
+u.user_id = i.user_id
+WHERE
+u.user_id = ' . $user_id;
 $result = mysql_query($query, $db) or die(mysql_error());
 $row = mysql_fetch_assoc($result);
 extract($row);
@@ -253,12 +349,22 @@ mysql_free_result($result);
 <meta name="revisit-after" content="7 days" />
 <meta name="googlebot" content="index, follow, all" />
 <meta name="robots" content="index, follow, all" />
-<script type="text/javascript" src="jquery.js"></script>
-<script type="text/javascript" src="javascript.php"></script>
+<link rel="stylesheet" type="text/css" href="css/global.css" media="all" />
+<script type="text/javascript" src="cs.js"></script>
+<script type="text/javascript" src="nav.js"></script>
+<script type="text/javascript" src="suggest.js"></script>
+<style type="text/css">
+body { 
+	background: url(<?php echo $bimage; ?>) repeat; 
+	background-position : 50% 140px; 
+	}
+</style>
 </head>
 
 <body>
-<?php include ("hd.inc.php"); ?>
+<?php
+include ("hd.inc.php");
+?>
 <!-- Begin page content -->
 <div class="pagecontent">
 <p><strong><?php echo $row['username']; ?>'s account information has been updated.</strong></p>
@@ -267,7 +373,9 @@ mysql_free_result($result);
 <p><a href="user_profile.php?id=<?php echo $user_id; ?>">Click here</a> to view <?php echo $row['username']; ?>'s profile.</p>
 </div>
 <!-- End page content -->
-<?php include ("ft.inc.php"); ?>
+<?php
+include ("ft.inc.php");
+?>
 </body>
 
 </html>
@@ -283,7 +391,14 @@ header('location: admin_area.php');
 die();
 }
 
-$query = 'SELECT * FROM login u JOIN info i ON u.user_id = i.user_id WHERE u.user_id = ' . $user_id;
+$query = 'SELECT * FROM
+login u
+JOIN
+info i
+ON
+u.user_id = i.user_id
+WHERE
+u.user_id = ' . $user_id;
 $result = mysql_query($query, $db) or die(mysql_error());
 
 if (mysql_num_rows($result) == 0) {
@@ -295,6 +410,7 @@ $row = mysql_fetch_assoc($result);
 extract($row);
 mysql_free_result($result);
 $password = '';
+
 $fullname = $row['firstname'] . ' ' . $row['middlename'] . ' ' . $row['lastname'];
 }
 ?>
@@ -304,84 +420,318 @@ $fullname = $row['firstname'] . ' ' . $row['middlename'] . ' ' . $row['lastname'
 <head>
 <title><?php echo $TEXT['global-headertitle'] . " | " . $TEXT['homepage-headertitle']; ?></title>
 <meta http-equiv="content-type" content="text/html; charset=<?php echo $TEXT['global-charset']; ?>" />
-<script type="text/javascript" src="jquery.js"></script>
-<script type="text/javascript" src="javascript.php"></script>
+<meta name="author" content="Homenet Spaces Andrew Gerst" />
+<meta name="copyright" content="© Homenet Spaces" />
+<meta name="keywords" content="Homenet, Spaces, The, Place, To, Be, Creative, Andrew, Gerst, Free, Profiles, Information, Facts" />
+<meta name="description" content="Welcome to Homenet Spaces we offer you a free profile with many cool and interesting things! This is the place to be creative!" />
+<meta name="revisit-after" content="7 days" />
+<meta name="googlebot" content="index, follow, all" />
+<meta name="robots" content="index, follow, all" />
+<link rel="stylesheet" type="text/css" href="css/global.css" media="all" />
+<script type="text/javascript" src="cs.js"></script>
+<script type="text/javascript" src="nav.js"></script>
+<script type="text/javascript" src="suggest.js"></script>
+<script type="text/javascript">
+<!--
+function updatecaptchaimg() {
+document.captchaimg.src = document.captchaimg.src + '?';
+}
+-->
+</script>
 <style type="text/css">
-td {
-vertical-align: top;
+td { 
+	vertical-align : top; 
+	}
+
+div.pagecontent table td.label { 
+	padding : 6px; 
+	text-align : right; 
+	}
+
+div.pagecontent table td.label label { 
+	position : relative; 
+	top : 4px; 
+	}
+
+div.pagecontent table td.input { 
+	padding : 6px; 
+	text-align : left; 
+	}
+
+div.pagecontent input[type="text"] {
+	font-size : 14pt; 
+	height : 25px; 
+	letter-spacing : 2px; 
+	line-height : 25px; 
+	}
+
+div.pagecontent input[type="password"] {
+	font-size : 14pt; 
+	height : 25px; 
+	letter-spacing : 2px; 
+	line-height : 25px; 
+	}
+
+div.pagecontent input[type="submit"] {
+	font-size : 13pt; 
+	height : 36px; 
+	letter-spacing : 2px; 
+	line-height : 29px; 
+	}
+
+div.pagecontent input[type="button"] {
+	font-size : 13pt; 
+	height : 36px; 
+	letter-spacing : 2px; 
+	line-height : 29px; 
+	}
+
+div.pagecontent input[type="reset"] {
+	font-size : 13pt; 
+	height : 36px; 
+	letter-spacing : 2px; 
+	line-height : 29px; 
+	}
+
+div.pagecontent input[type="radio"] {
+	font-size : 14pt; 
+	height : 25px; 
+	letter-spacing : 2px; 
+	line-height : 25px; 
+	}
+
+table td.input span.radio { 
+	left : 2px; 
+	position : relative; 
+	top : -6.5px; 
+	}
+
+div.pagecontent textarea#away_message { 
+	font-size : 14px; 
+	padding : 10px; 
+	text-align : left; 
+	}
+
+div.pagecontent textarea#about_me { 
+	font-size : 14px; 
+	padding : 10px; 
+	text-align : left; 
+	}
+
+div.pagecontent textarea#user_style { 
+	font-size : 14px; 
+	padding : 10px; 
+	text-align : left; 
+	}
+</style>
+<style type="text/css">
+#star { 
+	margin : 0 auto; 
+	padding-top : 5px; 
+	width : 125px; 
+	}
+
+#star ul.star { 
+	background : url('i/sy/st/stars.gif') repeat-x; 
+	cursor : pointer; 
+	float : left; 
+	height : 20px; 
+	left : 0px; 
+	list-style-type : none; 
+	margin : 0px; 
+	padding : 0px; 
+	position : relative; 
+	top : -5px; 
+	width : 85px; 
+	}
+
+#star li { 
+	display : block; 
+	float : left; 
+	height : 20px; 
+	left : 0px; 
+	margin : 0px; 
+	padding : 0px; 
+	position : absolute; 
+	text-decoration : none; 
+	text-indent : -9000px; 
+	width : 85px; 
+	z-index : 20; 
+	}
+
+#star li.curr { 
+	background : url('i/sy/st/stars.gif') left 25px; 
+	font-size : 1px; 
+	}
+
+#star div.user { 
+	color : #888; 
+	float : left; 
+	font-family : arial; 
+	font-size : 13px; 
+	left : 15px; 
+	position : relative; 
+	width : 30px; 
+	}
+</style>
+<script type="text/javascript">
+function $(v,o) {
+return((typeof(o) == 'object' ? o : document).getElementById(v));
 }
 
-div.pagecontent table td.label {
-padding: 6px;
-text-align: right;
+function $S(o) {
+return((typeof(o) == 'object' ? o : $(o)).style);
 }
 
-div.pagecontent table td.label label {
-position: relative;
-top: 4px;
+function agent(v) {
+return(Math.max(navigator.userAgent.toLowerCase().indexOf(v),0));
 }
 
-div.pagecontent table td.input {
-padding: 6px;
-text-align: left;
+function abPos(o) {
+var o = (typeof(o) == 'object' ? o : $(o)),
+z = {
+X : 0,
+Y : 0
+};
+
+while (o != null) {
+z.X += o.offsetLeft;
+z.Y += o.offsetTop;
+o = o.offsetParent;
+};
+return(z);
 }
 
-table td.input span.radio {
-left: 2px;
-position: relative;
-top: -6.5px;
+function XY(e,v) {
+var o = agent('msie') ? {
+'X' : event.clientX + document.body.scrollLeft,
+'Y' : event.clientY + document.body.scrollTop
+} : {
+'X' : e.pageX,
+'Y' : e.pageY
+};
+return(v ? o[v] : o);
 }
 
-div.pagecontent textarea#away_message {
-font-size: 14px;
-padding: 10px;
-text-align: left;
-}
+star = {};
 
-div.pagecontent textarea#about_me {
-font-size: 14px;
-padding: 10px;
-text-align: left;
-}
+star.mouse = function(e,o) {
+if (star.stop || isNaN(star.stop)) {
+star.stop = 0;
 
-div.pagecontent textarea#user_style {
-font-size: 14px;
-padding: 10px;
-text-align: left;
+document.onmousemove = function(e) {
+var n = star.num;
+var p = abPos($('star' + n)),
+x = XY(e),
+oX = x.X - p.X,
+oY = x.Y - p.Y;
+star.num = o.id.substr(4);
+
+if (oX < 1 || oX > 84 || oY < 0 || oY > 19) {
+star.stop = 1;
+star.revert();
+} else {
+
+/*
+This Comment Stops Rating From Changing On Hover
+--------------------------------------------------
+
+$S('starCur' + n).width = oX + 'px';
+$S('starUser' + n).color = '#111';
+$('starUser' + n).innerHTML = Math.round((oX / 84) * 100) + '%';
+*/
+
 }
+};
+}
+};
+
+/*
+This Comment Stops Update Function
+------------------------------------
+
+star.update = function(e,o) {
+var n = star.num,
+v = parseInt($('starUser' + n).innerHTML);
+
+n = o.id.substr(4);
+$('starCur' + n).title = v;
+
+var w = "<?php echo $_SERVER['PHP_SELF'] . '?' . $_SERVER['QUERY_STRING']; ?>&rating=" + v;
+
+window.location = w;
+};
+*/
+
+star.revert = function() {
+var n = star.num,
+v = parseInt($('starCur' + n).title);
+
+$S('starCur' + n).width = Math.round((v * 84) / 100) + 'px';
+$('starUser' + n).innerHTML = (v > 0 ? Math.round(v) + '%' : '');
+$('starUser' + n).style.color = '#888';
+
+document.onmousemove = '';
+};
+
+star.num = 0;
+</script>
+<style type="text/css">
+body { 
+	background: url(<?php echo $bimage; ?>) repeat; 
+	background-position : 50% 140px; 
+	}
 </style>
 </head>
 
 <body>
-<?php include ("hd.inc.php"); ?>
+<?php
+include ("hd.inc.php");
+?>
 <!-- Begin page content -->
 <div class="pagecontent">
-<div id="pageheader" class="pageheader2"><div class="heading">
-Update <?php echo $row['username']; ?>'s Account Information
-</div></div>
+<h1>Update <?php echo $row['username']; ?>'s Account Information</h1>
 <?php
-if ($default_image != null) echo '<img src="uploads/' . $row['username'] . '/images/thumb/' . $default_image . '" style="height: 100px; position: fixed; right: 18px; top: 160px; width: 100px;" />' . "\n";
-else echo '<img src="i/mem/default.jpg" style="height: 100px; position: absolute; right: 18px; top: 160px; width: 100px;" />' . "\n";
+if ($default_image != null) {
+echo '<img src="uploads/' . $row['username'] . '/images/thumb/' . $default_image . '" style="height : 100px; position : fixed; right : 18px; top : 160px; width : 100px; " />' . "\n";
+} else {
+echo '<img src="i/mem/default.jpg" style="height : 100px; position : absolute; right : 18px; top : 160px; width : 100px; " />' . "\n";
+}
 ?>
-<fieldset style="margin: 0 auto; width: 75%;">
+<fieldset style="margin : 0 auto; width : 75%; ">
 <legend>Account History&nbsp;</legend>
-<div style="margin-bottom: 15px; margin-top: 10px;">
-<fieldset style="margin: 0 auto; width: 85%;">
+<div style="margin-bottom : 15px; margin-top : 10px; ">
+<fieldset style="margin : 0 auto; width : 85%; ">
 <legend>Last Login Info&nbsp;</legend>
 <span>
 <?php
-if ($last_login != null) echo "Last Logged In On: $last_login";
-else echo "Last Logged In On: They Have Never Logged On";
+if ($last_login != null) {
+echo "Last Logged In On: ";
+echo $last_login;
+} else {
+echo "Last Logged In On: ";
+echo "They Have Never Logged On";
+}
 ?>
 </span>
 <br />
 <span>
 <?php
 if ($last_login_ip != null) {
-if ($last_login_ip == 0) echo "With This Computer: They Have Never Logged On";
-else echo "With This Computer: $last_login_ip | <a href=\"http://phpweby.com/services/iplocation?ip=$last_login_ip\" title=\"Locate This IP\" target=\"_blank\">Locate</a>";
+if ($last_login_ip == 0) {
+echo "With This Computer: ";
+echo "They Have Never Logged On";
 } else {
-if ($last_login_ip == 0 || null) echo "With This Computer: They Have Never Logged On";
+echo "With This Computer: ";
+echo $last_login_ip;
+echo " | ";
+echo '<a href="http://phpweby.com/services/iplocation?ip=' . $last_login_ip . '" title="Locate This IP" target="_blank">Locate</a>';
+}
+} else {
+if ($last_login_ip == 0 || null) {
+echo "With This Computer: ";
+echo "They Have Never Logged On";
+}
 }
 
 $uresult = mysql_db_query($om, "SELECT DISTINCT username FROM users_online ORDER BY username ASC") or die("Database SELECT Error");
@@ -400,98 +750,139 @@ echo " is Online!";
 </span>
 </fieldset>
 <br /><br />
-<fieldset style="margin: 0 auto; width: 85%;">
+<fieldset style="margin : 0 auto; width : 85%; ">
 <legend>Account Summary&nbsp;</legend>
 <span>
 Profile Views: <?php echo $hits; ?>
 <br />
 Logged On
 <?php
-echo " $logins ";
+echo " ";
+echo $logins;
+echo " ";
 
-if ($logins > 1) echo "Times";
-elseif ($logins == 1) echo "Time";
-else echo "Times & Was Hacked :P";
+if ($logins > 1) {
+echo "Times";
+} elseif ($logins == 1) {
+echo "Time";
+} else {
+echo "Times & Was Hacked :P";
+}
 ?>
 <br />
 Date Joined: <?php echo $date_joined; ?>
 </span>
 </fieldset>
 <br /><br />
-<fieldset style="margin: 0 auto; width: 85%;">
+<fieldset style="margin : 0 auto; width : 85%; ">
 <legend>User Rating / Rank&nbsp;</legend>
 <span>
 xRank:
 <?php
-if ($website != null) $ifexists_website = 1000;
-if ($user_style != null) $ifexists_user_style = 1000;
-if ($default_image != null) $ifexists_defualt_image = 1000;
+if ($website != null) {
+$ifexists_website = 1000;
+}
+
+if ($user_style != null) {
+$ifexists_user_style = 1000;
+}
+
+if ($default_image != null) {
+$ifexists_defualt_image = 1000;
+}
 
 $xrank = ($rank + ($hits * 2) + ($logins * 5) + ($ifexists_website) + ($ifexists_user_style) + ($ifexists_default_image));
 
 if ($logins > 5) {
-if ($logins > 100) { $xrank = ($xrank * 5);
-if ($logins > 200) { $xrank = ($xrank * 10);
-if ($logins > 300) { $xrank = ($xrank * 15);
-if ($logins > 400) { $xrank = ($xrank * 20);
-if ($logins > 500) { $xrank = ($xrank * 25);
+if ($logins > 100) {
+$xrank = ($xrank * 5);
+if ($logins > 200) {
+$xrank = ($xrank * 10);
+if ($logins > 300) {
+$xrank = ($xrank * 15);
+if ($logins > 400) {
+$xrank = ($xrank * 20);
+if ($logins > 500) {
+$xrank = ($xrank * 25);
 }}}}}
 $xrank = ($xrank * 1.0586951);
+} elseif ($logins == 4) {
+$xrank = ($xrank / 2.2452);
+} elseif ($logins == 3) {
+$xrank = ($xrank / 3.1385);
+} elseif ($logins == 2) {
+$xrank = ($xrank / 4.3698);
+} elseif ($logins == 1) {
+$xrank = 0;
+} else {
+$xrank = 0;
 }
-elseif ($logins == 4) $xrank = ($xrank / 2.2452);
-elseif ($logins == 3) $xrank = ($xrank / 3.1385);
-elseif ($logins == 2) $xrank = ($xrank / 4.3698);
-elseif ($logins == 1) $xrank = 0;
-else $xrank = 0;
 
-echo " $xrank ";
+echo " ";
+echo $xrank;
+echo " ";
 ?>
 <br />
 <div id="star">
 <ul id="star" class="star" onmousemove="star.mouse(event,this)" title="<?php echo $firstname . "'s Rating Is " . ($rating); ?>%">
 <li id="starCur" class="curr" title="<?php echo ($rating); ?>"<?php
-echo ' style="width: ';
+echo ' style="width : ';
 $width = round((($rating) * 84) / 100);
 echo $width;
-echo 'px;">';
+echo 'px; ">';
 ?></li>
 </ul>
-<div style="color: rgb(136, 136, 136);" id="starUser" class="user"><?php echo ($rating); ?>%</div>
+<div style="color: rgb(136, 136, 136); " id="starUser" class="user"><?php echo ($rating); ?>%</div>
 </div>
-<div style="clear: both; color: rgb(136, 136, 136);">
+<div style="clear : both; color: rgb(136, 136, 136); ">
 <small>
 <?php
 $votes = ($xratings > 0) ? $xratings : 'No';
+echo $votes;
 $vtense = ($xratings == 0 || $xratings > 1) ? ' Votes' : ' Vote';
-
-echo $votes . $vtense;
+echo $vtense;
 echo "</small>";
 
 if (isset($_GET['rating'])) {
-if (($vote > 0) && ($vote < 100)) echo " & <small>$rating_message</small>";
+if (($vote < 0) || ($vote > 100)) {
+} else {
+echo " & ";
+echo "<small>";
+echo $rating_message;
+echo "</small>";
+}
 }
 ?>
 </div>
 </span>
 </fieldset>
 <br /><br />
-<fieldset style="margin: 0 auto; width: 85%;">
+<fieldset style="margin : 0 auto; width : 85%; ">
 <legend>
 <?php
 if ($voters == null) {
 echo "Voters";
 } else {
 $numvoters = str_word_count($voters, null, '.0..9');
-if ($numvoters == 1) echo "1 Voter";
-else echo "$numvoters Voters";
+
+if ($numvoters == 1) {
+echo $numvoters;
+echo " Voter";
+} else {
+echo $numvoters;
+echo " Voters";
+}
 }
 ?>
 &nbsp;
 </legend>
 <span>
 <?php
-if ($voters == null) echo "No Voters Are Registered";
-else echo $voters;
+if ($voters == null) {
+echo "No Voters Are Registered";
+} else {
+echo $voters;
+}
 ?>
 </span>
 </fieldset>
@@ -499,9 +890,9 @@ else echo $voters;
 </fieldset>
 <br /><br />
 <form action="<?php $_SERVER['PHP_SELF']; ?>" method="post">
-<fieldset style="margin: 0 auto; width: 75%;">
+<fieldset style="margin : 0 auto; width : 75%; ">
 <legend>Personal Information&nbsp;</legend>
-<table style="margin-bottom: 10px; margin-top: 10px;">
+<table style="margin-bottom : 10px; margin-top : 10px; ">
 <tr>
 <td class="label"><label for="fullname">Full Name:</label></td>
 <td class="input"><input type="text" name="fullname" id="fullname" size="32" maxlength="40" value="<?php echo $fullname; ?>" /></td>
@@ -696,18 +1087,15 @@ else echo $voters;
 <td class="label"><label for="hobbies">Hobbies / Interests:</label></td>
 <td class="input"><select name="hobbies[]" id="hobbies" size="10" multiple="multiple">
 <?php
-$hobbies_list = array('Aircraft Spotting','Airbrushing','Airsofting','Acting','Aeromodeling','Amateur Astronomy','Amateur Radio','Animals/Pets/Dogs','Arts','Astrology','Astronomy','Backgammon','Badminton','Baseball','Basketball','Beach/Sun Tanning','Beachcombing','Beadwork','Beatboxing','Becoming A Child Advocate','Bell Ringing','Belly Dancing','Bicycling','Billiards','Biology','Bird Watching','Birding','BMX','Blacksmithing','Blogging','Board Games','Boating','Body Building','Bonsai Tree','Boomerangs','Bowling','Brewing Beer','Bridge Building','Bringing Food To The Disabled','Building A House For Habitat For Humanity','Building Dollhouses','Bungee Jumping','Butterfly Watching','Button Collecting',
-'Cake Decorating','Calculus','Call of Duty','Calligraphy','Camping','Candle Making','Canoeing','Car Racing','Casino Gambling','Cave Diving','Celebrating Your Favorite Pastimes/Collections','Checkers','Cheerleading','Chemistry','Chess','Church/Church Activities','Cigar Smoking','Cloud Watching','Coin Collecting','Collecting','Collecting Antiques','Collecting Artwork','Collecting Music Albums','Compose Music','Computer Activities','Cooking','Cosplay','Crafts','Crafts (Unspecified)','Crochet','Crocheting','Cross-Stitch','Crossword Puzzles','Dancing','Darts','Dating','Dating Online','Diecast Collectibles','Digital Photography','Dolls','Dominoes','Drawing','Dumpster Diving','Eating Out','Educational Courses','Electronics','Embroidery','Entertaining','Exercise (Aerobics, Weights)',
-'Fast Cars','Fencing','Fishing','Flying','Football','Four Wheeling','Freecell','Freshwater Aquariums','Frisbee Golf (Frolf)','Games','Gardening','Garage Saleing','Genealogy','Geocaching','Ghost Hunting','Glowsticking','Going To Movies','Golfing','Go Kart Racing','Grip Strength','Guitar','Handwriting Analysis','Hang Gliding','Hiking','History','Home Brewing','Home Repair','Home Theater','Horseback Riding','Hot Air Ballooning','Hula Hooping','Hunting','Illusion','Internet','Jet Engines','Jewelry Making','Jigsaw Puzzles','Juggling','Keep A Journal','Kayaking','Kitchen Chemistry','Kites','Kite Boarding','Knitting','Knotting',
-'Lasers','Lawn Darts','Learning A Foreign Language','Learning An Instrument','Learning To Pilot A Plane','Leathercrafting','Legos','Listening To Music','Macram&eacute;','Magic','Making Model Cars','Matchstick Modeling','Mathematics','Meditation','Microscopy','Minesweeper','Mixed Martial Arts','Metal Detecting','Model Rockets','Modeling Ships','Models','Motorcycle Racing','Motorcycles','Mountain Biking','Mountain Climbing','Musical Instruments','Needlepoint',
-'Online Gambling','Origami','Other than listed','Owning An Antique Car','Pac-Man','Painting','Paintball','Papermaking','Papermache','Parachuting','People Watching','Photography','Piano','Pinball','Pinochle','Playing Cards','Playing Music','Playing Poker','Playing Team Sports','Pottery','Puppetry','Pyrotechnics','Quilting','Rafting','Railfans','R/C Boats','R/C Cars','R/C Helicopters','R/C Planes','Read Ghost Stories','Reading','Reading To The Elderly','Relaxing','Renting Movies','Rescuing Abused Or Abandoned Animals','Reviving Old Interests','Robotics','Rock Climbing','Rock Collecting','Rockets','Rocking AIDS Babies','Rubik&apos;s Cubes','Running',
-'Saltwater Aquariums','School','Scrapbooking','Scuba Diving','Sewing','Shark Fishing','Shopping','Singing','Singing In Choir','Skateboarding','Sketching','Skeet Shooting','Skiing','Sky Diving','Sleeping','Smoking Pipes','Snorkeling','Soap Making','Soccer','Socializing With Friends/Neighbors','Solitaire','Spelunkering','Spending Time With Family/Kids','Spider Solitaire','Stamp Collecting','Storytelling','String Figures','Surf Fishing','Swimming',
-'Tea Tasting','Tennis','Tesla Coils','Tetris','Texting','Textiles','Theater','Tic-Tac-Toe','Tombstone Rubbing','Tool Collecting','Toy Collecting','Train Collecting','Train Spotting','Traveling','Treasure Hunting','Trekkie','Tug Of War','Tutoring Children','Urban Exploration','Vacation','Video Games','Volunteer','Walking','Warhammer','Watching Sporting Events','Watching TV','Websites','Windsurfing','Wine Making','Woodworking','Working','Working In A Food Pantry','Working On Cars','Writing','Writing Music','Writing Songs','Yoga','YoYo');
-$hobbies = explode(',', $hobbies);
+$hobbies_list = array('Biking', 'Computers', 'Cooking', 'Dancing', 'Exercise', 'Flying', 'Gaming', 'Golfing', 'Hiking', 'Hunting', 'Internet', 'Reading', 'Running', 'School', 'Singing', 'Skiing', 'Swimming', 'Traveling', 'Other than listed', 'Websites');
+$hobbies = explode(', ', $hobbies);
 
 foreach ($hobbies_list as $hobby) {
-if (in_array($hobby, $hobbies)) echo '<option value="' . $hobby . '" selected="selected">' . $hobby . '</option>';
-else echo '<option value="' . $hobby . '">' . $hobby . '</option>';
+if (in_array($hobby, $hobbies)) {
+echo '<option value="' . $hobby . '" selected="selected">' . $hobby . '</option>';
+} else {
+echo '<option value="' . $hobby . '">' . $hobby . '</option>';
+}
 }
 ?>
 </select>
@@ -729,14 +1117,17 @@ else echo '<option value="' . $hobby . '">' . $hobby . '</option>';
 </table>
 </fieldset>
 <br /><br />
-<fieldset style="margin: 0 auto; width: 75%;">
+<fieldset style="margin : 0 auto; width : 75%; ">
 <legend>Default Image&nbsp;</legend>
-<table style="margin-bottom: 10px; margin-top: 10px;">
+<table style="margin-bottom : 10px; margin-top : 10px; ">
 <tr>
 <td class="image">
 <?php
-if ($default_image != null) echo '<img src="uploads/' . $row['username'] . '/images/thumb/' . $default_image . '" style="height : 150px; width : 150px; " />';
-else echo '<img src="i/mem/default.jpg" id="defaultuserimage" />';
+if ($default_image != null) {
+echo '<img src="uploads/' . $row['username'] . '/images/thumb/' . $default_image . '" style="height : 150px; width : 150px; " />';
+} else {
+echo '<img src="i/mem/default.jpg" id="defaultuserimage" />';
+}
 ?>
 </td>
 <td class="input"><input type="text" name="default_image" id="default_image" size="41" maxlength="255" value="<?php echo $default_image; ?>" />
@@ -748,17 +1139,17 @@ else echo '<img src="i/mem/default.jpg" id="defaultuserimage" />';
 </table>
 </fieldset>
 <br /><br />
-<fieldset style="margin: 0 auto; width: 75%;">
+<fieldset style="margin : 0 auto; width : 75%; ">
 <legend>Login Credentials&nbsp;</legend>
-<table style="margin-bottom: 10px; margin-top: 10px;">
+<table style="margin-bottom : 10px; margin-top : 10px; ">
 <tr>
 <td class="label"><label for="username">Username:</label></td>
 <td class="input"><input type="text" name="username" id="username" size="32" maxlength="20" value="<?php echo $row['username']; ?>" /></td>
 </tr>
 </table>
-<fieldset style="margin: 0 auto; margin-bottom: 10px; width: 75%;">
+<fieldset style="margin : 0 auto; margin-bottom : 10px; width : 75%; ">
 <legend>Change Password&nbsp;</legend>
-<table style="margin-bottom: 10px; margin-top: 10px;">
+<table style="margin-bottom : 10px; margin-top : 10px; ">
 <tr>
 <td class="label"><label for="password">New Password:</label></td>
 <td class="input"><input type="password" name="password" id="password" size="32" maxlength="20" value="" />
@@ -770,18 +1161,18 @@ else echo '<img src="i/mem/default.jpg" id="defaultuserimage" />';
 </td>
 </tr>
 </table>
-<div style="margin-bottom: 10px;">
+<div style="margin-bottom : 10px; ">
 <small class="formreminder">( Leave blank if you're not changing the password )</small>
 </div>
 </fieldset>
 </fieldset>
 <br /><br />
-<fieldset style="margin: 0 auto; width: 75%;">
+<fieldset style="margin : 0 auto; width : 75%; ">
 <legend>Security Questions&nbsp;</legend>
-<div style="margin: 0 auto; margin-bottom: 10px; margin-top: 10px;">
-<fieldset style="margin: 0 auto; width: 90%;">
+<div style="margin : 0 auto; margin-bottom : 10px; margin-top : 10px; ">
+<fieldset style="margin : 0 auto; width : 90%; ">
 <legend>Question 1&nbsp;</legend>
-<table style="margin: 0 auto; margin-bottom: 10px; margin-top: 10px;">
+<table style="margin : 0 auto; margin-bottom : 10px; margin-top : 10px; ">
 <tr>
 <td class="label"><label for="security_question1">Question:</label></td>
 <td class="input">
@@ -809,9 +1200,9 @@ else echo '<img src="i/mem/default.jpg" id="defaultuserimage" />';
 </table>
 </fieldset>
 <br />
-<fieldset style="margin: 0 auto; width: 90%;">
+<fieldset style="margin : 0 auto; width : 90%; ">
 <legend>Question 2&nbsp;</legend>
-<table style="margin: 0 auto; margin-bottom: 10px; margin-top: 10px;">
+<table style="margin : 0 auto; margin-bottom : 10px; margin-top : 10px; ">
 <tr>
 <td class="label"><label for="security_question2">Question:</label></td>
 <td class="input">
@@ -841,9 +1232,9 @@ else echo '<img src="i/mem/default.jpg" id="defaultuserimage" />';
 </div>
 </fieldset>
 <br /><br />
-<fieldset style="margin: 0 auto; width: 75%;">
+<fieldset style="margin : 0 auto; width : 75%; ">
 <legend>Privacy&nbsp;</legend>
-<table style="margin-bottom: 10px; margin-top: 10px;">
+<table style="margin-bottom : 10px; margin-top : 10px; ">
 <tr>
 <td class="label"><label for="privacy">Who Can View Their Profile:</label></td>
 <td class="input">
@@ -868,9 +1259,9 @@ else echo '<img src="i/mem/default.jpg" id="defaultuserimage" />';
 </table>
 </fieldset>
 <br /><br />
-<fieldset style="margin: 0 auto; width: 75%;">
+<fieldset style="margin : 0 auto; width : 75%; ">
 <legend>Preferences&nbsp;</legend>
-<table style="margin-bottom: 10px; margin-top: 10px;">
+<table style="margin-bottom : 10px; margin-top : 10px; ">
 <tr>
 <td class="label"><label for="pref_song_astart">User Profile Music Autostart:</label></td>
 <td class="input">
@@ -878,11 +1269,35 @@ else echo '<img src="i/mem/default.jpg" id="defaultuserimage" />';
 <input type="radio" name="pref_song_astart" id="pref_song_astart" value="1" onclick="showMe6('pref_psong_offon')" <?php if ($pref_song_astart == "1") { echo 'checked="checked"'; } ?> /><span class="radio">False</span>
 </td>
 </tr>
+<script type="text/javascript">
+<!--
+function showMe4 (it) {
+var vis = document.getElementById(it).style.display
+if (vis == "") {
+document.getElementById(it).style.display = "none";
+} else {
+document.getElementById(it).style.display = "none";
+}
+}
+
+function showMe6 (it) {
+var vis = document.getElementById(it).style.display
+if (vis == "") {
+document.getElementById(it).style.display = "";
+} else {
+document.getElementById(it).style.display = "";
+}
+}
+//-->
+</script>
 <?php
-if ($pref_song_astart == 1) echo '<tr id="pref_psong_offon" style="">';
-else echo '<tr id="pref_psong_offon" style="display: none;">';
+if ($pref_song_astart == 1) {
+echo '<tr id="pref_psong_offon" style="">';
+} else {
+echo '<tr id="pref_psong_offon" style="display : none; ">';
+}
 ?>
-<td class="label"><label for="pref_psong_astart" style="color: #ff0000;">Only Autostart My Profile Music:</label></td>
+<td class="label"><label for="pref_psong_astart" style="color : #ff0000; ">Only Autostart My Profile Music:</label></td>
 <td class="input">
 <input type="radio" name="pref_psong_astart" id="pref_psong_astart" value="1" <?php if ($pref_psong_astart == "1") { echo 'checked="checked"'; } ?> /><span class="radio">True</span>
 <input type="radio" name="pref_psong_astart" id="pref_psong_astart" value="0" <?php if ($pref_psong_astart == "0") { echo 'checked="checked"'; } ?> /><span class="radio">False</span>
@@ -896,10 +1311,13 @@ else echo '<tr id="pref_psong_offon" style="display: none;">';
 </td>
 </tr>
 <?php
-if ($pref_upstyle == 1) echo '<tr id="pref_pupstyle_offon" style="">';
-else echo '<tr id="pref_pupstyle_offon" style="display: none;">';
+if ($pref_upstyle == 1) {
+echo '<tr id="pref_pupstyle_offon" style="">';
+} else {
+echo '<tr id="pref_pupstyle_offon" style="display : none; ">';
+}
 ?>
-<td class="label"><label for="pref_pupstyle" style="color: #f00;">Only Show My Profile Style:</label></td>
+<td class="label"><label for="pref_pupstyle" style="color : #ff0000; ">Only Show My Profile Style:</label></td>
 <td class="input">
 <input type="radio" name="pref_pupstyle" id="pref_pupstyle" value="1" <?php if ($pref_pupstyle == "1") { echo 'checked="checked"'; } ?> /><span class="radio">True</span>
 <input type="radio" name="pref_pupstyle" id="pref_pupstyle" value="0" <?php if ($pref_pupstyle == "0") { echo 'checked="checked"'; } ?> /><span class="radio">False</span>
@@ -913,14 +1331,14 @@ else echo '<tr id="pref_pupstyle_offon" style="display: none;">';
 </td>
 </tr>
 </table>
-<div style="margin-bottom: 10px;">
+<div style="margin-bottom : 10px; ">
 <small class="formreminder">( Settings When Viewing Other Members Profiles )</small>
 </div>
 </fieldset>
 <br /><br />
-<fieldset style="margin: 0 auto; width: 75%;">
+<fieldset style="margin : 0 auto; width : 75%; ">
 <legend>Settings&nbsp;</legend>
-<table style="margin-bottom: 10px; margin-top: 10px;">
+<table style="margin-bottom : 10px; margin-top : 10px; ">
 <tr>
 <td class="label"><label for="setting_vmode">Viewing Mode:</label></td>
 <td class="input">
@@ -959,9 +1377,9 @@ else echo '<tr id="pref_pupstyle_offon" style="display: none;">';
 </div>
 </fieldset>
 <br /><br />
-<fieldset style="margin: 0 auto; width: 75%;">
+<fieldset style="margin : 0 auto; width : 75%; ">
 <legend>Away Message&nbsp;</legend>
-<table style="margin: 0 auto; margin-bottom: 10px; margin-top: 10px;">
+<table style="margin : 0 auto; margin-bottom : 10px; margin-top : 10px; ">
 <tr>
 <td> </td>
 <td>
@@ -971,14 +1389,14 @@ else echo '<tr id="pref_pupstyle_offon" style="display: none;">';
 </td>
 </tr>
 </table>
-<div style="margin-bottom: 10px;">
+<div style="margin-bottom : 10px; ">
 <small class="formreminder">( Set this message when you are away on vacation )</small>
 </div>
 </fieldset>
 <br /><br />
-<fieldset style="margin: 0 auto; width: 75%;">
+<fieldset style="margin : 0 auto; width : 75%; ">
 <legend>About Me&nbsp;</legend>
-<table style="margin: 0 auto; margin-bottom: 10px; margin-top: 10px;">
+<table style="margin : 0 auto; margin-bottom : 10px; margin-top : 10px; ">
 <tr>
 <td> </td>
 <td>
@@ -990,13 +1408,13 @@ else echo '<tr id="pref_pupstyle_offon" style="display: none;">';
 </table>
 </fieldset>
 <br /><br />
-<fieldset style="margin: 0 auto; width: 75%;">
+<fieldset style="margin : 0 auto; width : 75%; ">
 <legend>Customize Profile&nbsp;</legend>
-<table style="margin: 0 auto; margin-bottom: 10px; margin-top: 10px;">
+<table style="margin : 0 auto; margin-bottom : 10px; margin-top : 10px; ">
 <tr>
 <td> </td>
 <td>
-<span style="color: #f33; weight: bold;">
+<span style="color : #ff3333; weight : bold; ">
 enter css code here
 </span>
 <br /><br />
@@ -1008,14 +1426,14 @@ enter css code here
 </table>
 </fieldset>
 <br /><br />
-<fieldset style="margin: 0 auto; width: 75%;">
+<fieldset style="margin : 0 auto; width : 75%; ">
 <legend>Profile Song&nbsp;</legend>
-<table style="margin-bottom: 10px; margin-top: 10px;">
+<table style="margin-bottom : 10px; margin-top : 10px; ">
 <tr>
 <td class="label">
 </td>
 <td class="input">
-<a href="media/mp/" target="_blank" style="margin-left: 10px; position: relative; text-decoration: none; top: -1px;">Browse The Music Place</a>
+<a href="media/mp/" target="_blank" style="margin-left : 10px; position : relative;  text-decoration : none; top : -1px; ">Browse The Music Place</a>
 </td>
 </tr>
 <tr>
@@ -1052,11 +1470,13 @@ enter css code here
 <small class="formreminder">( Some Songs May Include: Live Acoustic Instrumental Freestyle Skit Intro Outro Remix )</small>
 </div>
 </fieldset>
-<?php if ($_SESSION['access_level'] == 2) { ?>
+<?php
+if ($_SESSION['access_level'] == 2) {
+?>
 <br /><br />
-<fieldset style="margin: 0 auto; width: 75%;">
+<fieldset style="margin : 0 auto; width : 75%; ">
 <legend>Admin Options&nbsp;</legend>
-<table style="margin-bottom: 10px; margin-top: 10px;">
+<table style="margin-bottom : 10px; margin-top : 10px; ">
 <tr>
 <td class="label"><label for="access_level">Access Level:</label></td>
 <td class="input">
@@ -1067,30 +1487,37 @@ enter css code here
 <tr>
 <td> </td>
 <td><input type="checkbox" id="delete" name="delete" onclick="delete_user(); " /> <label for="delete"><small>Delete</small></label>
+<script type="text/javascript">
+function delete_user() {
+confirm("Are You Sure You Want To Delete <?php echo $row['username']; ?>'s Profile?");
+}
+</script>
 </td>
 </tr>
 </table>
 </fieldset>
 <br /><br />
-<fieldset style="margin: 0 auto; width: 75%;">
+<fieldset style="margin : 0 auto; width : 75%; ">
 <legend>Security Code&nbsp;</legend>
-<table style="margin: 0 auto; margin-bottom: 10px; margin-top: 10px;">
+<table style="margin : 0 auto; margin-bottom : 10px; margin-top : 10px; ">
 <tr>
-<td><input type="text" name="txtsecuritycode" size="14" maxlength="7" value="" style="font-size: 18pt; height: 30px; letter-spacing: 2px; line-height: 30px; margin-right: 5px; text-align: center;" /></td>
+<td><input type="text" name="txtsecuritycode" size="14" maxlength="7" value="" style="font-size : 18pt; height : 30px; letter-spacing : 2px; line-height : 30px; margin-right : 5px; text-align : center; " /></td>
 <td><img name="captchaimg" alt="Security Code" src="captcha_securityimage.php" /></td>
-<td><a onclick="javascript:updatecaptchaimg();"><img src="i/captcha/arrow_refresh.png" alt="Refresh Code" style="border-width: 0; margin-left: 5px; margin-top: 7px;" /></a></td>
+<td><a onclick="javascript:updatecaptchaimg();"><img src="i/captcha/arrow_refresh.png" alt="Refresh Code" style="border-width : 0px; margin-left : 5px; margin-top : 7px; " /></a></td>
 </tr>
 </table>
 <br />
 <div>
 <input type="hidden" name="user_id" value="<?php echo $user_id; ?>" />
 <input type="submit" name="update" value="Update" />
-<input type="button" id="cancel" value="Cancel" onclick="history.go(-1);" />
+<input type="button" id="cancel" value="Cancel" onclick="history.go(-1); " />
 <input type="reset" id="reset" value="Reset" />
 </div>
 <br />
 </fieldset>
-<?php } ?>
+<?php
+}
+?>
 </form>
 <br />
 <span>
@@ -1098,7 +1525,9 @@ enter css code here
 </span>
 </div>
 <!-- End page content -->
-<?php include ("ft.inc.php"); ?>
+<?php
+include ("ft.inc.php");
+?>
 </body>
 
 </html>

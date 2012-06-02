@@ -37,19 +37,30 @@ echo "<br />Last Message Was Sent ";
 if ($timediff < 60) {
 echo $timediff;
 
-if ($timediff > 1) echo " Seconds Ago";
-else echo " Second Ago";
+if ($timediff > 1) {
+echo " Seconds Ago";
+} else {
+echo " Second Ago";
+}
 } else {
 $mtimediff = floor($timediff / 60);
 $stimediff = ($timediff % 60);
+
 echo $mtimediff;
 
-if ($mtimediff > 1) echo " Minutes & ";
-else echo " Minute & ";
+if ($mtimediff > 1) {
+echo " Minutes & ";
+} else {
+echo " Minute & ";
+}
+
 echo $stimediff;
 
-if ($stimediff > 1) echo " Seconds Ago";
-else echo " Second Ago";
+if ($stimediff > 1) {
+echo " Seconds Ago";
+} else {
+echo " Second Ago";
+}
 }
 }
 ?>

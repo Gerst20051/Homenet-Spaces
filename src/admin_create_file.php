@@ -6,6 +6,7 @@ require ("lang.inc.php");
 include ("auth.inc.php");
 include ("admin.inc.php");
 include ("db.member.inc.php");
+include ("bimage.inc.php");
 */
 ?>
 <?php
@@ -15,7 +16,9 @@ $new_filename = $_POST['new_filename'];
 $new_filename .= ".php";
 
 if (!file_exists($new_filename)) {
-if (!copy($file_to_copy, $new_filename)) echo "An Error Occurred While Creating Your File";
+if (!copy($file_to_copy, $new_filename)) {
+echo "An Error Occurred While Creating Your File";
+}
 } else {
 echo "That File Already Exists Please Choose A New File Name!";
 }

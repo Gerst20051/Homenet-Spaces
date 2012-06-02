@@ -1,23 +1,42 @@
 <?php
 $user_id = (isset($_GET['id'])) ? $_GET['id'] : 0;
-if ($user_id == 0) { header('location: members.php'); die(); }
+
+if ($user_id == 0) {
+header('location: members.php');
+die();
+}
 
 session_start();
+
 require ("lang.inc.php");
 include ("db.member.inc.php");
 include ("db.om.inc.php");
 include ("login.inc.php");
+include ("bimage.inc.php");
 
-$query = 'SELECT user_id FROM login WHERE user_id = ' . $user_id;
+// check if user id is registered
+$query = 'SELECT
+user_id
+FROM
+login
+WHERE
+user_id = ' . $user_id;
 $result = mysql_query($query, $db) or die(mysql_error());
 
-if (mysql_num_rows($result) == 0) header('location: members.php');
+if (mysql_num_rows($result) == 0) {
+header('location: members.php');
+}
 
 if (isset($_GET['rating'])) {
 $vote = $_GET['rating'];
 $user_id = $_GET['id'];
 
-$query = 'SELECT user_id, rating, xratings, voters FROM info WHERE user_id = ' . $user_id;
+$query = 'SELECT
+user_id, rating, xratings, voters
+FROM
+info
+WHERE
+user_id = ' . $user_id;
 $result = mysql_query($query, $db) or die(mysql_error());
 $row = mysql_fetch_array($result);
 extract($row);
@@ -29,11 +48,17 @@ $xratings = ($xratings + 1);
 $newrating = ($totalrating / $xratings);
 
 if ($voters == null) {
-if ($_SESSION['username'] == null) $voters = "guest";
-else $voters = $_SESSION['username'];
+if ($_SESSION['username'] == null) {
+$voters = "guest";
 } else {
-if ($_SESSION['username'] == null) $voters = $voters . ", guest";
-else $voters = $voters . ", " . $_SESSION['username'];
+$voters = $_SESSION['username'];
+}
+} else {
+if ($_SESSION['username'] == null) {
+$voters = $voters . ", guest";
+} else {
+$voters = $voters . ", " . $_SESSION['username'];
+}
 }
 
 if (($vote < 0) || ($vote > 100)) {
@@ -54,7 +79,14 @@ $rating_message = "You Voted " . $vote . "%";
 }
 
 $user_id = $_GET['id'];
-$query = 'SELECT * FROM login u JOIN info i ON u.user_id = i.user_id WHERE u.user_id = ' . $user_id;
+$query = 'SELECT * FROM
+login u
+JOIN
+info i
+ON
+u.user_id = i.user_id
+WHERE
+u.user_id = ' . $user_id;
 $result = mysql_query($query, $db) or die(mysql_error($db));
 $row = mysql_fetch_array($result);
 extract($row);
@@ -74,17 +106,34 @@ header('refresh: 3; url=login.php?redirect=' . $_SERVER['PHP_SELF'] . "?" . $_SE
 <head>
 <title><?php echo $TEXT['global-headertitle'] . " | " . $TEXT['homepage-headertitle']; ?></title>
 <meta http-equiv="content-type" content="text/html; charset=<?php echo $TEXT['global-charset']; ?>" />
-<script type="text/javascript" src="jquery.js"></script>
-<script type="text/javascript" src="javascript.php"></script>
+<meta name="author" content="Homenet Spaces Andrew Gerst" />
+<meta name="copyright" content="© Homenet Spaces" />
+<meta name="keywords" content="Homenet, Spaces, The, Place, To, Be, Creative, Andrew, Gerst, Free, Profiles, Information, Facts" />
+<meta name="description" content="Welcome to Homenet Spaces | This is the place to be creative! Feel free to add yourself to our wonderful community by registering! " />
+<meta name="revisit-after" content="7 days" />
+<meta name="googlebot" content="index, follow, all" />
+<meta name="robots" content="index, follow, all" />
+<link rel="stylesheet" type="text/css" href="css/global.css" media="all" />
+<script type="text/javascript" src="cs.js"></script>
+<script type="text/javascript" src="nav.js"></script>
+<script type="text/javascript" src="suggest.js"></script>
+<style type="text/css">
+body { 
+	background: url(<?php echo $bimage; ?>) repeat; 
+	background-position : 50% 140px; 
+	}
+</style>
 </head>
 
 <body>
-<?php include ("hd.inc.php"); ?>
+<?php
+include ("hd.inc.php");
+?>
 <!-- Begin page content -->
 <div class="pagecontent">
 <?php
-echo '<form name="counter" style="margin: 0;"><p><strong style="color: #f33; font-weight: bold;">You will be redirected to the login page in
-<input type="text" size="1" name="cd" style="background-color: transparent; border: 0; color: #f33; font-weight: bold; width: 12px;">
+echo '<form name="counter" style="margin : 0px; "><p><strong style="color : #ff3333; font-weight : bold; ">You will be redirected to the login page in
+<input type="text" size="1" name="cd" style="background-color : transparent; border : 0px; color : #ff3333; font-weight : bold; width : 12px; ">
 seconds.</strong></p></form>';
 echo '<p>If your browser doesn\'t redirect you properly automatically, ' . '<a href="login.php?redirect=' . $_SERVER['PHP_SELF'] . "?" . $_SERVER['QUERY_STRING'] . '">click here</a>.</p>';
 ?>
@@ -127,11 +176,17 @@ die();
 }
 }
 
-if (isset($_GET['action']) && ($_GET['action'] == "message")) include ("user_message.inc.php");
-elseif (isset($_GET['action']) && ($_GET['action'] == "comment")) include ("user_comment.inc.php");
-elseif (isset($_GET['action']) && ($_GET['action'] == "allcomments")) include ("user_allcomments.inc.php");
-elseif (isset($_GET['action']) && ($_GET['action'] == "befriend")) include ("user_befriend.inc.php");
-elseif (isset($_GET['action']) && ($_GET['action'] == "allfriends")) include ("user_allfriends.inc.php");
+if (isset($_GET['action']) && ($_GET['action'] == "message")) {
+include ("user_message.inc.php");
+} elseif (isset($_GET['action']) && ($_GET['action'] == "comment")) {
+include ("user_comment.inc.php");
+} elseif (isset($_GET['action']) && ($_GET['action'] == "allcomments")) {
+include ("user_allcomments.inc.php");
+} elseif (isset($_GET['action']) && ($_GET['action'] == "befriend")) {
+include ("user_befriend.inc.php");
+} elseif (isset($_GET['action']) && ($_GET['action'] == "allfriends")) {
+include ("user_allfriends.inc.php");
+}
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//<?php echo $TEXT['global-dtdlang']; ?>" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?php echo $TEXT['global-lang']; ?>" lang="<?php echo $TEXT['global-lang']; ?>" dir="<?php echo $TEXT['global-text_dir']; ?>">
@@ -139,69 +194,78 @@ elseif (isset($_GET['action']) && ($_GET['action'] == "allfriends")) include ("u
 <head>
 <title><?php echo $username . " ( " . $firstname . " " . $lastname . " ) | " . $TEXT['global-headertitle']; ?></title>
 <meta http-equiv="content-type" content="text/html; charset=<?php echo $TEXT['global-charset']; ?>" />
-<script type="text/javascript" src="jquery.js"></script>
-<script type="text/javascript" src="javascript.php"></script>
+<meta name="author" content="Homenet Spaces Andrew Gerst" />
+<meta name="copyright" content="© Homenet Spaces" />
+<meta name="keywords" content="Homenet, Spaces, The, Place, To, Be, Creative, Andrew, Gerst, Free, Profiles, Information, Facts" />
+<meta name="description" content="Welcome to Homenet Spaces we offer you a free profile with many cool and interesting things! This is the place to be creative!" />
+<meta name="revisit-after" content="7 days" />
+<meta name="googlebot" content="index, follow, all" />
+<meta name="robots" content="index, follow, all" />
+<link rel="stylesheet" type="text/css" href="css/global.css" media="all" />
+<script type="text/javascript" src="cs.js"></script>
+<script type="text/javascript" src="nav.js"></script>
+<script type="text/javascript" src="suggest.js"></script>
 <style type="text/css">
 #star { 
-margin : 0 auto; 
-padding-top : 5px; 
-width : 125px; 
-}
+	margin : 0 auto; 
+	padding-top : 5px; 
+	width : 125px; 
+	}
 
 #star ul.star { 
-background : url('i/sy/st/stars.gif') repeat-x; 
-cursor : pointer; 
-float : left; 
-height : 20px; 
-left : 0px; 
-list-style-type : none; 
-margin : 0px; 
-padding : 0px; 
-position : relative; 
-top : -5px; 
-width : 85px; 
-}
+	background : url('i/sy/st/stars.gif') repeat-x; 
+	cursor : pointer; 
+	float : left; 
+	height : 20px; 
+	left : 0px; 
+	list-style-type : none; 
+	margin : 0px; 
+	padding : 0px; 
+	position : relative; 
+	top : -5px; 
+	width : 85px; 
+	}
 
 #star li { 
-display : block; 
-float : left; 
-height : 20px; 
-left : 0px; 
-margin : 0px; 
-padding : 0px; 
-position : absolute; 
-text-decoration : none; 
-text-indent : -9000px; 
-width : 85px; 
-z-index : 120; 
-}
+	display : block; 
+	float : left; 
+	height : 20px; 
+	left : 0px; 
+	margin : 0px; 
+	padding : 0px; 
+	position : absolute; 
+	text-decoration : none; 
+	text-indent : -9000px; 
+	width : 85px; 
+	z-index : 120; 
+	}
 
 #star li.curr { 
-background : url('i/sy/st/stars.gif') left 25px; 
-font-size : 1px; 
-}
+	background : url('i/sy/st/stars.gif') left 25px; 
+	font-size : 1px; 
+	}
 
 #star div.user { 
-color: rgb(136, 136, 136); 
-float : left; 
-font-family : arial; 
-font-size : 13px; 
-left : 15px; 
-position : relative; 
-width : 20px; 
-}
+	color: rgb(136, 136, 136); 
+	float : left; 
+	font-family : arial; 
+	font-size : 13px; 
+	left : 15px; 
+	position : relative; 
+	width : 20px; 
+	}
 
 #star div.starvotes { 
-clear : both; 
-color: rgb(136, 136, 136); 
-padding-bottom : 2px; 
-text-align : center; 
-}
+	clear : both; 
+	color: rgb(136, 136, 136); 
+	padding-bottom : 2px; 
+	text-align : center; 
+	}
 
 #star div.starvotes a { 
-color: rgb(136, 136, 136); 
-text-decoration : none; 
-}
+	color: rgb(136, 136, 136); 
+	text-decoration : none; 
+	}
 </style>
 <script type="text/javascript"> 
 function $(v,o) {
@@ -294,356 +358,389 @@ document.onmousemove = '';
 star.num = 0;
 </script>
 <style type="text/css">
+div#profileheader { 
+	background-color : #ff9; 
+	border : 2px solid #fc0; 
+	border-radius : 8px; 
+	border-radius-bottomleft : 0px; 
+	border-radius-bottomright : 0px; 
+	-moz-border-radius-topleft : 8px; 
+	-webkit-border-top-left-radius : 8px; 
+	-moz-border-radius-topright : 8px; 
+	-webkit-border-top-right-radius : 8px; 
+	display : block; 
+	height : auto; 
+	line-height : 110px; 
+	margin : 0 auto; 
+	margin-left : 20px; 
+	margin-right : 20px; 
+	text-align : left; 
+	width : 915px; 
+	}
+
+div#profileheader div.heading { 
+	font-size : 40px; 
+	left : 20px; 
+	letter-spacing : 1px; 
+	position : relative; 
+	}
+
 div#leftpanel { 
-float : left; 
-margin-left : 20px; 
-width : 47%; 
-}
+	float : left; 
+	margin-left : 20px; 
+	width : 47%; 
+	}
 
 div#rightpanel { 
-float : right; 
-margin-right : 20px; 
-width : 47%; 
-z-index : 900; 
-}
+	float : right; 
+	margin-right : 20px; 
+	width : 47%; 
+	z-index : 900; 
+	}
 
 div#rightpanel div#profilepic { 
-position : relative; 
-right : -98px; 
-top : -85px;
-}
+	position : relative; 
+	right : -98px; 
+	top : -85px;
+	}
 
 div#rightpanel div.profilepicinfo { 
-background-color : #ff9; 
-border : 2px solid #fc0; 
-border-radius-bottomleft : 8px; 
-border-radius-bottomright : 8px; 
--moz-border-radius-bottomleft : 8px; 
--webkit-border-bottom-left-radius : 8px; 
--moz-border-radius-bottomright : 8px; 
--webkit-border-bottom-right-radius : 8px; 
-display : block; 
-height : auto; 
-margin : 0 auto; 
-margin-top : 15px; 
-padding : 6px; 
-text-align : left; 
-width : 176px; 
-}
+	background-color : #ff9; 
+	border : 2px solid #fc0; 
+	border-radius-bottomleft : 8px; 
+	border-radius-bottomright : 8px; 
+	-moz-border-radius-bottomleft : 8px; 
+	-webkit-border-bottom-left-radius : 8px; 
+	-moz-border-radius-bottomright : 8px; 
+	-webkit-border-bottom-right-radius : 8px; 
+	display : block; 
+	height : auto; 
+	margin : 0 auto; 
+	margin-top : 15px; 
+	padding : 6px; 
+	text-align : left; 
+	width : 176px; 
+	}
 
 div#rightpanel div.profilepicinfo div.sam { 
-padding : 5px; 
-}
+	padding : 5px; 
+	}
 
 div#rightpanel div.profilepicmusic { 
-background-color : #ff9; 
-border : 2px solid #fc0; 
-border-radius : 8px; 
--moz-border-radius : 8px; 
--webkit-border-radius : 8px; 
-display : block; 
-height : auto; 
-margin : 0 auto; 
-margin-top : 15px; 
-padding : 6px; 
-text-align : center; 
-width : 176px; 
-}
+	background-color : #ff9; 
+	border : 2px solid #fc0; 
+	border-radius : 8px; 
+	-moz-border-radius : 8px; 
+	-webkit-border-radius : 8px; 
+	display : block; 
+	height : auto; 
+	margin : 0 auto; 
+	margin-top : 15px; 
+	padding : 6px; 
+	text-align : center; 
+	width : 176px; 
+	}
 
 div#rightpanel div.profilepicmusic div.heading { 
-font-size : 18px; 
-}
+	font-size : 18px; 
+	}
 
 div#leftpanel div.profilelinks { 
-background-color : #ff9; 
-border : 2px solid #fc0; 
-border-radius : 8px; 
-border-radius-topleft : 0px; 
-border-radius-bottomright : 0px; 
--moz-border-radius-bottomleft : 8px; 
--webkit-border-bottom-left-radius : 8px; 
--moz-border-radius-topright : 8px; 
--webkit-border-top-right-radius : 8px; 
-display : inline; 
-float : left; 
-height : auto; 
-line-height : 50px; 
-margin : 0 auto; 
-margin-top : 15px; 
-text-align : center; 
-width : 440px; 
-}
+	background-color : #ff9; 
+	border : 2px solid #fc0; 
+	border-radius : 8px; 
+	border-radius-topleft : 0px; 
+	border-radius-bottomright : 0px; 
+	-moz-border-radius-bottomleft : 8px; 
+	-webkit-border-bottom-left-radius : 8px; 
+	-moz-border-radius-topright : 8px; 
+	-webkit-border-top-right-radius : 8px; 
+	display : inline; 
+	float : left; 
+	height : auto; 
+	line-height : 50px; 
+	margin : 0 auto; 
+	margin-top : 15px; 
+	text-align : center; 
+	width : 440px; 
+	}
 
 div#leftpanel div.profileawaymessage { 
-background-color : #ff9; 
-border : 2px solid #fc0; 
-border-radius : 8px; 
-border-radius-topleft : 0px; 
-border-radius-bottomright : 0px; 
--moz-border-radius-bottomleft : 8px; 
--webkit-border-bottom-left-radius : 8px; 
--moz-border-radius-topright : 8px; 
--webkit-border-top-right-radius : 8px; 
-display : inline; 
-float : left; 
-height : auto; 
-margin : 0 auto; 
-margin-top : 15px; 
-text-align : center; 
-width : 440px; 
-}
+	background-color : #ff9; 
+	border : 2px solid #fc0; 
+	border-radius : 8px; 
+	border-radius-topleft : 0px; 
+	border-radius-bottomright : 0px; 
+	-moz-border-radius-bottomleft : 8px; 
+	-webkit-border-bottom-left-radius : 8px; 
+	-moz-border-radius-topright : 8px; 
+	-webkit-border-top-right-radius : 8px; 
+	display : inline; 
+	float : left; 
+	height : auto; 
+	margin : 0 auto; 
+	margin-top : 15px; 
+	text-align : center; 
+	width : 440px; 
+	}
 
 div#leftpanel div.profileawaymessage div.heading { 
-color : #ff0000; 
-font-size : 16pt; 
-letter-spacing : 1px; 
-padding-top : 8px; 
-text-align : center; 
-width : 100%; 
-}
+	color : #ff0000; 
+	font-size : 16pt; 
+	letter-spacing : 1px; 
+	padding-top : 8px; 
+	text-align : center; 
+	width : 100%; 
+	}
 
 div#leftpanel div.profileawaymessage div.content { 
-letter-spacing : 1px; 
-padding : 20px; 
-}
+	letter-spacing : 1px; 
+	padding : 20px; 
+	}
 
 div#leftpanel div.profileinfo { 
-background-color : #ff9; 
-border : 2px solid #fc0; 
-border-radius : 8px; 
-border-radius-topright : 0px; 
--moz-border-radius-bottomleft : 8px; 
--webkit-border-bottom-left-radius : 8px; 
--moz-border-radius-bottomright : 8px; 
--webkit-border-bottom-right-radius : 8px; 
--moz-border-radius-topleft : 8px; 
--webkit-border-top-left-radius : 8px; 
-clear : both; 
-display : block; 
-float : left; 
-height : auto; 
-margin : 0 auto; 
-margin-top : 15px; 
-text-align : left; 
-width : 440px; 
-}
+	background-color : #ff9; 
+	border : 2px solid #fc0; 
+	border-radius : 8px; 
+	border-radius-topright : 0px; 
+	-moz-border-radius-bottomleft : 8px; 
+	-webkit-border-bottom-left-radius : 8px; 
+	-moz-border-radius-bottomright : 8px; 
+	-webkit-border-bottom-right-radius : 8px; 
+	-moz-border-radius-topleft : 8px; 
+	-webkit-border-top-left-radius : 8px; 
+	clear : both; 
+	display : block; 
+	float : left; 
+	height : auto; 
+	margin : 0 auto; 
+	margin-top : 15px; 
+	text-align : left; 
+	width : 440px; 
+	}
 
 div#leftpanel div.profileinfo div.heading { 
-font-size : 16pt; 
-padding-top : 8px; 
-text-align : center; 
-width : 100%; 
-}
+	font-size : 16pt; 
+	padding-top : 8px; 
+	text-align : center; 
+	width : 100%; 
+	}
 
 div#leftpanel div.profileinfo div.content { 
-margin : 18px; 
-}
+	margin : 18px; 
+	}
 
 div#leftpanel div.profilestats { 
-background-color : #ff9; 
-border : 2px solid #fc0; 
-border-radius : 8px; 
--moz-border-radius-bottomleft : 8px; 
--webkit-border-bottom-left-radius : 8px; 
--moz-border-radius-bottomright : 8px; 
--webkit-border-bottom-right-radius : 8px; 
--moz-border-radius-topleft : 8px; 
--webkit-border-top-left-radius : 8px; 
--moz-border-radius-topright : 8px; 
--webkit-border-top-right-radius : 8px; 
-clear : both; 
-display : block; 
-float : left; 
-height : auto; 
-margin : 0 auto; 
-margin-top : 15px; 
-text-align : left; 
-width : 440px; 
-}
+	background-color : #ff9; 
+	border : 2px solid #fc0; 
+	border-radius : 8px; 
+	-moz-border-radius-bottomleft : 8px; 
+	-webkit-border-bottom-left-radius : 8px; 
+	-moz-border-radius-bottomright : 8px; 
+	-webkit-border-bottom-right-radius : 8px; 
+	-moz-border-radius-topleft : 8px; 
+	-webkit-border-top-left-radius : 8px; 
+	-moz-border-radius-topright : 8px; 
+	-webkit-border-top-right-radius : 8px; 
+	clear : both; 
+	display : block; 
+	float : left; 
+	height : auto; 
+	margin : 0 auto; 
+	margin-top : 15px; 
+	text-align : left; 
+	width : 440px; 
+	}
 
 div#leftpanel div.profilestats div.heading { 
-font-size : 16pt; 
-padding-top : 8px; 
-text-align : center; 
-width : 100%; 
-}
+	font-size : 16pt; 
+	padding-top : 8px; 
+	text-align : center; 
+	width : 100%; 
+	}
 
 div#leftpanel div.profilestats div.content { 
-margin : 18px; 
-}
+	margin : 18px; 
+	}
 
 div#leftpanel div.profiledetails { 
-background-color : #ff9; 
-border : 2px solid #fc0; 
-border-radius : 8px; 
--moz-border-radius-bottomleft : 8px; 
--webkit-border-bottom-left-radius : 8px; 
--moz-border-radius-bottomright : 8px; 
--webkit-border-bottom-right-radius : 8px; 
--moz-border-radius-topleft : 8px; 
--webkit-border-top-left-radius : 8px; 
--moz-border-radius-topright : 8px; 
--webkit-border-top-right-radius : 8px; 
-clear : both; 
-display : block; 
-float : left; 
-height : auto; 
-margin : 0 auto; 
-margin-top : 15px; 
-text-align : left; 
-width : 440px; 
-}
+	background-color : #ff9; 
+	border : 2px solid #fc0; 
+	border-radius : 8px; 
+	-moz-border-radius-bottomleft : 8px; 
+	-webkit-border-bottom-left-radius : 8px; 
+	-moz-border-radius-bottomright : 8px; 
+	-webkit-border-bottom-right-radius : 8px; 
+	-moz-border-radius-topleft : 8px; 
+	-webkit-border-top-left-radius : 8px; 
+	-moz-border-radius-topright : 8px; 
+	-webkit-border-top-right-radius : 8px; 
+	clear : both; 
+	display : block; 
+	float : left; 
+	height : auto; 
+	margin : 0 auto; 
+	margin-top : 15px; 
+	text-align : left; 
+	width : 440px; 
+	}
 
 div#leftpanel div.profiledetails div.heading { 
-font-size : 16pt; 
-padding-top : 8px; 
-text-align : center; 
-width : 100%; 
-}
+	font-size : 16pt; 
+	padding-top : 8px; 
+	text-align : center; 
+	width : 100%; 
+	}
 
 div#leftpanel div.profiledetails div.content { 
-margin : 18px; 
-}
+	margin : 18px; 
+	}
 
 div#friends { 
-background-color : #ff9; 
-border : 2px solid #fc0; 
-border-radius : 8px; 
--moz-border-radius-bottomleft : 8px; 
--webkit-border-bottom-left-radius : 8px; 
--moz-border-radius-bottomright : 8px; 
--webkit-border-bottom-right-radius : 8px; 
--moz-border-radius-topleft : 8px; 
--webkit-border-top-left-radius : 8px; 
--moz-border-radius-topright : 8px; 
--webkit-border-top-right-radius : 8px; 
-margin : 0 auto; 
-margin-top : 15px; 
-}
+	background-color : #ff9; 
+	border : 2px solid #fc0; 
+	border-radius : 8px; 
+	-moz-border-radius-bottomleft : 8px; 
+	-webkit-border-bottom-left-radius : 8px; 
+	-moz-border-radius-bottomright : 8px; 
+	-webkit-border-bottom-right-radius : 8px; 
+	-moz-border-radius-topleft : 8px; 
+	-webkit-border-top-left-radius : 8px; 
+	-moz-border-radius-topright : 8px; 
+	-webkit-border-top-right-radius : 8px; 
+	margin : 0 auto; 
+	margin-top : 15px; 
+	}
 
 div#friends a { 
-text-decoration : none; 
-}
+	text-decoration : none; 
+	}
 
 div#friends div.header { 
-padding : 10px; 
-}
+	padding : 10px; 
+	}
 
 div#friends div.header span.heading { 
-float : left; 
-font-size : 18px; 
-}
+	float : left; 
+	font-size : 18px; 
+	}
 
 div#friends div.header span.link { 
-float : right; 
-}
+	float : right; 
+	}
 
 div#friends div.content { 
-padding : 10px; 
-}
+	padding : 10px; 
+	}
 
 div#friends div.footer { 
-padding : 10px; 
-}
+	padding : 10px; 
+	}
 
 div#friends div.footer span.toplink { 
-float : left; 
-}
+	float : left; 
+	}
 
 div#friends div.footer span.link { 
-float : right; 
-}
+	float : right; 
+	}
 
 div.friendsection { 
-background-color : #ffffff; 
-border-radius : 6px; 
--moz-border-radius : 6px; 
--webkit-border-radius : 6px; 
-clear : right; 
-display : block; 
-float : left; 
-margin : 0 auto; 
-margin : 5px; 
-padding : 5px; 
-text-align : center; 
-width : 120px; 
-}
+	background-color : #ffffff; 
+	border-radius : 6px; 
+	-moz-border-radius : 6px; 
+	-webkit-border-radius : 6px; 
+	clear : right; 
+	display : block; 
+	float : left; 
+	margin : 0 auto; 
+	margin : 5px; 
+	padding : 5px; 
+	text-align : center; 
+	width : 120px; 
+	}
 
 div.friendsection img.friend { 
-border-radius : 6px; 
--moz-border-radius : 6px; 
--webkit-border-radius : 6px; 
-border-width : 0px; 
-height : auto; 
-margin-top : 4px; 
-width : 100px; 
-}
+	border-radius : 6px; 
+	-moz-border-radius : 6px; 
+	-webkit-border-radius : 6px; 
+	border-width : 0px; 
+	height : auto; 
+	margin-top : 4px; 
+	width : 100px; 
+	}
 
 div.friendsection div.name { 
-margin-top : 4px; 
-}
+	margin-top : 4px; 
+	}
 
 div#comments { 
-background-color : #ff9; 
-border : 2px solid #fc0; 
-border-radius : 8px; 
--moz-border-radius-bottomleft : 8px; 
--webkit-border-bottom-left-radius : 8px; 
--moz-border-radius-bottomright : 8px; 
--webkit-border-bottom-right-radius : 8px; 
--moz-border-radius-topleft : 8px; 
--webkit-border-top-left-radius : 8px; 
--moz-border-radius-topright : 8px; 
--webkit-border-top-right-radius : 8px; 
-clear : both; 
-margin : 0 auto; 
-margin-left : 20px; 
-margin-right : 20px; 
-}
+	background-color : #ff9; 
+	border : 2px solid #fc0; 
+	border-radius : 8px; 
+	-moz-border-radius-bottomleft : 8px; 
+	-webkit-border-bottom-left-radius : 8px; 
+	-moz-border-radius-bottomright : 8px; 
+	-webkit-border-bottom-right-radius : 8px; 
+	-moz-border-radius-topleft : 8px; 
+	-webkit-border-top-left-radius : 8px; 
+	-moz-border-radius-topright : 8px; 
+	-webkit-border-top-right-radius : 8px; 
+	clear : both; 
+	margin : 0 auto; 
+	margin-left : 20px; 
+	margin-right : 20px; 
+	}
 
 div#comments a { 
-text-decoration : none; 
-}
+	text-decoration : none; 
+	}
 
 div#comments div.header { 
-padding : 10px; 
-}
+	padding : 10px; 
+	}
 
 div#comments div.header span.heading { 
-float : left; 
-font-size : 18px; 
-}
+	float : left; 
+	font-size : 18px; 
+	}
 
 div#comments div.header span.link { 
-float : right; 
-}
+	float : right; 
+	}
 
 div#comments div.content { 
-padding : 10px; 
-}
+	padding : 10px; 
+	}
 
 div#comments div.commentcontainer { 
-background-color : #ff9; 
-border : 1px solid #fc0; 
-border-radius : 8px; 
--moz-border-radius : 8px; 
--webkit-border-radius : 8px; 
-display : block; 
-height : auto; 
-margin : 0 auto; 
-}
+	background-color : #ff9; 
+	border : 1px solid #fc0; 
+	border-radius : 8px; 
+	-moz-border-radius : 8px; 
+	-webkit-border-radius : 8px; 
+	display : block; 
+	height : auto; 
+	margin : 0 auto; 
+	}
 
 div#comments div.footer { 
-padding : 10px; 
-}
+	padding : 10px; 
+	}
 
 div#comments div.footer span.toplink { 
-float : left; 
-}
+	float : left; 
+	}
 
 div#comments div.footer span.link { 
-float : right; 
-}
+	float : right; 
+	}
+</style>
+<style type="text/css">
+body { 
+	background: url(<?php echo $bimage; ?>) repeat; 
+	background-position : 50% 140px; 
+	}
 </style>
 <?php
 if (isset($_SESSION['logged']) && ($_SESSION['pref_upstyle'] == 1)) {
@@ -662,7 +759,9 @@ if ($user_style != null) {
 </head>
 
 <body id="userprofile_body">
-<?php include ("hd.inc.php"); ?>
+<?php
+include ("hd.inc.php");
+?>
 <!-- Begin page content -->
 <div id="userprofile_pagecontent" class="pagecontent">
 <?php
@@ -673,23 +772,32 @@ if ($_SESSION['pref_upview'] == 1) {
 include ("user_profile_lite.inc.php");
 } else {
 ?>
-<div id="pageheader" class="pageheader2"><div class="heading">
+<div id="profileheader">
+<div class="heading">
 <?php echo $fullname; ?>
 <?php
 $uresult = mysql_db_query($om, "SELECT DISTINCT username FROM users_online ORDER BY username ASC") or die("Database SELECT Error");
 
 while ($onlineusers = mysql_fetch_array($uresult, MYSQL_ASSOC)) {
-foreach ($onlineusers as $users) { if ($row['username'] == $users) echo " is Online!"; }
+foreach ($onlineusers as $users) {
+if ($row['username'] == $users) {
+echo " is Online!";
+}
+}
 }
 ?>
-</div></div>
+</div>
+</div>
 <!-- Begin right panel -->
 <div id="rightpanel">
 <!-- Begin profile pic -->
 <div id="profilepic">
 <?php
-if ($row['default_image'] != null) echo '<a href="user_pictures.php?id=' . $user_id . '"><img src="/uploads/' . $row['username'] . '/images/thumb/' . $row['default_image'] . '" id="defaultuserimage" title="View ' . $firstname . ' ' . $lastname . '\'s Picture Gallery" /></a><br />' . "\n";
-else echo '<img src="i/mem/default.jpg" id="defaultuserimage" /><br />' . "\n";
+if ($row['default_image'] != null) {
+echo '<a href="user_pictures.php?id=' . $user_id . '"><img src="uploads/' . $row['username'] . '/images/thumb/' . $row['default_image'] . '" id="defaultuserimage" title="View ' . $firstname . ' ' . $lastname . '\'s Picture Gallery" /></a><br />' . "\n";
+} else {
+echo '<img src="i/mem/default.jpg" id="defaultuserimage" /><br />' . "\n";
+}
 ?>
 <div class="profilepicinfo">
 <div class="sam">
@@ -705,27 +813,45 @@ if ($chars >= 13) {
 if ($upper_case_count == 0 || 1) {
 echo split_hjms_chars($status, 11, $dots);
 } else {
-if ($upper_case_count >= 8) echo split_hjms_chars($status, 8, $dots);
-elseif ($upper_case_count == 7) echo split_hjms_chars($status, 8, $dots);
-elseif ($upper_case_count == 6) echo split_hjms_chars($status, 9, $dots);
-elseif ($upper_case_count == 5) echo split_hjms_chars($status, 10, $dots);
-elseif ($upper_case_count == 4) echo split_hjms_chars($status, 10, $dots);
-elseif ($upper_case_count == 3) echo split_hjms_chars($status, 10, $dots);
-elseif ($upper_case_count == 2) echo split_hjms_chars($status, 10, $dots);
+if ($upper_case_count >= 8) {
+echo split_hjms_chars($status, 8, $dots);
+} elseif ($upper_case_count == 7) {
+echo split_hjms_chars($status, 8, $dots);
+} elseif ($upper_case_count == 6) {
+echo split_hjms_chars($status, 9, $dots);
+} elseif ($upper_case_count == 5) {
+echo split_hjms_chars($status, 10, $dots);
+} elseif ($upper_case_count == 4) {
+echo split_hjms_chars($status, 10, $dots);
+} elseif ($upper_case_count == 3) {
+echo split_hjms_chars($status, 10, $dots);
+} elseif ($upper_case_count == 2) {
+echo split_hjms_chars($status, 10, $dots);
+}
 }
 } else { // l2 or less characters
 if ($upper_case_count <= 3) {
 echo $status;
 } else {
-if ($upper_case_count == 4) echo split_hjms_chars($status, 10, $dots);
-elseif ($upper_case_count == 5) echo split_hjms_chars($status, 10, $dots);
-elseif ($upper_case_count == 6) echo split_hjms_chars($status, 10, $dots);
-elseif ($upper_case_count == 7) echo split_hjms_chars($status, 10, $dots);
-elseif ($upper_case_count == 8) echo split_hjms_chars($status, 9, $dots);
-elseif ($upper_case_count == 9) echo split_hjms_chars($status, 9, $dots);
-elseif ($upper_case_count == 10) echo split_hjms_chars($status, 9, $dots);
-elseif ($upper_case_count == 11) echo split_hjms_chars($status, 9, $dots);
-elseif ($upper_case_count == 12) echo split_hjms_chars($status, 9, $dots);
+if ($upper_case_count == 4) {
+echo split_hjms_chars($status, 10, $dots);
+} elseif ($upper_case_count == 5) {
+echo split_hjms_chars($status, 10, $dots);
+} elseif ($upper_case_count == 6) {
+echo split_hjms_chars($status, 10, $dots);
+} elseif ($upper_case_count == 7) {
+echo split_hjms_chars($status, 10, $dots);
+} elseif ($upper_case_count == 8) {
+echo split_hjms_chars($status, 9, $dots);
+} elseif ($upper_case_count == 9) {
+echo split_hjms_chars($status, 9, $dots);
+} elseif ($upper_case_count == 10) {
+echo split_hjms_chars($status, 9, $dots);
+} elseif ($upper_case_count == 11) {
+echo split_hjms_chars($status, 9, $dots);
+} elseif ($upper_case_count == 12) {
+echo split_hjms_chars($status, 9, $dots);
+}
 }
 }
 ?>
@@ -742,27 +868,45 @@ if ($chars >= 13) {
 if ($upper_case_count == 0 || 1) {
 echo split_hjms_chars($mood, 11, $dots);
 } else {
-if ($upper_case_count >= 8) echo split_hjms_chars($mood, 8, $dots);
-elseif ($upper_case_count == 7) echo split_hjms_chars($mood, 8, $dots);
-elseif ($upper_case_count == 6) echo split_hjms_chars($mood, 9, $dots);
-elseif ($upper_case_count == 5) echo split_hjms_chars($mood, 10, $dots);
-elseif ($upper_case_count == 4) echo split_hjms_chars($mood, 10, $dots);
-elseif ($upper_case_count == 3) echo split_hjms_chars($mood, 10, $dots);
-elseif ($upper_case_count == 2) echo split_hjms_chars($mood, 10, $dots);
+if ($upper_case_count >= 8) {
+echo split_hjms_chars($mood, 8, $dots);
+} elseif ($upper_case_count == 7) {
+echo split_hjms_chars($mood, 8, $dots);
+} elseif ($upper_case_count == 6) {
+echo split_hjms_chars($mood, 9, $dots);
+} elseif ($upper_case_count == 5) {
+echo split_hjms_chars($mood, 10, $dots);
+} elseif ($upper_case_count == 4) {
+echo split_hjms_chars($mood, 10, $dots);
+} elseif ($upper_case_count == 3) {
+echo split_hjms_chars($mood, 10, $dots);
+} elseif ($upper_case_count == 2) {
+echo split_hjms_chars($mood, 10, $dots);
+}
 }
 } else { // l2 or less characters
 if ($upper_case_count <= 3) {
 echo $mood;
 } else {
-if ($upper_case_count == 4) echo split_hjms_chars($mood, 10, $dots);
-elseif ($upper_case_count == 5) echo split_hjms_chars($mood, 10, $dots);
-elseif ($upper_case_count == 6) echo split_hjms_chars($mood, 10, $dots);
-elseif ($upper_case_count == 7) echo split_hjms_chars($mood, 10, $dots);
-elseif ($upper_case_count == 8) echo split_hjms_chars($mood, 9, $dots);
-elseif ($upper_case_count == 9) echo split_hjms_chars($mood, 9, $dots);
-elseif ($upper_case_count == 10) echo split_hjms_chars($mood, 9, $dots);
-elseif ($upper_case_count == 11) echo split_hjms_chars($mood, 9, $dots);
-elseif ($upper_case_count == 12) echo split_hjms_chars($mood, 9, $dots);
+if ($upper_case_count == 4) {
+echo split_hjms_chars($mood, 10, $dots);
+} elseif ($upper_case_count == 5) {
+echo split_hjms_chars($mood, 10, $dots);
+} elseif ($upper_case_count == 6) {
+echo split_hjms_chars($mood, 10, $dots);
+} elseif ($upper_case_count == 7) {
+echo split_hjms_chars($mood, 10, $dots);
+} elseif ($upper_case_count == 8) {
+echo split_hjms_chars($mood, 9, $dots);
+} elseif ($upper_case_count == 9) {
+echo split_hjms_chars($mood, 9, $dots);
+} elseif ($upper_case_count == 10) {
+echo split_hjms_chars($mood, 9, $dots);
+} elseif ($upper_case_count == 11) {
+echo split_hjms_chars($mood, 9, $dots);
+} elseif ($upper_case_count == 12) {
+echo split_hjms_chars($mood, 9, $dots);
+}
 }
 }
 ?>
@@ -771,10 +915,10 @@ elseif ($upper_case_count == 12) echo split_hjms_chars($mood, 9, $dots);
 <div id="star">
 <ul id="star" class="star" onmousedown="star.update(event,this)" onmousemove="star.mouse(event,this)" title="Rate <?php echo $firstname . " " . $lastname . "!"; ?>">
 <li id="starCur" class="curr" title="<?php echo ($rating); ?>"<?php
-echo ' style="width: ';
+echo ' style="width : ';
 $width = round((($rating) * 84) / 100);
 echo $width;
-echo 'px;">';
+echo 'px; ">';
 ?></li>
 </ul>
 <div id="starUser" class="user"><?php echo ($rating); ?>%</div>
@@ -782,8 +926,10 @@ echo 'px;">';
 <small><a href="#" title="See Who Voted!" onclick="showMe2('voters')">
 <?php
 $votes = ($xratings > 0) ? $xratings : 'No';
+echo $votes;
 $vtense = ($xratings == 0 || $xratings > 1) ? ' Votes' : ' Vote';
-echo "$votes$vtense</a></small>";
+echo $vtense;
+echo "</a></small>";
 
 if (isset($_GET['rating'])) {
 if (($vote < 0) || ($vote > 100)) {
@@ -797,8 +943,21 @@ echo "</small>";
 ?>
 </div>
 </div>
+<script type="text/javascript">
+<!-- 
+function showMe5 (it) {
+var vis = document.getElementById(it).style.visibility
+
+if (vis == "hidden") {
+document.getElementById(it).style.visibility = "visible";
+} else {
+document.getElementById(it).style.visibility = "hidden";
+}
+}
+//-->
+</script>
 <!-- Begin voters -->
-<div id="voters" style="visibility: hidden; display: block;">
+<div id="voters" style="visibility : hidden; display : block; ">
 <span class="closespan">
 <span class="header">
 <?php
@@ -806,8 +965,14 @@ if ($voters == null) {
 echo "0 Voters";
 } else {
 $numvoters = str_word_count($voters, null, '.0..9');
-if ($numvoters == 1) echo "1 Voter";
-else echo "$numvoters Voters";
+
+if ($numvoters == 1) {
+echo $numvoters;
+echo " Voter";
+} else {
+echo $numvoters;
+echo " Voters";
+}
 }
 ?>
 </span>
@@ -816,8 +981,11 @@ else echo "$numvoters Voters";
 <div class="splash">
 <span>
 <?php
-if ($voters == null) echo "No Voters Are Registered";
-else echo $voters;
+if ($voters == null) {
+echo "No Voters Are Registered";
+} else {
+echo $voters;
+}
 ?>
 </span>
 </div>
@@ -835,38 +1003,48 @@ $profile_song_letter = "#";
 */
 ?>
 <div class="profilepicmusic">
-<div style="padding: 5px;">
+<div style="padding : 5px; ">
 <div class="heading">
 Music Panel
 </div>
 <!-- Begin user profile song -->
-<div style="padding: 8px;">
+<div style="padding : 8px; ">
 <embed src="media/mp/<?php echo $profile_song_artist . " - " . $profile_song_name; ?>" autostart="<?php
 if (isset($_SESSION['logged']) && ($_SESSION['pref_song_astart'] == 1)) {
 if ($_SESSION['username'] == $username) {
-if ($_SESSION['pref_psong_astart'] == 0) echo "false";
-else echo "true";
+if ($_SESSION['pref_psong_astart'] == 0) {
+echo "false";
+} else {
+echo "true";
+}
 } else {
 echo "false";
 }
 } else {
-if ($profile_song_astart == 1) echo "true";
-else echo "false";
+if ($profile_song_astart == 1) {
+echo "true";
+} else {
+echo "false";
+}
 } ?>" loop="2" playcount="2" controls="smallconsole" volume="50" style="height : 16px; width : 150px; " />
 <noembed>
 <bgsound src="media/mp/<?php echo $profile_song_artist . " - " . $profile_song_name; ?>" loop="2" />
 </noembed>
 </div>
 <!-- End user profile song -->
-<div style="text-align: left;">
+<div style="text-align : left; ">
 Artist: <?php echo $profile_song_artist; ?>
 </div>
-<div style="text-align: left;">
+<div style="text-align : left; ">
 Song:
 <?php
 $nameArray = split("[/\\.]", $profile_song_name);
 $p = count($nameArray);
-for ($i = 0; $i < ($p - 1); $i++) $psongname .= $nameArray[$i];
+
+for ($i = 0; $i < ($p - 1); $i++) {
+$psongname .= $nameArray[$i];
+}
+
 echo $psongname;
 ?>
 </div>
@@ -888,27 +1066,54 @@ $members = mysql_num_rows($result);
 $rorder = mt_rand(0, 3);
 
 switch ($rorder) {
-case 0: $order = "user_id"; break;
-case 1: $order = "username"; break;
-case 2: $order = "firstname"; break;
-case 3: $order = "lastname"; break;
+case 0:
+$order = "user_id";
+break;
+
+case 1:
+$order = "username";
+break;
+
+case 2:
+$order = "firstname";
+break;
+
+case 3:
+$order = "lastname";
+break;
 }
 
 $rsort = mt_rand(0, 1);
 
-if ($rsort == 0) $sort = "ASC";
-else $sort = "DESC";
+if ($rsort == 0) {
+$sort = "ASC";
+} else {
+$sort = "DESC";
+}
 
 $range = 18;
 $limit1 = mt_rand(0, ($members - $range));
 $count = 0;
 
-$query = "SELECT u.user_id, username, firstname, lastname, default_image FROM login u JOIN info i ON u.user_id = i.user_id WHERE u.user_id != 2 ORDER BY $order $sort LIMIT $limit1, $range";
+$query = "SELECT u.user_id, username, firstname, lastname, default_image FROM
+login u
+JOIN
+info i
+ON
+u.user_id = i.user_id
+WHERE
+u.user_id != 2
+ORDER BY
+$order $sort
+LIMIT $limit1, $range";
 $result = mysql_query($query, $db) or die(mysql_error($db));
 
 while ($row2 = mysql_fetch_array($result)) {
-if ($count > 0) $friends .= ", " . $row2['username'];
-else $friends = $row2['username'];
+if ($count > 0) {
+$friends .= ", " . $row2['username'];
+} else {
+$friends = $row2['username'];
+}
 
 $count++;
 }
@@ -918,9 +1123,15 @@ if ($friends == null) {
 $friends = "Admin";
 $numfriends = 1;
 } else {
-if ($row['username'] != "Admin") $friends = "Admin, " . $friends;
-if ($row['username'] != "Admin") $numfriends = count(explode(", ", $friends));
-else $numfriends = $members;
+if ($row['username'] != "Admin") {
+$friends = "Admin, " . $friends;
+}
+
+if ($row['username'] != "Admin") {
+$numfriends = count(explode(", ", $friends));
+} else {
+$numfriends = $members;
+}
 }
 
 $friends = explode(", ", $friends);
@@ -947,21 +1158,31 @@ echo '<a href="user_profile.php?id=' . $row2['user_id'] . '" title="View ' . $fr
 ?>
 <div class="friendsection">
 <?php
-if ($row2['default_image'] != null) echo '<img src="/uploads/' . $row2['username'] . '/images/thumb/' . $row2['default_image'] . '" class="friend" /><br />' . "\n";
-else echo '<img src="i/mem/default.jpg" class="friend" /><br />' . "\n";
+if ($row2['default_image'] != null) {
+echo '<img src="uploads/' . $row2['username'] . '/images/thumb/' . $row2['default_image'] . '" class="friend" /><br />' . "\n";
+} else {
+echo '<img src="i/mem/default.jpg" class="friend" /><br />' . "\n";
+}
+
 echo "<div class='name'>" . $row2['firstname'] . " " . $row2['lastname'] . "</div>\n";
 ?>
 </div>
 </a>
 <!-- End <?php echo $row2['firstname'] . " " . $row2['lastname']; ?>'s section -->
 <?php
-$break = "<div style='clear: both; width: 100%;'> </div>\n";
+$break = "<div style='clear : both; width : 100%; '> </div>\n";
 
-if ($fcount == 3) echo $break;
-elseif ($fcount == 6) echo $break;
-elseif ($fcount == 9) echo $break;
-elseif ($fcount == 12) echo $break;
-elseif ($fcount == 15) echo $break;
+if ($fcount == 3) {
+echo $break;
+} elseif ($fcount == 6) {
+echo $break;
+} elseif ($fcount == 9) {
+echo $break;
+} elseif ($fcount == 12) {
+echo $break;
+} elseif ($fcount == 15) {
+echo $break;
+}
 
 $fcount++;
 }
@@ -1019,7 +1240,7 @@ $this_year_birth_date_timestamp = strtotime($this_year_birth_date);
 
 $years_old = ($current_year - $birth_year);
 
-if ($now < $this_year_birth_date_timestamp) {
+if ($now < $this_year_birth_date_timestamp) { // his/her birthday hasn't yet arrived this year
 $years_old = ($years_old - 1);
 }
 
@@ -1036,9 +1257,11 @@ if ($age == 0) {
 if ($current_month < $birth_month) {
 $month_diff = (12 - $birth_month);
 $age = ($month_diff + $current_month);
+
 echo $age . " Months";
 } else {
 $age = ($current_month - $birth_month);
+
 echo $age . " Months";
 }
 } else {
@@ -1050,7 +1273,9 @@ echo " / Birthdate: ";
 echo $birth_date;
 }
 
-if ($birth_month == $current_month && $birth_day == $current_day) echo " / Happy Birthday!";
+if ($birth_month == $current_month && $birth_day == $current_day) {
+echo " / Happy Birthday!";
+}
 ?></div>
 <div>Hometown: <?php echo $hometown; ?></div>
 <div>Community: <?php echo $community; ?></div>
@@ -1065,35 +1290,58 @@ Profile Stats
 <div class="content">
 <div>xRank:
 <?php
-if ($website != null) $ifexists_website = 1000;
-if ($user_style != null) $ifexists_user_style = 1000;
-if ($default_image != null) $ifexists_defualt_image = 1000;
+if ($website != null) {
+$ifexists_website = 1000;
+}
+
+if ($user_style != null) {
+$ifexists_user_style = 1000;
+}
+
+if ($default_image != null) {
+$ifexists_defualt_image = 1000;
+}
 
 $xrank = ($rank + ($hits * 2) + ($logins * 5) + ($ifexists_website) + ($ifexists_user_style) + ($ifexists_default_image));
 
 if ($logins > 5) {
-if ($logins > 100) { $xrank = ($xrank * 5);
-if ($logins > 200) { $xrank = ($xrank * 10);
-if ($logins > 300) { $xrank = ($xrank * 15);
-if ($logins > 400) { $xrank = ($xrank * 20);
-if ($logins > 500) { $xrank = ($xrank * 25);
+if ($logins > 100) {
+$xrank = ($xrank * 5);
+if ($logins > 200) {
+$xrank = ($xrank * 10);
+if ($logins > 300) {
+$xrank = ($xrank * 15);
+if ($logins > 400) {
+$xrank = ($xrank * 20);
+if ($logins > 500) {
+$xrank = ($xrank * 25);
 }}}}}
 $xrank = ($xrank * 1.0586951);
+} elseif ($logins == 4) {
+$xrank = ($xrank / 2.2452);
+} elseif ($logins == 3) {
+$xrank = ($xrank / 3.1385);
+} elseif ($logins == 2) {
+$xrank = ($xrank / 4.3698);
+} elseif ($logins == 1) {
+$xrank = 0;
+} else {
+$xrank = 0;
 }
-elseif ($logins == 4) $xrank = ($xrank / 2.2452);
-elseif ($logins == 3) $xrank = ($xrank / 3.1385);
-elseif ($logins == 2) $xrank = ($xrank / 4.3698);
-elseif ($logins == 1) $xrank = 0;
-else $xrank = 0;
 
-echo " $xrank ";
+echo " ";
+echo $xrank;
+echo " ";
 ?>
 </div>
 <div>Profile Views: 
 <?php
-$hits++;
+$hits = ($hits + 1);
 
-$query = 'UPDATE info SET hits = ' . $hits . ' WHERE user_id = ' . $user_id;
+$query = 'UPDATE info SET
+hits = ' . $hits . '
+WHERE
+user_id = ' . $user_id;
 mysql_query($query, $db) or die(mysql_error());
 
 echo $hits;
@@ -1101,17 +1349,23 @@ echo $hits;
 </div>
 <div>Logged On
 <?php
-echo " $logins ";
+echo " ";
+echo $logins;
+echo " ";
 
-if ($logins > 1) echo "Times";
-elseif ($logins == 1) echo "Time";
-else echo "Times & Was Hacked :P";
+if ($logins > 1) {
+echo "Times";
+} elseif ($logins == 1) {
+echo "Time";
+} else {
+echo "Times & Was Hacked :P";
+}
 ?>
 </div>
 <div>Last Login: <?php echo $last_login; ?></div>
 <div>Date Joined: <?php echo $date_joined; ?></div>
 </div>
-<div style="padding-bottom: 10px; text-align: center;">
+<div style="padding-bottom : 10px; text-align : center; ">
 <a href="http://www.facebook.com/share.php?u=http://hnsdesktop.tk/<?php echo $row['username']; ?>" target="_blank">Share profile on Facebook</a>
 <br />
 <a href="http://www.twitter.com/home?status=View+my+Homenet+Spaces+profile.+Check+it+out!+http://hnsdesktop.tk/<?php echo $row['username']; ?>" target="_blank">Share profile on Twitter</a>
@@ -1129,7 +1383,7 @@ Profile Details
 </div>
 </div>
 <!-- End left panel -->
-<div style="clear: both; width: 100%;">&nbsp;</div>
+<div style="clear : both; width : 100%; ">&nbsp;</div>
 <!-- Begin comments -->
 <a name="comments"></a>
 <div id="comments">
@@ -1156,19 +1410,21 @@ mysql_free_result($result3);
 
 $fullname = $row3['firstname'] . ' ' . $row3['middlename'] . ' ' . $row3['lastname'];
 
-if ($ccount > 0) echo "<br />\n";
+if ($ccount > 0) {
+echo "<br />\n";
+}
 ?>
 <div class="commentcontainer">
-<div style="diplay: block;">
-<div style="float: left; text-align: left; padding: 10px; width: 45%;">
+<div style="diplay : block; ">
+<div style="float : left; text-align : left; padding : 10px; width : 45%; ">
 <?php echo '<a href="user_profile.php?id=' . $row2['user_id'] . '">' . $row2['user'] . '</a>'; ?>
 </div>
-<div style="clear: right; float: right; text-align: right; padding: 10px; width: 45%;">
+<div style="clear : right; float : right; text-align : right; padding : 10px; width : 45%; ">
 <?php
 if (isset($_SESSION['logged']) && $_SESSION['logged'] == 1) {
 if ($row['username'] == $_SESSION['username']) {
 if ($row2['status'] == 0) {
-echo '<span style="color: #f00; font-weight: bold;">New!</span> | ';
+echo '<span style="color : #ff0000; font-weight : bold; ">New!</span> | ';
 }
 }
 }
@@ -1177,24 +1433,27 @@ echo $row2['date'];
 ?>
 </div>
 </div>
-<div style="background-color: #fff; clear: both; display: block; margin: 0 auto; margin-left: 10px; margin-right: 10px; min-height: 50px; padding: 10px; padding-bottom: 16px; text-align: left;">
-<div style="display: block; text-align: center; width: 10%;">
+<div style="background-color : #ffffff; clear : both; display : block; margin : 0 auto; margin-left : 10px; margin-right : 10px; min-height : 50px; padding : 10px; padding-bottom : 16px;  text-align : left; ">
+<div style="display : block; text-align : center; width : 10%; ">
 <?php
-if ($row3['default_image'] != null) echo '<img src="/uploads/' . $row2['user'] . '/images/thumb/' . $row3['default_image'] . '" id="defaultuserimage" title="' . $fullname . '" style="float: left; height: 50px; margin-right: 10px; margin-top: 4px; width: 50px;" />' . "\n";
-else echo '<img src="i/mem/default.jpg" alt="" id="defaultuserimage" style="float: left; height: 50px; margin-right: 10px; margin-top: 4px; width: 50px;" />' . "\n";
+if ($row3['default_image'] != null) {
+echo '<img src="uploads/' . $row2['user'] . '/images/thumb/' . $row3['default_image'] . '" id="defaultuserimage" title="' . $fullname . '" style="float : left; height : 50px; margin-right : 10px; margin-top : 4px; width : 50px; " />' . "\n";
+} else {
+echo '<img src="i/mem/default.jpg" alt="" id="defaultuserimage" style="float : left; height : 50px; margin-right : 10px; margin-top : 4px; width : 50px; " />' . "\n";
+}
 ?>
 </div>
-<div style="clear: right; display: block; font-size: 12pt; width: 100%;">
+<div style="clear : right; display : block; font-size : 12pt; width : 100%; ">
 <?php
 echo $row2['comment'];
 ?>
 </div>
 </div>
 <?php
-if (isset($_SESSION['logged']) && ($_SESSION['logged'] == 1)) {
+if (isset($_SESSION['logged']) && $_SESSION['logged'] == 1) {
 if ($row['username'] == $_SESSION['username']) {
 ?>
-<div style="clear: both; padding: 10px; text-align: right;">
+<div style="clear : both; padding : 10px; text-align : right; ">
 <a href="user_comments.php?comment_id=<?php echo $row2['comment_id'] . "&action=delete"; ?>">Delete</a> | 
 <a href="user_profile.php?id=<?php echo $row2['user_id'] . "&action=comment"; ?>">Comment Back</a> | 
 <a href="user_profile.php?id=<?php echo $row2['user_id'] . "&action=message"; ?>">Message</a>
@@ -1202,7 +1461,7 @@ if ($row['username'] == $_SESSION['username']) {
 <?php
 } else {
 ?>
-<div style="clear: both; padding: 10px; text-align: right;">
+<div style="clear : both; padding : 10px; text-align : right; ">
 <a href="user_profile.php?id=<?php echo $row2['user_id'] . "&action=comment"; ?>">Comment</a> | 
 <a href="user_profile.php?id=<?php echo $row2['user_id'] . "&action=message"; ?>">Message</a>
 </div>
@@ -1210,7 +1469,7 @@ if ($row['username'] == $_SESSION['username']) {
 }
 } else {
 ?>
-<div style="clear: both; padding: 10px; text-align: right;">
+<div style="clear : both; padding : 10px; text-align : right; ">
 </div>
 <?php
 }
@@ -1228,7 +1487,7 @@ $ccount++;
 <br />
 </div>
 <!-- End comments -->
-<div style="clear: both; width: 100%;">&nbsp;</div>
+<div style="clear : both; width : 100%; ">&nbsp;</div>
 <?php
 }
 }

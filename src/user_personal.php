@@ -2,8 +2,26 @@
 require ("lang.inc.php");
 include ("auth.inc.php");
 include ("db.member.inc.php");
+include ("bimage.inc.php");
 
-$query = 'SELECT * FROM login u JOIN info i ON u.user_id = i.user_id WHERE username = "' . mysql_real_escape_string($_SESSION['username'], $db) . '"';
+if (!isset($_GET['login'])) {
+} else {
+switch ($_GET['login']) {
+case '1':
+header ('refresh: 3; url=user_personal.php');
+echo '<embed src="psp/images/start.swf" hidden="true" loop="false" pluginspage="http://www.macromedia.com/go/getflashplayer" type="application/x-shockwave-flash" name="flStart" style="position : absolute; top : -100; left : -100; "></embed>';
+break;
+}
+}
+
+$query = 'SELECT * FROM
+login u
+JOIN
+info i
+ON
+u.user_id = i.user_id
+WHERE
+username = "' . mysql_real_escape_string($_SESSION['username'], $db) . '"';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 $row = mysql_fetch_array($result);
 extract($row);
@@ -17,69 +35,78 @@ $fullname = $row['firstname'] . " " . $row['middlename'] . " " . $row['lastname'
 <head>
 <title><?php echo $TEXT['global-headertitle'] . " | " . $firstname . " " . $lastname . " | " . $TEXT['homepage-headertitle']; ?></title>
 <meta http-equiv="content-type" content="text/html; charset=<?php echo $TEXT['global-charset']; ?>" />
-<script type="text/javascript" src="jquery.js"></script>
-<script type="text/javascript" src="javascript.php"></script>
+<meta name="author" content="Homenet Spaces Andrew Gerst" />
+<meta name="copyright" content="© Homenet Spaces" />
+<meta name="keywords" content="Homenet, Spaces, The, Place, To, Be, Creative, Andrew, Gerst, Free, Profiles, Information, Facts" />
+<meta name="description" content="Welcome to Homenet Spaces we offer you a free profile with many cool and interesting things! This is the place to be creative!" />
+<meta name="revisit-after" content="7 days" />
+<meta name="googlebot" content="index, follow, all" />
+<meta name="robots" content="index, follow, all" />
+<link rel="stylesheet" type="text/css" href="css/global.css" media="all" />
+<script type="text/javascript" src="cs.js"></script>
+<script type="text/javascript" src="nav.js"></script>
+<script type="text/javascript" src="suggest.js"></script>
 <style type="text/css">
 #star { 
-margin : 0 auto; 
-padding-top : 5px; 
-width : 125px; 
-}
+	margin : 0 auto; 
+	padding-top : 5px; 
+	width : 125px; 
+	}
 
 #star ul.star { 
-background : url('i/sy/st/stars.gif') repeat-x; 
-cursor : pointer; 
-float : left; 
-height : 20px; 
-left : 0px; 
-list-style-type : none; 
-margin : 0px; 
-padding : 0px; 
-position : relative; 
-top : -5px; 
-width : 85px; 
-}
+	background : url('i/sy/st/stars.gif') repeat-x; 
+	cursor : pointer; 
+	float : left; 
+	height : 20px; 
+	left : 0px; 
+	list-style-type : none; 
+	margin : 0px; 
+	padding : 0px; 
+	position : relative; 
+	top : -5px; 
+	width : 85px; 
+	}
 
 #star li { 
-display : block; 
-float : left; 
-height : 20px; 
-left : 0px; 
-margin : 0px; 
-padding : 0px; 
-position : absolute; 
-text-decoration : none; 
-text-indent : -9000px; 
-width : 85px; 
-z-index : 120; 
-}
+	display : block; 
+	float : left; 
+	height : 20px; 
+	left : 0px; 
+	margin : 0px; 
+	padding : 0px; 
+	position : absolute; 
+	text-decoration : none; 
+	text-indent : -9000px; 
+	width : 85px; 
+	z-index : 120; 
+	}
 
 #star li.curr { 
-background : url('i/sy/st/stars.gif') left 25px; 
-font-size : 1px; 
-}
+	background : url('i/sy/st/stars.gif') left 25px; 
+	font-size : 1px; 
+	}
 
 #star div.user { 
-color: rgb(136, 136, 136); 
-float : left; 
-font-family : arial; 
-font-size : 13px; 
-left : 15px; 
-position : relative; 
-width : 20px; 
-}
+	color: rgb(136, 136, 136); 
+	float : left; 
+	font-family : arial; 
+	font-size : 13px; 
+	left : 15px; 
+	position : relative; 
+	width : 20px; 
+	}
 
 #star div.starvotes { 
-clear : both; 
-color: rgb(136, 136, 136); 
-padding-bottom : 2px; 
-text-align : center; 
-}
+	clear : both; 
+	color: rgb(136, 136, 136); 
+	padding-bottom : 2px; 
+	text-align : center; 
+	}
 
 #star div.starvotes a { 
-color: rgb(136, 136, 136); 
-text-decoration : none; 
-}
+	color: rgb(136, 136, 136); 
+	text-decoration : none; 
+	}
 </style>
 <script type="text/javascript">
 function $(v,o) {
@@ -177,245 +204,278 @@ document.onmousemove = '';
 star.num = 0;
 </script>
 <style type="text/css">
+div#profileheader { 
+	background-color : #ff9; 
+	border : 2px solid #fc0; 
+	border-radius : 8px; 
+	border-radius-bottomleft : 0px; 
+	border-radius-bottomright : 0px; 
+	-moz-border-radius-topleft : 8px; 
+	-webkit-border-top-left-radius : 8px; 
+	-moz-border-radius-topright : 8px; 
+	-webkit-border-top-right-radius : 8px; 
+	display : block; 
+	height : auto; 
+	line-height : 110px; 
+	margin : 0 auto; 
+	margin-left : 20px; 
+	margin-right : 20px; 
+	text-align : left; 
+	width : 915px; 
+	}
+
+div#profileheader div.heading { 
+	font-size : 40px; 
+	left : 20px; 
+	letter-spacing : 1px; 
+	position : relative; 
+	}
+
 div#leftpanel { 
-float : left; 
-margin-left : 20px; 
-width : 47%; 
-}
+	float : left; 
+	margin-left : 20px; 
+	width : 47%; 
+	}
 
 div#rightpanel { 
-float : right; 
-margin-right : 20px; 
-width : 47%; 
-z-index : 900; 
-}
+	float : right; 
+	margin-right : 20px; 
+	width : 47%; 
+	z-index : 900; 
+	}
 
 div#rightpanel div#profilepic { 
-position : relative; 
-right : -98px; 
-top : -85px;
-}
+	position : relative; 
+	right : -98px; 
+	top : -85px;
+	}
 
 div#rightpanel div.profilepicinfo { 
-background-color : #ff9; 
-border : 2px solid #fc0; 
-border-radius-bottomleft : 8px; 
-border-radius-bottomright : 8px; 
--moz-border-radius-bottomleft : 8px; 
--webkit-border-bottom-left-radius : 8px; 
--moz-border-radius-bottomright : 8px; 
--webkit-border-bottom-right-radius : 8px; 
-display : block; 
-height : auto; 
-margin : 0 auto; 
-margin-top : 15px; 
-padding : 6px; 
-text-align : left; 
-width : 176px; 
-}
+	background-color : #ff9; 
+	border : 2px solid #fc0; 
+	border-radius-bottomleft : 8px; 
+	border-radius-bottomright : 8px; 
+	-moz-border-radius-bottomleft : 8px; 
+	-webkit-border-bottom-left-radius : 8px; 
+	-moz-border-radius-bottomright : 8px; 
+	-webkit-border-bottom-right-radius : 8px; 
+	display : block; 
+	height : auto; 
+	margin : 0 auto; 
+	margin-top : 15px; 
+	padding : 6px; 
+	text-align : left; 
+	width : 176px; 
+	}
 
 div#rightpanel div.profilepicinfo div.sam { 
-padding : 5px; 
-}
+	padding : 5px; 
+	}
 
 div#rightpanel div.profilepicupdate { 
-background-color : #ff9; 
-border : 2px solid #fc0; 
-border-radius : 8px; 
--moz-border-radius : 8px; 
--webkit-border-radius : 8px; 
-display : block; 
-height : auto; 
-margin : 0 auto; 
-margin-top : 15px; 
-padding : 6px; 
-text-align : center; 
-width : 176px; 
-}
+	background-color : #ff9; 
+	border : 2px solid #fc0; 
+	border-radius : 8px; 
+	-moz-border-radius : 8px; 
+	-webkit-border-radius : 8px; 
+	display : block; 
+	height : auto; 
+	margin : 0 auto; 
+	margin-top : 15px; 
+	padding : 6px; 
+	text-align : center; 
+	width : 176px; 
+	}
 
 div#rightpanel div.profilepicupdate div.content { 
-line-height : 1.5em; 
-margin : 5px; 
-}
+	line-height : 1.5em; 
+	margin : 5px; 
+	}
 
 div#rightpanel div.profilepicchecklist { 
-background-color : #ff9; 
-border : 2px solid #fc0; 
-border-radius : 8px; 
--moz-border-radius : 8px; 
--webkit-border-radius : 8px; 
-display : block; 
-height : auto; 
-margin : 0 auto; 
-margin-top : 15px; 
-padding : 6px; 
-text-align : center; 
-width : 176px; 
-}
+	background-color : #ff9; 
+	border : 2px solid #fc0; 
+	border-radius : 8px; 
+	-moz-border-radius : 8px; 
+	-webkit-border-radius : 8px; 
+	display : block; 
+	height : auto; 
+	margin : 0 auto; 
+	margin-top : 15px; 
+	padding : 6px; 
+	text-align : center; 
+	width : 176px; 
+	}
 
 div#rightpanel div.profilepicchecklist div.heading { 
-color : #ff0000; 
-font-size : 16pt; 
-padding-top : 4px; 
-text-align : center; 
-width : 100%; 
-}
+	color : #ff0000; 
+	font-size : 16pt; 
+	padding-top : 4px; 
+	text-align : center; 
+	width : 100%; 
+	}
 
 div#rightpanel div.profilepicchecklist div.content { 
-line-height : 1.5em; 
-margin : 5px; 
-}
+	line-height : 1.5em; 
+	margin : 5px; 
+	}
 
 div#leftpanel div.profilelinks { 
-background-color : #ff9; 
-border : 2px solid #fc0; 
-border-radius : 8px; 
-border-radius-topleft : 0px; 
-border-radius-bottomright : 0px; 
--moz-border-radius-bottomleft : 8px; 
--webkit-border-bottom-left-radius : 8px; 
--moz-border-radius-topright : 8px; 
--webkit-border-top-right-radius : 8px; 
-display : inline; 
-float : left; 
-height : auto; 
-line-height : 50px; 
-margin : 0 auto; 
-margin-top : 15px; 
-text-align : center; 
-width : 440px; 
-}
+	background-color : #ff9; 
+	border : 2px solid #fc0; 
+	border-radius : 8px; 
+	border-radius-topleft : 0px; 
+	border-radius-bottomright : 0px; 
+	-moz-border-radius-bottomleft : 8px; 
+	-webkit-border-bottom-left-radius : 8px; 
+	-moz-border-radius-topright : 8px; 
+	-webkit-border-top-right-radius : 8px; 
+	display : inline; 
+	float : left; 
+	height : auto; 
+	line-height : 50px; 
+	margin : 0 auto; 
+	margin-top : 15px; 
+	text-align : center; 
+	width : 440px; 
+	}
 
 div#leftpanel div.profileawaymessage { 
-background-color : #ff9; 
-border : 2px solid #fc0; 
-border-radius : 8px; 
-border-radius-topleft : 0px; 
-border-radius-bottomright : 0px; 
--moz-border-radius-bottomleft : 8px; 
--webkit-border-bottom-left-radius : 8px; 
--moz-border-radius-topright : 8px; 
--webkit-border-top-right-radius : 8px; 
-display : inline; 
-float : left; 
-height : auto; 
-margin : 0 auto; 
-margin-top : 15px; 
-text-align : center; 
-width : 440px; 
-}
+	background-color : #ff9; 
+	border : 2px solid #fc0; 
+	border-radius : 8px; 
+	border-radius-topleft : 0px; 
+	border-radius-bottomright : 0px; 
+	-moz-border-radius-bottomleft : 8px; 
+	-webkit-border-bottom-left-radius : 8px; 
+	-moz-border-radius-topright : 8px; 
+	-webkit-border-top-right-radius : 8px; 
+	display : inline; 
+	float : left; 
+	height : auto; 
+	margin : 0 auto; 
+	margin-top : 15px; 
+	text-align : center; 
+	width : 440px; 
+	}
 
 div#leftpanel div.profileawaymessage div.heading { 
-color : #ff0000; 
-font-size : 16pt; 
-letter-spacing : 1px; 
-padding-top : 8px; 
-text-align : center; 
-width : 100%; 
-}
+	color : #ff0000; 
+	font-size : 16pt; 
+	letter-spacing : 1px; 
+	padding-top : 8px; 
+	text-align : center; 
+	width : 100%; 
+	}
 
 div#leftpanel div.profileawaymessage div.content { 
-letter-spacing : 1px; 
-padding : 20px; 
-}
+	letter-spacing : 1px; 
+	padding : 20px; 
+	}
 
 div#leftpanel div.profileinfo { 
-background-color : #ff9; 
-border : 2px solid #fc0; 
-border-radius : 8px; 
-border-radius-topright : 0px; 
--moz-border-radius-bottomleft : 8px; 
--webkit-border-bottom-left-radius : 8px; 
--moz-border-radius-bottomright : 8px; 
--webkit-border-bottom-right-radius : 8px; 
--moz-border-radius-topleft : 8px; 
--webkit-border-top-left-radius : 8px; 
-clear : both; 
-display : block; 
-float : left; 
-height : auto; 
-margin : 0 auto; 
-margin-top : 15px; 
-text-align : left; 
-width : 440px; 
-}
+	background-color : #ff9; 
+	border : 2px solid #fc0; 
+	border-radius : 8px; 
+	border-radius-topright : 0px; 
+	-moz-border-radius-bottomleft : 8px; 
+	-webkit-border-bottom-left-radius : 8px; 
+	-moz-border-radius-bottomright : 8px; 
+	-webkit-border-bottom-right-radius : 8px; 
+	-moz-border-radius-topleft : 8px; 
+	-webkit-border-top-left-radius : 8px; 
+	clear : both; 
+	display : block; 
+	float : left; 
+	height : auto; 
+	margin : 0 auto; 
+	margin-top : 15px; 
+	text-align : left; 
+	width : 440px; 
+	}
 
 div#leftpanel div.profileinfo div.heading { 
-font-size : 16pt; 
-padding-top : 8px; 
-text-align : center; 
-width : 100%; 
-}
+	font-size : 16pt; 
+	padding-top : 8px; 
+	text-align : center; 
+	width : 100%; 
+	}
 
 div#leftpanel div.profileinfo div.content { 
-margin : 18px; 
-}
+	margin : 18px; 
+	}
 
 div#leftpanel div.profilestats { 
-background-color : #ff9; 
-border : 2px solid #fc0; 
-border-radius : 8px; 
--moz-border-radius-bottomleft : 8px; 
--webkit-border-bottom-left-radius : 8px; 
--moz-border-radius-bottomright : 8px; 
--webkit-border-bottom-right-radius : 8px; 
--moz-border-radius-topleft : 8px; 
--webkit-border-top-left-radius : 8px; 
--moz-border-radius-topright : 8px; 
--webkit-border-top-right-radius : 8px; 
-clear : both; 
-display : block; 
-float : left; 
-height : auto; 
-margin : 0 auto; 
-margin-top : 15px; 
-text-align : left; 
-width : 440px; 
-}
+	background-color : #ff9; 
+	border : 2px solid #fc0; 
+	border-radius : 8px; 
+	-moz-border-radius-bottomleft : 8px; 
+	-webkit-border-bottom-left-radius : 8px; 
+	-moz-border-radius-bottomright : 8px; 
+	-webkit-border-bottom-right-radius : 8px; 
+	-moz-border-radius-topleft : 8px; 
+	-webkit-border-top-left-radius : 8px; 
+	-moz-border-radius-topright : 8px; 
+	-webkit-border-top-right-radius : 8px; 
+	clear : both; 
+	display : block; 
+	float : left; 
+	height : auto; 
+	margin : 0 auto; 
+	margin-top : 15px; 
+	text-align : left; 
+	width : 440px; 
+	}
 
 div#leftpanel div.profilestats div.heading { 
-font-size : 16pt; 
-padding-top : 8px; 
-text-align : center; 
-width : 100%; 
-}
+	font-size : 16pt; 
+	padding-top : 8px; 
+	text-align : center; 
+	width : 100%; 
+	}
 
 div#leftpanel div.profilestats div.content { 
-margin : 18px; 
-}
+	margin : 18px; 
+	}
 
 div#leftpanel div.profiledetails { 
-background-color : #ff9; 
-border : 2px solid #fc0; 
-border-radius : 8px; 
--moz-border-radius-bottomleft : 8px; 
--webkit-border-bottom-left-radius : 8px; 
--moz-border-radius-bottomright : 8px; 
--webkit-border-bottom-right-radius : 8px; 
--moz-border-radius-topleft : 8px; 
--webkit-border-top-left-radius : 8px; 
--moz-border-radius-topright : 8px; 
--webkit-border-top-right-radius : 8px; 
-clear : both; 
-display : block; 
-float : left; 
-height : auto; 
-margin : 0 auto; 
-margin-top : 15px; 
-text-align : left; 
-width : 440px; 
-}
+	background-color : #ff9; 
+	border : 2px solid #fc0; 
+	border-radius : 8px; 
+	-moz-border-radius-bottomleft : 8px; 
+	-webkit-border-bottom-left-radius : 8px; 
+	-moz-border-radius-bottomright : 8px; 
+	-webkit-border-bottom-right-radius : 8px; 
+	-moz-border-radius-topleft : 8px; 
+	-webkit-border-top-left-radius : 8px; 
+	-moz-border-radius-topright : 8px; 
+	-webkit-border-top-right-radius : 8px; 
+	clear : both; 
+	display : block; 
+	float : left; 
+	height : auto; 
+	margin : 0 auto; 
+	margin-top : 15px; 
+	text-align : left; 
+	width : 440px; 
+	}
 
 div#leftpanel div.profiledetails div.heading { 
-font-size : 16pt; 
-padding-top : 8px; 
-text-align : center; 
-width : 100%; 
-}
+	font-size : 16pt; 
+	padding-top : 8px; 
+	text-align : center; 
+	width : 100%; 
+	}
 
 div#leftpanel div.profiledetails div.content { 
-margin : 18px; 
-}
+	margin : 18px; 
+	}
+</style>
+<style type="text/css">
+body { 
+	background: url(<?php echo $bimage; ?>) repeat; 
+	background-position : 50% 140px; 
+	}
 </style>
 <?php
 if (isset($_SESSION['logged']) && ($_SESSION['pref_upstyle'] == 1)) {
@@ -434,19 +494,26 @@ if ($user_style != null) {
 </head>
 
 <body id="userpersonal_body">
-<?php include ("hd.inc.php"); ?>
+<?php
+include ("hd.inc.php");
+?>
 <!-- Begin page content -->
 <div id="userpersonal_pagecontent" class="pagecontent">
-<div id="pageheader" class="pageheader2"><div class="heading">
+<div id="profileheader">
+<div class="heading">
 Personal Area
-</div></div>
+</div>
+</div>
 <!-- Begin right panel -->
 <div id="rightpanel">
 <!-- Begin profile pic -->
 <div id="profilepic">
 <?php
-if ($row['default_image'] != null) echo '<a href="user_pictures.php?id=' . $user_id . '"><img src="/uploads/' . $row['username'] . '/images/thumb/' . $row['default_image'] . '" id="defaultuserimage" title="View ' . $firstname . ' ' . $lastname . '\'s Picture Gallery" /></a><br />' . "\n";
-else echo '<img src="i/mem/default.jpg" id="defaultuserimage" /><br />' . "\n";
+if ($row['default_image'] != null) {
+echo '<a href="user_pictures.php?id=' . $user_id . '"><img src="uploads/' . $row['username'] . '/images/thumb/' . $row['default_image'] . '" id="defaultuserimage" title="View ' . $firstname . ' ' . $lastname . '\'s Picture Gallery" /></a><br />' . "\n";
+} else {
+echo '<img src="i/mem/default.jpg" id="defaultuserimage" /><br />' . "\n";
+}
 ?>
 <div class="profilepicinfo">
 <div class="sam">
@@ -462,27 +529,45 @@ if ($chars >= 13) {
 if ($upper_case_count == 0 || 1) {
 echo split_hjms_chars($status, 11, $dots);
 } else {
-if ($upper_case_count >= 8) echo split_hjms_chars($status, 8, $dots);
-elseif ($upper_case_count == 7) echo split_hjms_chars($status, 8, $dots);
-elseif ($upper_case_count == 6) echo split_hjms_chars($status, 9, $dots);
-elseif ($upper_case_count == 5) echo split_hjms_chars($status, 10, $dots);
-elseif ($upper_case_count == 4) echo split_hjms_chars($status, 10, $dots);
-elseif ($upper_case_count == 3) echo split_hjms_chars($status, 10, $dots);
-elseif ($upper_case_count == 2) echo split_hjms_chars($status, 10, $dots);
+if ($upper_case_count >= 8) {
+echo split_hjms_chars($status, 8, $dots);
+} elseif ($upper_case_count == 7) {
+echo split_hjms_chars($status, 8, $dots);
+} elseif ($upper_case_count == 6) {
+echo split_hjms_chars($status, 9, $dots);
+} elseif ($upper_case_count == 5) {
+echo split_hjms_chars($status, 10, $dots);
+} elseif ($upper_case_count == 4) {
+echo split_hjms_chars($status, 10, $dots);
+} elseif ($upper_case_count == 3) {
+echo split_hjms_chars($status, 10, $dots);
+} elseif ($upper_case_count == 2) {
+echo split_hjms_chars($status, 10, $dots);
+}
 }
 } else { // l2 or less characters
 if ($upper_case_count <= 3) {
 echo $status;
 } else {
-if ($upper_case_count == 4) echo split_hjms_chars($status, 10, $dots);
-elseif ($upper_case_count == 5) echo split_hjms_chars($status, 10, $dots);
-elseif ($upper_case_count == 6) echo split_hjms_chars($status, 10, $dots);
-elseif ($upper_case_count == 7) echo split_hjms_chars($status, 10, $dots);
-elseif ($upper_case_count == 8) echo split_hjms_chars($status, 9, $dots);
-elseif ($upper_case_count == 9) echo split_hjms_chars($status, 9, $dots);
-elseif ($upper_case_count == 10) echo split_hjms_chars($status, 9, $dots);
-elseif ($upper_case_count == 11) echo split_hjms_chars($status, 9, $dots);
-elseif ($upper_case_count == 12) echo split_hjms_chars($status, 9, $dots);
+if ($upper_case_count == 4) {
+echo split_hjms_chars($status, 10, $dots);
+} elseif ($upper_case_count == 5) {
+echo split_hjms_chars($status, 10, $dots);
+} elseif ($upper_case_count == 6) {
+echo split_hjms_chars($status, 10, $dots);
+} elseif ($upper_case_count == 7) {
+echo split_hjms_chars($status, 10, $dots);
+} elseif ($upper_case_count == 8) {
+echo split_hjms_chars($status, 9, $dots);
+} elseif ($upper_case_count == 9) {
+echo split_hjms_chars($status, 9, $dots);
+} elseif ($upper_case_count == 10) {
+echo split_hjms_chars($status, 9, $dots);
+} elseif ($upper_case_count == 11) {
+echo split_hjms_chars($status, 9, $dots);
+} elseif ($upper_case_count == 12) {
+echo split_hjms_chars($status, 9, $dots);
+}
 }
 }
 ?>
@@ -499,27 +584,45 @@ if ($chars >= 13) {
 if ($upper_case_count == 0 || 1) {
 echo split_hjms_chars($mood, 11, $dots);
 } else {
-if ($upper_case_count >= 8) echo split_hjms_chars($mood, 8, $dots);
-elseif ($upper_case_count == 7) echo split_hjms_chars($mood, 8, $dots);
-elseif ($upper_case_count == 6) echo split_hjms_chars($mood, 9, $dots);
-elseif ($upper_case_count == 5) echo split_hjms_chars($mood, 10, $dots);
-elseif ($upper_case_count == 4) echo split_hjms_chars($mood, 10, $dots);
-elseif ($upper_case_count == 3) echo split_hjms_chars($mood, 10, $dots);
-elseif ($upper_case_count == 2) echo split_hjms_chars($mood, 10, $dots);
+if ($upper_case_count >= 8) {
+echo split_hjms_chars($mood, 8, $dots);
+} elseif ($upper_case_count == 7) {
+echo split_hjms_chars($mood, 8, $dots);
+} elseif ($upper_case_count == 6) {
+echo split_hjms_chars($mood, 9, $dots);
+} elseif ($upper_case_count == 5) {
+echo split_hjms_chars($mood, 10, $dots);
+} elseif ($upper_case_count == 4) {
+echo split_hjms_chars($mood, 10, $dots);
+} elseif ($upper_case_count == 3) {
+echo split_hjms_chars($mood, 10, $dots);
+} elseif ($upper_case_count == 2) {
+echo split_hjms_chars($mood, 10, $dots);
+}
 }
 } else { // l2 or less characters
 if ($upper_case_count <= 3) {
 echo $mood;
 } else {
-if ($upper_case_count == 4) echo split_hjms_chars($mood, 10, $dots);
-elseif ($upper_case_count == 5) echo split_hjms_chars($mood, 10, $dots);
-elseif ($upper_case_count == 6) echo split_hjms_chars($mood, 10, $dots);
-elseif ($upper_case_count == 7) echo split_hjms_chars($mood, 10, $dots);
-elseif ($upper_case_count == 8) echo split_hjms_chars($mood, 9, $dots);
-elseif ($upper_case_count == 9) echo split_hjms_chars($mood, 9, $dots);
-elseif ($upper_case_count == 10) echo split_hjms_chars($mood, 9, $dots);
-elseif ($upper_case_count == 11) echo split_hjms_chars($mood, 9, $dots);
-elseif ($upper_case_count == 12) echo split_hjms_chars($mood, 9, $dots);
+if ($upper_case_count == 4) {
+echo split_hjms_chars($mood, 10, $dots);
+} elseif ($upper_case_count == 5) {
+echo split_hjms_chars($mood, 10, $dots);
+} elseif ($upper_case_count == 6) {
+echo split_hjms_chars($mood, 10, $dots);
+} elseif ($upper_case_count == 7) {
+echo split_hjms_chars($mood, 10, $dots);
+} elseif ($upper_case_count == 8) {
+echo split_hjms_chars($mood, 9, $dots);
+} elseif ($upper_case_count == 9) {
+echo split_hjms_chars($mood, 9, $dots);
+} elseif ($upper_case_count == 10) {
+echo split_hjms_chars($mood, 9, $dots);
+} elseif ($upper_case_count == 11) {
+echo split_hjms_chars($mood, 9, $dots);
+} elseif ($upper_case_count == 12) {
+echo split_hjms_chars($mood, 9, $dots);
+}
 }
 }
 ?>
@@ -528,7 +631,7 @@ elseif ($upper_case_count == 12) echo split_hjms_chars($mood, 9, $dots);
 <div id="star">
 <ul id="star" class="star" onmousedown="star.update(event,this)" onmousemove="star.mouse(event,this)" title="Rate <?php echo $firstname . " " . $lastname . "!"; ?>">
 <li id="starCur" class="curr" title="<?php echo ($rating); ?>"<?php
-echo ' style="width: ';
+echo ' style="width : ';
 $width = round((($rating) * 84) / 100);
 echo $width;
 echo 'px; ">';
@@ -539,8 +642,10 @@ echo 'px; ">';
 <small><a href="#" title="See Who Voted!" onclick="showMe2('voters')">
 <?php
 $votes = ($xratings > 0) ? $xratings : 'No';
+echo $votes;
 $vtense = ($xratings == 0 || $xratings > 1) ? ' Votes' : ' Vote';
-echo "$votes$vtense</a></small>";
+echo $vtense;
+echo "</a></small>";
 
 if (isset($_GET['rating'])) {
 if (($vote < 0) || ($vote > 100)) {
@@ -554,8 +659,20 @@ echo "</small>";
 ?>
 </div>
 </div>
+<script type="text/javascript">
+<!-- 
+function showMe5 (it) {
+var vis = document.getElementById(it).style.visibility
+if (vis == "hidden") {
+document.getElementById(it).style.visibility = "visible";
+} else {
+document.getElementById(it).style.visibility = "hidden";
+}
+}
+//-->
+</script>
 <!-- Begin voters -->
-<div id="voters" style="visibility: hidden; display: block;">
+<div id="voters" style="visibility : hidden; display : block; ">
 <span class="closespan">
 <span class="header">
 <?php
@@ -564,8 +681,13 @@ echo "0 Voters";
 } else {
 $numvoters = str_word_count($voters, null, '.0..9');
 
-if ($numvoters == 1) echo "1 Voter";
-else echo "$numvoters Voters";
+if ($numvoters == 1) {
+echo $numvoters;
+echo " Voter";
+} else {
+echo $numvoters;
+echo " Voters";
+}
 }
 ?>
 </span>
@@ -574,8 +696,11 @@ else echo "$numvoters Voters";
 <div class="splash">
 <span>
 <?php
-if ($voters == null) echo "No Voters Are Registered";
-else echo $voters;
+if ($voters == null) {
+echo "No Voters Are Registered";
+} else {
+echo $voters;
+}
 ?>
 </span>
 </div>
@@ -592,12 +717,30 @@ else echo $voters;
 <?php
 $checklist = 0;
 
-if ($row['default_image'] == null) $checklist += 1;
-if (($status == null) || ($mood == null)) $checklist += 1;
-if ($user_style == null) $checklist += 1;
-if ($website == null) $checklist += 1;
-if ($about_me == null) $checklist += 1;
-if ($profile_song_letter == null || $profile_song_artist == null || $profile_song_name == null) $checklist += 1;
+if ($row['default_image'] == null) {
+$checklist += 1;
+}
+
+if (($status == null) || ($mood == null)) {
+$checklist += 1;
+}
+
+if ($user_style == null) {
+$checklist += 1;
+}
+
+if ($website == null) {
+$checklist += 1;
+}
+
+if ($about_me == null) {
+$checklist += 1;
+}
+
+if ($profile_song_letter == null || $profile_song_artist == null || $profile_song_name == null) {
+$checklist += 1;
+}
+
 if ($checklist > 0) {
 ?>
 <div class="profilepicchecklist">
@@ -606,16 +749,35 @@ if ($checklist > 0) {
 </div>
 <div class="content">
 <?php
-if ($row['default_image'] == null) echo '<div><a href="upload.php?type=image&default">Upload Default Image</a></div>';
-if (($status == null) || ($mood == null)) echo '<div><a href="#" onclick="showMe3(\'samupdate\'); ">Update Status & Mood</a></div>';
-if ($user_style == null) echo '<div><a href="customize_profile.php">Customize Profile</a></div>';
-if ($website == null) echo '<div><a href="update_account.php">Add Website</a></div>';
-if ($about_me == null) echo '<div><a href="update_account.php">About Me</a></div>';
-if ($profile_song_letter == null || $profile_song_artist == null || $profile_song_name == null) echo '<div><a href="update_account.php">Profile Song</a></div>';
+if ($row['default_image'] == null) {
+echo '<div><a href="upload.php?type=image&default">Upload Default Image</a></div>';
+}
+
+if (($status == null) || ($mood == null)) {
+echo '<div><a href="#" onclick="showMe3(\'samupdate\'); ">Update Status & Mood</a></div>';
+}
+
+if ($user_style == null) {
+echo '<div><a href="customize_profile.php">Customize Profile</a></div>';
+}
+
+if ($website == null) {
+echo '<div><a href="update_account.php">Add Website</a></div>';
+}
+
+if ($about_me == null) {
+echo '<div><a href="update_account.php">About Me</a></div>';
+}
+
+if ($profile_song_letter == null || $profile_song_artist == null || $profile_song_name == null) {
+echo '<div><a href="update_account.php">Profile Song</a></div>';
+}
 ?>
 </div>
 </div>
-<?php } ?>
+<?php
+}
+?>
 </div>
 <!-- End profile pic -->
 </div>
@@ -627,7 +789,7 @@ if ($profile_song_letter == null || $profile_song_artist == null || $profile_son
 </div>
 <div class="profileinfo">
 <div class="heading">
-<?php echo "Welcome $firstname $lastname"; ?>
+<?php echo "Welcome " . $firstname . " " . $lastname; ?>
 </div>
 <div class="content">
 <div>Gender: <?php echo $gender; ?></div>
@@ -665,20 +827,25 @@ if ($age == 0) {
 if ($current_month < $birth_month) {
 $month_diff = (12 - $birth_month);
 $age = ($month_diff + $current_month);
-echo "$age Months";
+
+echo $age . " Months";
 } else {
 $age = ($current_month - $birth_month);
-echo "$age Months";
+
+echo $age . " Months";
 }
 } else {
 echo $age;
 }
 
 if ($privacy_birthdate == 1) {
-echo " / Birthdate: $birth_date";
+echo " / Birthdate: ";
+echo $birth_date;
 }
 
-if ($birth_month == $current_month && $birth_day == $current_day) echo " / Happy Birthday!";
+if ($birth_month == $current_month && $birth_day == $current_day) {
+echo " / Happy Birthday!";
+}
 ?></div>
 <div>Hometown: <?php echo $hometown; ?></div>
 <div>Community: <?php echo $community; ?></div>
@@ -693,35 +860,58 @@ Profile Stats
 <div class="content">
 <div>xRank:
 <?php
-if ($website != null) $ifexists_website = 1000;
-if ($user_style != null) $ifexists_user_style = 1000;
-if ($default_image != null) $ifexists_defualt_image = 1000;
+if ($website != null) {
+$ifexists_website = 1000;
+}
+
+if ($user_style != null) {
+$ifexists_user_style = 1000;
+}
+
+if ($default_image != null) {
+$ifexists_defualt_image = 1000;
+}
 
 $xrank = ($rank + ($hits * 2) + ($logins * 5) + ($ifexists_website) + ($ifexists_user_style) + ($ifexists_default_image));
 
 if ($logins > 5) {
-if ($logins > 100) { $xrank = ($xrank * 5);
-if ($logins > 200) { $xrank = ($xrank * 10);
-if ($logins > 300) { $xrank = ($xrank * 15);
-if ($logins > 400) { $xrank = ($xrank * 20);
-if ($logins > 500) { $xrank = ($xrank * 25);
+if ($logins > 100) {
+$xrank = ($xrank * 5);
+if ($logins > 200) {
+$xrank = ($xrank * 10);
+if ($logins > 300) {
+$xrank = ($xrank * 15);
+if ($logins > 400) {
+$xrank = ($xrank * 20);
+if ($logins > 500) {
+$xrank = ($xrank * 25);
 }}}}}
 $xrank = ($xrank * 1.0586951);
+} elseif ($logins == 4) {
+$xrank = ($xrank / 2.2452);
+} elseif ($logins == 3) {
+$xrank = ($xrank / 3.1385);
+} elseif ($logins == 2) {
+$xrank = ($xrank / 4.3698);
+} elseif ($logins == 1) {
+$xrank = 0;
+} else {
+$xrank = 0;
 }
-elseif ($logins == 4) $xrank = ($xrank / 2.2452);
-elseif ($logins == 3) $xrank = ($xrank / 3.1385);
-elseif ($logins == 2) $xrank = ($xrank / 4.3698);
-elseif ($logins == 1) $xrank = 0;
-else $xrank = 0;
 
-echo " $xrank ";
+echo " ";
+echo $xrank;
+echo " ";
 ?>
 </div>
 <div>Profile Views: 
 <?php
 $hits = ($hits + 1);
 
-$query = 'UPDATE info SET hits = ' . $hits . ' WHERE user_id = ' . $user_id;
+$query = 'UPDATE info SET
+hits = ' . $hits . '
+WHERE
+user_id = ' . $user_id;
 mysql_query($query, $db) or die(mysql_error());
 
 echo $hits;
@@ -729,17 +919,23 @@ echo $hits;
 </div>
 <div>Logged On
 <?php
-echo " $logins ";
+echo " ";
+echo $logins;
+echo " ";
 
-if ($logins > 1) echo "Times";
-elseif ($logins == 1) echo "Time";
-else echo "Times & Was Hacked :P";
+if ($logins > 1) {
+echo "Times";
+} elseif ($logins == 1) {
+echo "Time";
+} else {
+echo "Times & Was Hacked :P";
+}
 ?>
 </div>
 <div>Last Login: <?php echo $last_login; ?></div>
 <div>Date Joined: <?php echo $date_joined; ?></div>
 </div>
-<div style="padding-bottom: 10px; text-align: center;">
+<div style="padding-bottom : 10px; text-align : center; ">
 <a href="http://www.facebook.com/share.php?u=http://hnsdesktop.tk/<?php echo $row['username']; ?>" target="_blank">Share profile on Facebook</a>
 <br />
 <a href="http://www.twitter.com/home?status=View+my+Homenet+Spaces+profile.+Check+it+out!+http://hnsdesktop.tk/<?php echo $row['username']; ?>" target="_blank">Share profile on Twitter</a>
@@ -757,7 +953,7 @@ Profile Details
 </div>
 </div>
 <!-- End left panel -->
-<div style="clear: both; width: 100%;">&nbsp;</div>
+<div style="clear : both; width : 100%; ">&nbsp;</div>
 </div>
 <!-- End page content -->
 <?php

@@ -4,6 +4,7 @@ session_start();
 require ("lang.inc.php");
 include ("db.member.inc.php");
 include ("login.inc.php");
+include ("bimage.inc.php");
 
 if (!isset($_POST['upload'])) {
 header('refresh: 2; url=upload.php');
@@ -14,16 +15,33 @@ header('refresh: 2; url=upload.php');
 <head>
 <title><?php echo $TEXT['global-headertitle'] . " | " . $TEXT['homepage-headertitle']; ?></title>
 <meta http-equiv="content-type" content="text/html; charset=<?php echo $TEXT['global-charset']; ?>" />
-<script type="text/javascript" src="jquery.js"></script>
-<script type="text/javascript" src="javascript.php"></script>
+<meta name="author" content="Homenet Spaces Andrew Gerst" />
+<meta name="copyright" content="© Homenet Spaces" />
+<meta name="keywords" content="Homenet, Spaces, The, Place, To, Be, Creative, Andrew, Gerst, Free, Profiles, Information, Facts" />
+<meta name="description" content="Welcome to Homenet Spaces | This is the place to be creative! Feel free to add yourself to our wonderful community by registering! " />
+<meta name="revisit-after" content="7 days" />
+<meta name="googlebot" content="index, follow, all" />
+<meta name="robots" content="index, follow, all" />
+<link rel="stylesheet" type="text/css" href="css/global.css" media="all" />
+<script type="text/javascript" src="cs.js"></script>
+<script type="text/javascript" src="nav.js"></script>
+<script type="text/javascript" src="suggest.js"></script>
+<style type="text/css">
+body { 
+	background: url(<?php echo $bimage; ?>) repeat; 
+	background-position : 50% 140px; 
+	}
+</style>
 </head>
 
 <body>
-<?php include ("hd.inc.php"); ?>
+<?php
+include ("hd.inc.php");
+?>
 <!-- Begin page content -->
 <div class="pagecontent">
 <?php
-echo '<p><strong style="color: #f33; weight: bold;">You need to select a file to upload.</strong></p>';
+echo '<p><strong style="color : #ff3333; weight : bold; ">You need to select a file to upload.</strong></p>';
 echo '<p>You are now being redirected to the upload page. If your browser ' .
 'doesn\'t redirect you automatically, <a href="upload.php">click here</a>.</p>';
 ?>
@@ -46,12 +64,29 @@ die();
 <head>
 <title><?php echo $TEXT['global-headertitle'] . " | " . $TEXT['homepage-headertitle']; ?></title>
 <meta http-equiv="content-type" content="text/html; charset=<?php echo $TEXT['global-charset']; ?>" />
-<script type="text/javascript" src="jquery.js"></script>
-<script type="text/javascript" src="javascript.php"></script>
+<meta name="author" content="Homenet Spaces Andrew Gerst" />
+<meta name="copyright" content="© Homenet Spaces" />
+<meta name="keywords" content="Homenet, Spaces, The, Place, To, Be, Creative, Andrew, Gerst, Free, Profiles, Information, Facts" />
+<meta name="description" content="Welcome to Homenet Spaces | This is the place to be creative! Feel free to add yourself to our wonderful community by registering! " />
+<meta name="revisit-after" content="7 days" />
+<meta name="googlebot" content="index, follow, all" />
+<meta name="robots" content="index, follow, all" />
+<link rel="stylesheet" type="text/css" href="css/global.css" media="all" />
+<script type="text/javascript" src="cs.js"></script>
+<script type="text/javascript" src="nav.js"></script>
+<script type="text/javascript" src="suggest.js"></script>
+<style type="text/css">
+body { 
+	background: url(<?php echo $bimage; ?>) repeat; 
+	background-position : 50% 140px; 
+	}
+</style>
 </head>
 
 <body>
-<?phpinclude ("hd.inc.php"); ?>
+<?php
+include ("hd.inc.php");
+?>
 <!-- Begin page content -->
 <div class="pagecontent">
 <?php
@@ -60,12 +95,15 @@ $thumbuploaddir = $_POST['thumbuploaddir'];
 $file_name = $_FILES['ufile']['name'];
 $random_digit = rand(0000, 9999);
 
-if (isset($_POST['make_random'])) $new_file_name = $random_digit . "_" . $file_name;
-else $new_file_name = $file_name;
+if (isset($_POST['make_random'])) {
+$new_file_name = $random_digit . "_" . $file_name;
+} else {
+$new_file_name = $file_name;
+}
 
 $path = $uploaddir . $new_file_name;
 
-if (isset($_POST['thumbuploaddir'])) {
+if (isset($_POST['thumbuploaddir'])) { // images are being uploaded
 if (!eregi('image/', $_FILES['ufile']['type'])) {
 echo 'That Was Not A Valid Image';
 echo '<br /><br />';
@@ -73,8 +111,10 @@ echo "<a href='upload.php?type=image'>Upload More Images</a>";
 echo '<br /><br />';
 echo 'Please Upload A Valid File!';
 } else {
+// get info about uploaded image
 list($width, $height, $type, $attr) = getimagesize($_FILES['ufile']['tmp_name']);
 
+// make sure the uploaded file is really a supported image
 $error = 'The file you uploaded is not a supported filetype. They are GIF, JPEG, & PNG.';
 $error .= '<br /><br />';
 $error .= '<a href="upload.php?type=image">Upload More Images</a>';
@@ -83,26 +123,59 @@ $error .= '<!-- End page content -->';
 $error .= '</body>';
 
 switch ($type) {
-case IMAGETYPE_GIF: $image = imagecreatefromgif($_FILES['ufile']['tmp_name']) or die($error); break;
-case IMAGETYPE_JPEG: $image = imagecreatefromjpeg($_FILES['ufile']['tmp_name']) or die($error); break;
-case IMAGETYPE_PNG: $image = imagecreatefrompng($_FILES['ufile']['tmp_name']) or die($error); break;
-default: die($error);
+case IMAGETYPE_GIF:
+$image = imagecreatefromgif($_FILES['ufile']['tmp_name']) or die($error);
+break;
+
+case IMAGETYPE_JPEG:
+$image = imagecreatefromjpeg($_FILES['ufile']['tmp_name']) or die($error);
+break;
+
+case IMAGETYPE_PNG:
+$image = imagecreatefrompng($_FILES['ufile']['tmp_name']) or die($error);
+break;
+
+default:
+die($error);
 }
 
 if ($ufile != none) {
+// make sure the uploaded file transfer was successful
 if ($_FILES['ufile']['error'] != UPLOAD_ERR_OK) {
 switch ($_FILES['ufile']['error']) {
-case UPLOAD_ERR_INI_SIZE: die('The uploaded file exceeds the upload_max_filesize directive in php.ini.<br /><br /><a href="upload.php?type=image">Upload More Images</a></div><!-- End page content --></body>'); break;
-case UPLOAD_ERR_FORM_SIZE: die('The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form.<br /><br /><a href="upload.php?type=image">Upload More Images</a></div><!-- End page content --></body>'); break;
-case UPLOAD_ERR_PARTIAL: die('The uploaded file was only partially uploaded.<br /><br /><a href="upload.php?type=image">Upload More Images</a></div><!-- End page content --></body>'); break;
-case UPLOAD_ERR_NO_FILE: die('No file was uploaded.<br /><br /><a href="upload.php?type=image">Upload More Images</a></div><!-- End page content --></body>'); break;
-case UPLOAD_ERR_NO_TMP_DIR: die('The server is missing a temporary folder.<br /><br /><a href="upload.php?type=image">Upload More Images</a></div><!-- End page content --></body>'); break;
-case UPLOAD_ERR_CANT_WRITE: die('The server failed to write the uploaded file to disk.<br /><br /><a href="upload.php?type=image">Upload More Images</a></div><!-- End page content --></body>'); break;
-case UPLOAD_ERR_EXTENTION: die('File upload stopped by extension.<br /><br /><a href="upload.php?type=image">Upload More Images</a></div><!-- End page content --></body>'); break;
+case UPLOAD_ERR_INI_SIZE:
+die('The uploaded file exceeds the upload_max_filesize directive in php.ini.<br /><br /><a href="upload.php?type=image">Upload More Images</a></div><!-- End page content --></body>');
+break;
+
+case UPLOAD_ERR_FORM_SIZE:
+die('The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form.<br /><br /><a href="upload.php?type=image">Upload More Images</a></div><!-- End page content --></body>');
+break;
+
+case UPLOAD_ERR_PARTIAL:
+die('The uploaded file was only partially uploaded.<br /><br /><a href="upload.php?type=image">Upload More Images</a></div><!-- End page content --></body>');
+break;
+
+case UPLOAD_ERR_NO_FILE:
+die('No file was uploaded.<br /><br /><a href="upload.php?type=image">Upload More Images</a></div><!-- End page content --></body>');
+break;
+
+case UPLOAD_ERR_NO_TMP_DIR:
+die('The server is missing a temporary folder.<br /><br /><a href="upload.php?type=image">Upload More Images</a></div><!-- End page content --></body>');
+break;
+
+case UPLOAD_ERR_CANT_WRITE:
+die('The server failed to write the uploaded file to disk.<br /><br /><a href="upload.php?type=image">Upload More Images</a></div><!-- End page content --></body>');
+break;
+
+case UPLOAD_ERR_EXTENTION:
+die('File upload stopped by extension.<br /><br /><a href="upload.php?type=image">Upload More Images</a></div><!-- End page content --></body>');
+break;
 }
 }
 
-if (file_exists($path)) $fileoverridden = true;
+if (file_exists($path)) {
+$fileoverridden = true;
+}
 
 if (copy($_FILES['ufile']['tmp_name'], $path)) {
 $filesize = $_FILES['ufile']['size'];
@@ -125,7 +198,9 @@ return round($filesize, 2) . ' ' . $prefix[$step];
 
 echo "<h2>Upload was Successful</h2>";
 
-if ($fileoverridden == true) echo "<h4 style='color: #f00; letter-spacing: 1px;'>A File Has Been Overridden :/</h4>";
+if ($fileoverridden == true) {
+echo "<h4 style='color : #ff0000; letter-spacing : 1px; '>A File Has Been Overridden :/</h4>";
+}
 
 echo "File Name : " . $new_file_name . "<br />"; 
 echo "File Size : " . display_filesize($filesize) . "<br />";
@@ -134,7 +209,12 @@ echo "<br />";
 echo "<a href='upload.php?type=image'>Upload More Images</a>";
 
 if (isset($_SESSION['logged']) && $_SESSION['logged'] == 1) {
-$query = 'SELECT rank FROM info WHERE user_id = ' . $_SESSION['user_id'];
+$query = 'SELECT
+rank
+FROM
+info
+WHERE
+user_id = ' . $_SESSION['user_id'];
 $result = mysql_query($query, $db) or die(mysql_error());
 $row = mysql_fetch_array($result);
 extract($row);
@@ -142,12 +222,18 @@ mysql_free_result($result);
 
 $rank = ($rank + 100);
 
-$query = 'UPDATE info SET rank = ' . $rank . ' WHERE user_id = ' . $_SESSION['user_id'];
+$query = 'UPDATE info SET
+rank = ' . $rank . '
+WHERE
+user_id = ' . $_SESSION['user_id'];
 mysql_query($query, $db) or die(mysql_error());
 
+// dimensions for the thumbnail
 $thumb_width = 200;
 $ratio = ($width / $thumb_width);
 $thumb_height = round($height / $ratio);
+
+// create the thumbnail
 $thumb = imagecreatetruecolor($thumb_width, $thumb_height);
 $newthumb = $thumbuploaddir . $new_file_name;
 
@@ -158,7 +244,11 @@ imagedestroy($thumb);
 if (isset($_POST['make_default'])) {
 $default_image = $new_file_name;
 
-$query = 'UPDATE info SET default_image = "' . mysql_real_escape_string($default_image, $db) . '" WHERE user_id = ' . $_SESSION['user_id'] . ' LIMIT 1';
+$query = 'UPDATE info SET
+default_image = "' . mysql_real_escape_string($default_image, $db) . '"
+WHERE
+user_id = ' . $_SESSION['user_id'] . '
+LIMIT 1';
 mysql_query($query, $db) or die(mysql_error());
 
 $_SESSION['default_image'] = $default_image;
@@ -169,21 +259,44 @@ echo "<a href='upload.php?type=image'>Please Select An Image To Upload</a>";
 }
 }
 }
-} else {
+} else { // files are being uploaded
 if ($ufile != none) {
+// make sure the uploaded file transfer was successful
 if ($_FILES['ufile']['error'] != UPLOAD_ERR_OK) {
 switch ($_FILES['ufile']['error']) {
-case UPLOAD_ERR_INI_SIZE: die('The uploaded file exceeds the upload_max_filesize directive in php.ini.<br /><br /><a href="upload.php?type=image">Upload More Images</a></div><!-- End page content --></body>'); break;
-case UPLOAD_ERR_FORM_SIZE: die('The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form.<br /><br /><a href="upload.php?type=image">Upload More Images</a></div><!-- End page content --></body>'); break;
-case UPLOAD_ERR_PARTIAL: die('The uploaded file was only partially uploaded.<br /><br /><a href="upload.php?type=image">Upload More Images</a></div><!-- End page content --></body>'); break;
-case UPLOAD_ERR_NO_FILE: die('No file was uploaded.<br /><br /><a href="upload.php?type=image">Upload More Images</a></div><!-- End page content --></body>'); break;
-case UPLOAD_ERR_NO_TMP_DIR: die('The server is missing a temporary folder.<br /><br /><a href="upload.php?type=image">Upload More Images</a></div><!-- End page content --></body>'); break;
-case UPLOAD_ERR_CANT_WRITE: die('The server failed to write the uploaded file to disk.<br /><br /><a href="upload.php?type=image">Upload More Images</a></div><!-- End page content --></body>'); break;
-case UPLOAD_ERR_EXTENTION: die('File upload stopped by extension.<br /><br /><a href="upload.php?type=image">Upload More Images</a></div><!-- End page content --></body>'); break;
+case UPLOAD_ERR_INI_SIZE:
+die('The uploaded file exceeds the upload_max_filesize directive in php.ini.<br /><br /><a href="upload.php?type=image">Upload More Images</a></div><!-- End page content --></body>');
+break;
+
+case UPLOAD_ERR_FORM_SIZE:
+die('The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form.<br /><br /><a href="upload.php?type=image">Upload More Images</a></div><!-- End page content --></body>');
+break;
+
+case UPLOAD_ERR_PARTIAL:
+die('The uploaded file was only partially uploaded.<br /><br /><a href="upload.php?type=image">Upload More Images</a></div><!-- End page content --></body>');
+break;
+
+case UPLOAD_ERR_NO_FILE:
+die('No file was uploaded.<br /><br /><a href="upload.php?type=image">Upload More Images</a></div><!-- End page content --></body>');
+break;
+
+case UPLOAD_ERR_NO_TMP_DIR:
+die('The server is missing a temporary folder.<br /><br /><a href="upload.php?type=image">Upload More Images</a></div><!-- End page content --></body>');
+break;
+
+case UPLOAD_ERR_CANT_WRITE:
+die('The server failed to write the uploaded file to disk.<br /><br /><a href="upload.php?type=image">Upload More Images</a></div><!-- End page content --></body>');
+break;
+
+case UPLOAD_ERR_EXTENTION:
+die('File upload stopped by extension.<br /><br /><a href="upload.php?type=image">Upload More Images</a></div><!-- End page content --></body>');
+break;
 }
 }
 
-if (file_exists($path)) $fileoverridden = true;
+if (file_exists($path)) {
+$fileoverridden = true;
+}
 
 if (copy($_FILES['ufile']['tmp_name'], $path)) {
 $filesize = $_FILES['ufile']['size'];
@@ -206,7 +319,9 @@ return round($filesize, 2) . ' ' . $prefix[$step];
 
 echo "<h2>Upload was Successful</h2>";
 
-if ($fileoverridden == true) echo "<h4 style='color: #f00; letter-spacing: 1px;'>A File Has Been Overridden :/</h4>";
+if ($fileoverridden == true) {
+echo "<h4 style='color : #ff0000; letter-spacing : 1px; '>A File Has Been Overridden :/</h4>";
+}
 
 echo "File Name : " . $new_file_name . "<br />";
 echo "File Size : " . display_filesize($filesize) . "<br />";
@@ -215,7 +330,12 @@ echo "<br />";
 echo "<a href='upload.php?type=file'>Upload More Files</a>";
 
 if (isset($_SESSION['logged']) && $_SESSION['logged'] == 1) {
-$query = 'SELECT rank FROM info WHERE user_id = ' . $_SESSION['user_id'];
+$query = 'SELECT
+rank
+FROM
+info
+WHERE
+user_id = ' . $_SESSION['user_id'];
 $result = mysql_query($query, $db) or die(mysql_error());
 $row = mysql_fetch_array($result);
 extract($row);
@@ -223,7 +343,10 @@ mysql_free_result($result);
 
 $rank = ($rank + 100);
 
-$query = 'UPDATE info SET rank = ' . $rank . ' WHERE user_id = ' . $_SESSION['user_id'];
+$query = 'UPDATE info SET
+rank = ' . $rank . '
+WHERE
+user_id = ' . $_SESSION['user_id'];
 mysql_query($query, $db) or die(mysql_error());
 }
 } else {
@@ -242,4 +365,6 @@ include ("tracking_scripts.inc.php");
 </body>
 
 </html>
-<?php } ?>
+<?php
+}
+?>

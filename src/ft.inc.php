@@ -55,9 +55,9 @@ if (count($footer_updateerrors) > 0) {
 echo '<!-- Begin footer update errors -->' . "\n";
 echo '<div id="error">' . "\n" . '<table class="update">' . "\n" . '<tr class="row">' . "\n";
 echo '<td class="cell">' . "\n";
-echo '<div><strong class="header">' . $TEXT['header-updateerrors_header'] . '</strong></div>' . "\n";
+echo '<p><strong class="header">' . $TEXT['header-updateerrors_header'] . '</strong></p>' . "\n";
 echo '<div class="list">' . "\n";
-echo '<div>' . $TEXT['header-updateerrors_listheader'] . '</div>' . "\n";
+echo '<p>' . $TEXT['header-updateerrors_listheader'] . '</p>' . "\n";
 echo '<ul>' . "\n";
 
 foreach ($footer_updateerrors as $footer_updateerror) {
@@ -75,9 +75,9 @@ if (count($footer_registererrors) > 0) {
 echo '<!-- Begin footer register errors -->' . "\n";
 echo '<div id="error">' . "\n" . '<table class="register">' . "\n" . '<tr class="row">' . "\n";
 echo '<td class="cell">' . "\n";
-echo '<div><strong class="header">' . $TEXT['header-registererrors_header'] . '</strong></div>' . "\n";
+echo '<p><strong class="header">' . $TEXT['header-registererrors_header'] . '</strong></p>' . "\n";
 echo '<div class="list">' . "\n";
-echo '<div>' . $TEXT['header-registererrors_listheader'] . '</div>' . "\n";
+echo '<p>' . $TEXT['header-registererrors_listheader'] . '</p>' . "\n";
 echo '<ul>' . "\n";
 
 foreach ($footer_registererrors as $footer_registererror) {
@@ -95,9 +95,9 @@ if (count($footer_creategrouperrors) > 0) {
 echo '<!-- Begin footer create group errors -->' . "\n";
 echo '<div id="error">' . "\n" . '<table class="creategroup">' . "\n" . '<tr class="row">' . "\n";
 echo '<td class="cell">' . "\n";
-echo '<div><strong class="header">' . $TEXT['header-creategrouperrors_header'] . '</strong></div>' . "\n";
+echo '<p><strong class="header">' . $TEXT['header-creategrouperrors_header'] . '</strong></p>' . "\n";
 echo '<div class="list">' . "\n";
-echo '<div>' . $TEXT['header-creategrouperrors_listheader'] . '</div>' . "\n";
+echo '<p>' . $TEXT['header-creategrouperrors_listheader'] . '</p>' . "\n";
 echo '<ul>' . "\n";
 
 foreach ($footer_creategrouperrors as $footer_creategrouperror) {
@@ -115,9 +115,9 @@ if (count($footer_resetpassworderrors) > 0) {
 echo '<!-- Begin footer reset password errors -->' . "\n";
 echo '<div id="error">' . "\n" . '<table class="resetpassword">' . "\n" . '<tr class="row">' . "\n";
 echo '<td class="cell">' . "\n";
-echo '<div><strong class="header">' . $TEXT['header-resetpassworderrors_header'] . '</strong></div>' . "\n";
+echo '<p><strong class="header">' . $TEXT['header-resetpassworderrors_header'] . '</strong></p>' . "\n";
 echo '<div class="list">' . "\n";
-echo '<div>' . $TEXT['header-resetpassworderrors_listheader'] . '</div>' . "\n";
+echo '<p>' . $TEXT['header-resetpassworderrors_listheader'] . '</p>' . "\n";
 echo '<ul>' . "\n";
 
 foreach ($footer_resetpassworderrors as $footer_resetpassworderror) {
@@ -132,6 +132,18 @@ echo '<!-- End footer reset password errors -->' . "\n";
 }
 ?>
 <!-- Begin global footer -->
+<script type="text/javascript">
+<!-- 
+function showMe2 (it) {
+var vis = document.getElementById(it).style.visibility
+if (vis == "hidden") {
+document.getElementById(it).style.visibility = "visible";
+} else {
+document.getElementById(it).style.visibility = "hidden";
+}
+}
+//-->
+</script>
 <div id="worldwidelang" style="visibility : hidden; ">
 <span class="closespan">
 <a title="<?php echo $TEXT['footer-worldwidelang_close_title']; ?>" accesskey="8" onclick="showMe2('worldwidelang')" class="close"><?php echo $TEXT['footer-worldwidelang_close']; ?></a>
@@ -159,8 +171,12 @@ echo '<div class="linkdiv"><a href="set_language.php?lang=' . $key . '&amp;redir
 <a href="javascript:history.back()" title="<?php echo $TEXT['footer-list1_link1_title']; ?>" accesskey="8">
 <?php echo $TEXT['footer-list1_link1']; ?></a>&nbsp; |&nbsp;
 <a href="<?php
-if (isset($_SERVER['QUERY_STRING']) && $_SERVER['QUERY_STRING'] != null) $noredirect = $_SERVER['PHP_SELF'] . "?" . $_SERVER['QUERY_STRING'];
-else $noredirect = $_SERVER['PHP_SELF'];
+if (isset($_SERVER['QUERY_STRING']) && $_SERVER['QUERY_STRING'] != null) {
+$noredirect = $_SERVER['PHP_SELF'] . "?" . $_SERVER['QUERY_STRING'];
+} else {
+$noredirect = $_SERVER['PHP_SELF'];
+}
+
 echo $noredirect . "#top";
 ?>" title="<?php echo $TEXT['footer-list1_link2_title']; ?>" accesskey="8">
 <?php echo $TEXT['footer-list1_link2']; ?></a>&nbsp; |&nbsp;
@@ -240,26 +256,26 @@ echo $noredirect . "#top";
 <dt><?php echo $TEXT['footer-list5_header']; ?></dt>
 <dd>
 <span class="blue" onmousedown="style.backgroundColor='blue'" onmouseout="style.backgroundColor=''" title="<?php echo $TEXT['footer-list5_color1_title']; ?>">
-<span><?php echo $TEXT['footer-list5_color1']; ?></span><input type="radio" name="grootte" value="1" onclick="setCookie(theme, this.value, exp); doRefresh();" accesskey="1" />
+<span><?php echo $TEXT['footer-list5_color1']; ?></span><input type="radio" name="grootte" value="1" onclick="SetCookie(theme, this.value, exp); doRefresh();" accesskey="1" />
 </span>
 <span class="orange" onmousedown="style.backgroundColor='orange'" onmouseout="style.backgroundColor=''" title="<?php echo $TEXT['footer-list5_color2_title']; ?>"> 
-<span><?php echo $TEXT['footer-list5_color2']; ?></span><input type="radio" name="grootte" value="2" onclick="setCookie(theme, this.value, exp); doRefresh();" accesskey="2" />
+<span><?php echo $TEXT['footer-list5_color2']; ?></span><input type="radio" name="grootte" value="2" onclick="SetCookie(theme, this.value, exp); doRefresh();" accesskey="2" />
 </span>
 </dd>
 <dd>
 <span class="green" onmousedown="style.backgroundColor='green'" onmouseout="style.backgroundColor=''" title="<?php echo $TEXT['footer-list5_color3_title']; ?>">
-<span><?php echo $TEXT['footer-list5_color3']; ?></span><input type="radio" name="grootte" value="3" onclick="setCookie(theme, this.value, exp); doRefresh();" accesskey="3" />
+<span><?php echo $TEXT['footer-list5_color3']; ?></span><input type="radio" name="grootte" value="3" onclick="SetCookie(theme, this.value, exp); doRefresh();" accesskey="3" />
 </span>
 <span class="yellow" onmousedown="style.backgroundColor='yellow'" onmouseout="style.backgroundColor=''" title="<?php echo $TEXT['footer-list5_color4_title']; ?>"> 
-<span><?php echo $TEXT['footer-list5_color4']; ?></span><input type="radio" name="grootte" value="4" onclick="setCookie(theme, this.value, exp); doRefresh();" accesskey="4" />
+<span><?php echo $TEXT['footer-list5_color4']; ?></span><input type="radio" name="grootte" value="4" onclick="SetCookie(theme, this.value, exp); doRefresh();" accesskey="4" />
 </span>
 </dd>
 <dd>
 <span class="red" onmousedown="style.backgroundColor='red'" onmouseout="style.backgroundColor=''"  title="<?php echo $TEXT['footer-list5_color5_title']; ?>">
-<span><?php echo $TEXT['footer-list5_color5']; ?></span><input type="radio" name="grootte" value="5" onclick="setCookie(theme, this.value, exp); doRefresh();" accesskey="5" />
+<span><?php echo $TEXT['footer-list5_color5']; ?></span><input type="radio" name="grootte" value="5" onclick="SetCookie(theme, this.value, exp); doRefresh();" accesskey="5" />
 </span>
 <span class="black" onmousedown="style.backgroundColor='black'" onmouseout="style.backgroundColor=''" title="<?php echo $TEXT['footer-list5_color6_title']; ?>"> 
-<span><?php echo $TEXT['footer-list5_color6']; ?></span><input type="radio" name="grootte" value="6" onclick="setCookie(theme, this.value, exp); doRefresh();" accesskey="6" />
+<span><?php echo $TEXT['footer-list5_color6']; ?></span><input type="radio" name="grootte" value="6" onclick="SetCookie(theme, this.value, exp); doRefresh();" accesskey="6" />
 </span>
 </dd>
 </dl>
