@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// make sure the uploaded file is really a supported image
 $error = 'The file you are trying to edit is not a supported filetype. They are GIF, JPEG, & PNG.';
 $error .= '<br /><br />';
 $error .= '<a href="upload.php?type=image">Upload More Images</a>';
@@ -11,46 +10,31 @@ $error .= '</body>';
 
 $image = urldecode($_GET['image']);
 
-// get info about uploaded image
 list($width, $height, $type, $attr) = getimagesize($image);
 
 switch ($type) {
-case IMAGETYPE_GIF:
-$newimage = imagecreatefromgif($image) or die($error);
-break;
-
-case IMAGETYPE_JPEG:
-$newimage = imagecreatefromjpeg($image) or die($error);
-break;
-
-case IMAGETYPE_PNG:
-$newimage = imagecreatefrompng($image) or die($error);
-break;
-
-default:
-die($error);
+case IMAGETYPE_GIF: $newimage = imagecreatefromgif($image) or die($error); break;
+case IMAGETYPE_JPEG: $newimage = imagecreatefromjpeg($image) or die($error); break;
+case IMAGETYPE_PNG: $newimage = imagecreatefrompng($image) or die($error); break;
+default: die($error);
 }
 
 if (isset($_SESSION['caption']) && $_SESSION['caption'] != null) {
 $caption = $_SESSION['caption'];
-
 $fontsize = mt_rand(10, 64);
 $angle = mt_rand(-180, 180);
 $xint = mt_rand(10, ($width -10));
 $yint = mt_rand(10, ($height - 10));
 $color = mt_rand(0, 255);
 $font = 'i/captcha/fonts/arial.ttf';
-
 imagettftext($newimage, $fontsize, $angle, $xint, $yint, $color, $font, $caption);
 }
 
 $effect = urldecode($_GET['effect']);
 
-// apply the filter
 switch ($effect) {
 case IMG_FILTER_BRIGHTNESS:
 $howbright = mt_rand(-255, 255);
-
 imagefilter($newimage, IMG_FILTER_BRIGHTNESS, $howbright);
 break;
 
@@ -61,13 +45,11 @@ $blue = mt_rand(-255, 255);
 $trans = mt_rand(0, 127);
 $alpha = mt_rand(1, 2);
 $alpha = $alpha == 1 ? $trans : null;
-
 imagefilter($newimage, IMG_FILTER_COLORIZE, $red, $green, $blue, $alpha);
 break;
 
 case IMG_FILTER_CONTRAST:
 $value = mt_rand(-100, 100);
-
 imagefilter($newimage, IMG_FILTER_CONTRAST, $value);
 break;
 
@@ -99,7 +81,6 @@ case IMG_FILTER_PIXELATE:
 $bsize = mt_rand(1, 10);
 $atense = mt_rand(1, 2);
 $adv = $atense == 1 ? true : false;
-
 imagefilter($newimage, IMG_FILTER_PIXELATE, $bsize, $adv);
 break;
 
@@ -109,12 +90,10 @@ break;
 
 case IMG_FILTER_SMOOTH:
 $value = -1924.124;
-
 imagefilter($newimage, IMG_FILTER_SMOOTH, $value);
 break;
 }
 
-// show the image
 header('Content-Type: image/jpeg');
 imagejpeg($newimage, null, 90);
 imagedestroy($newimage);

@@ -4,7 +4,6 @@ session_start();
 require ("lang.inc.php");
 include ("db.member.inc.php");
 include ("login.inc.php");
-include ("bimage.inc.php");
 
 if (!isset($_GET['action'])) {
 ?>
@@ -14,76 +13,61 @@ if (!isset($_GET['action'])) {
 <head>
 <title><?php echo $TEXT['global-headertitle'] . " | " . $TEXT['homepage-headertitle']; ?></title>
 <meta http-equiv="content-type" content="text/html; charset=<?php echo $TEXT['global-charset']; ?>" />
-<meta name="author" content="Homenet Spaces Andrew Gerst" />
-<meta name="copyright" content="© Homenet Spaces" />
-<meta name="keywords" content="Homenet, Spaces, The, Place, To, Be, Creative, Andrew, Gerst, Free, Profiles, Information, Facts" />
-<meta name="description" content="Welcome to Homenet Spaces we offer you a free profile with many cool and interesting things! This is the place to be creative!" />
-<meta name="revisit-after" content="7 days" />
-<meta name="googlebot" content="index, follow, all" />
-<meta name="robots" content="index, follow, all" />
-<link rel="stylesheet" type="text/css" href="css/global.css" media="all" />
-<script type="text/javascript" src="cs.js"></script>
-<script type="text/javascript" src="nav.js"></script>
-<script type="text/javascript" src="suggest.js"></script>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="javascript.php"></script>
 <style type="text/css">
-th { 
-	background-color : #3366cc; 
-	padding : 5px; 
-	}
+th {
+background-color: #36c;
+padding: 5px;
+}
 	
-#members { 
-	margin : 0 auto; 
-	width : 80%; 
-	}
+#members {
+margin: 0 auto;
+width: 80%;
+}
 
-.odd_row { 
-	background-color : #ccffff; 
-	width : 25%; 
-	}
+.odd_row {
+background-color: #cff;
+width: 25%;
+}
 
-.even_row { 
-	background-color : #ccccff; 
-	width : 25%; 
-	}
+.even_row {
+background-color: #ccf;
+width: 25%;
+}
 
-a.header { 
-	color : #dfe9fd; 
-	text-decoration : none; 
-	width : 100%; 
-	}
+a.header {
+color: #dfe9fd;
+text-decoration: none;
+width: 100%;
+}
 
-a.header:hover { 
-	color : #004080; 
-	text-decoration : none; 
-	width : 100%; 
-	}
+a.header:hover {
+color: #004080;
+text-decoration: none;
+width: 100%;
+}
 
-a.username { 
-	color : #004080; 
-	text-decoration : none; 
-	}
+a.username {
+color: #004080;
+text-decoration: none;
+}
 
-a.username:hover { 
-	border-bottom : 1px dotted #004080; 
-	color : #004080; 
-	text-decoration : none; 
-	}
-</style>
-<style type="text/css">
-body { 
-	background: url(<?php echo $bimage; ?>) repeat; 
-	background-position : 50% 140px; 
-	}
+a.username:hover {
+border-bottom: 1px dotted #004080;
+color: #004080;
+text-decoration: none;
+}
 </style>
 </head>
 
 <body>
-<?php
-include ("hd.inc.php");
-?>
+<?php include ("hd.inc.php"); ?>
 <!-- Begin page content -->
 <div class="pagecontent">
-<h1>Welcome to the Groups area.</h1>
+<div id="pageheader" class="pageheader2"><div class="heading">
+Welcome to the Groups area.
+</div></div>
 <p>Here you can view your community!
 <br />
 <br />
@@ -95,10 +79,7 @@ $sql = "SHOW TABLES FROM groups";
 $result = mysql_query($sql, $group_db);
 $tablerow = array();
 
-while ($row = mysql_fetch_array($result)) {
-$tablerow[] = $row;
-}
-
+while ($row = mysql_fetch_array($result)) $tablerow[] = $row;
 $total_tables = count($tablerow);
 
 echo "There are ";
@@ -109,15 +90,12 @@ echo "<br /><br />";
 $sql = "SHOW TABLES FROM groups";
 $result = mysql_query($sql, $group_db);
 
-while ($grouplist = mysql_fetch_row($result)) {
-echo "{$grouplist[0]}\n";
-}
+while ($grouplist = mysql_fetch_row($result)) echo "{$grouplist[0]}\n";
 
 mysql_free_result($result);
 ?>
 </p>
 <?php
-// determine sorting order of table
 $orders = array('asc', 'desc', 'asc', 'desc', 'asc', 'desc', 'asc', 'desc', 'asc', 'desc', 'asc', 'desc', 'asc', 'desc', 'asc', 'desc', 'asc', 'desc');
 $o = rand(0, count($orders) - 1);
 $switchOrder = "{$orders[$o]}";
@@ -127,9 +105,7 @@ echo '<tr><th><a href="' . $_SERVER['PHP_SELF'] . '?sort=name&order=' . $switchO
 <th><a href="' . $_SERVER['PHP_SELF'] . '?sort=numbermembers&order=' . $switchOrder . '" title="Sort by First Name ' . $switchOrder . '" class="header">Number Of Members</a></th>
 <th><a href="' . $_SERVER['PHP_SELF'] . '?sort=created&order=' . $switchOrder . '" title="Sort by Last Name ' . $switchOrder . '" class="header">Date Created</a></th>';
 
-$query = 'SELECT TABLES FROM groups
-ORDER BY
-created ASC';
+$query = 'SELECT TABLES FROM groups ORDER BY created ASC';
 $result = mysql_query($query, $group_db) or die(mysql_error($group_db));
 
 switch ($_GET['sort']) {
@@ -172,9 +148,9 @@ $odd = true;
 while ($row = mysql_fetch_array($result)) {
 echo ($odd == true) ? '<tr class="odd_row">' : '<tr class="even_row">';
 $odd = !$odd;
-echo '<td style="padding : 3px; "><a href="groups.php?id=' . $row['groupname'] . '" class="username">' . $row['groupname'] . '</a></td>';
-echo '<td style="padding : 3px; ">' . $numbermembers . '</td>';
-echo '<td style="padding : 3px; ">' . $created . '</td>';
+echo '<td style="padding: 3px;"><a href="groups.php?id=' . $row['groupname'] . '" class="username">' . $row['groupname'] . '</a></td>';
+echo '<td style="padding: 3px;">' . $numbermembers . '</td>';
+echo '<td style="padding: 3px;">' . $created . '</td>';
 echo '</tr>';
 }
 echo '</table>';
@@ -200,19 +176,16 @@ switch ($_GET['action']) {
 case 'create':
 ?>
 <?php
-// filter incoming values
 $groupname = (isset($_POST['groupname'])) ? trim($_POST['groupname']) : '';
 $joincode = (isset($_POST['joincode'])) ? trim($_POST['joincode']) : '';
 
-if (isset($_POST['create']) && $_POST['create'] == 'Create Group') {
+if (isset($_POST['create']) && ($_POST['create'] == 'Create Group')) {
 $header_creategrouperrors = array();
 
-if (empty($groupname)) {
-$header_creategrouperrors[] = 'Group Name cannot be blank.';
-}
+if (empty($groupname)) $header_creategrouperrors[] = 'Group Name cannot be blank.';
 
 if (count($header_creategrouperrors) > 0) {
-} else { // no errors so enter the data into the database
+} else {
 $date_created = date('Y-m-d');
 
 $sql = "CREATE TABLE IF NOT EXISTS " . $groupname . " (
@@ -242,38 +215,19 @@ header('refresh: 4; url=index.php');
 <head>
 <title><?php echo $TEXT['global-headertitle'] . " | " . $TEXT['homepage-headertitle']; ?></title>
 <meta http-equiv="content-type" content="text/html; charset=<?php echo $TEXT['global-charset']; ?>" />
-<meta name="author" content="Homenet Spaces Andrew Gerst" />
-<meta name="copyright" content="© Homenet Spaces" />
-<meta name="keywords" content="Homenet, Spaces, The, Place, To, Be, Creative, Andrew, Gerst, Free, Profiles, Information, Facts" />
-<meta name="description" content="Welcome to Homenet Spaces we offer you a free profile with many cool and interesting things! This is the place to be creative!" />
-<meta name="revisit-after" content="7 days" />
-<meta name="googlebot" content="index, follow, all" />
-<meta name="robots" content="index, follow, all" />
-<link rel="stylesheet" type="text/css" href="css/global.css" media="all" />
-<script type="text/javascript" src="cs.js"></script>
-<script type="text/javascript" src="nav.js"></script>
-<script type="text/javascript" src="suggest.js"></script>
-<style type="text/css">
-body { 
-	background: url(<?php echo $bimage; ?>) repeat; 
-	background-position : 50% 140px; 
-	}
-</style>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="javascript.php"></script>
 </head>
 
 <body>
-<?php
-include ("hd.inc.php");
-?>
+<?php include ("hd.inc.php"); ?>
 <!-- Begin page content -->
 <div class="pagecontent">
 <p><strong>Thank you <?php echo $groupname; ?> for registering!</strong></p>
 <p>Your registration is complete! You are being sent to the homepage. If your browser doesn't redirect properly after 4 seconds, <a href="index.php">click here</a>.</p>
 </div>
 <!-- End page content -->
-<?php
-include ("ft.inc.php");
-?>
+<?php include ("ft.inc.php"); ?>
 </body>
 
 </html>
@@ -288,71 +242,42 @@ die();
 <head>
 <title><?php echo $TEXT['global-headertitle'] . " | " . $TEXT['homepage-headertitle']; ?></title>
 <meta http-equiv="content-type" content="text/html; charset=<?php echo $TEXT['global-charset']; ?>" />
-<meta name="author" content="Homenet Spaces Andrew Gerst" />
-<meta name="copyright" content="© Homenet Spaces" />
-<meta name="keywords" content="Homenet, Spaces, The, Place, To, Be, Creative, Andrew, Gerst, Free, Profiles, Information, Facts" />
-<meta name="description" content="Welcome to Homenet Spaces we offer you a free profile with many cool and interesting things! This is the place to be creative!" />
-<meta name="revisit-after" content="7 days" />
-<meta name="googlebot" content="index, follow, all" />
-<meta name="robots" content="index, follow, all" />
-<link rel="stylesheet" type="text/css" href="css/global.css" media="all" />
-<script type="text/javascript" src="cs.js"></script>
-<script type="text/javascript" src="nav.js"></script>
-<script type="text/javascript" src="suggest.js"></script>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="javascript.php"></script>
 <style type="text/css">
-td { 
-	vertical-align : top; 
-	}
+td {
+vertical-align: top;
+}
 
-div.pagecontent table td.label { 
-	padding : 6px; 
-	text-align : right; 
-	}
+div.pagecontent table td.label {
+padding: 6px;
+text-align: right;
+}
 
-div.pagecontent table td.label label { 
-	position : relative; 
-	top : 4px; 
-	}
+div.pagecontent table td.label label {
+position: relative;
+top: 4px;
+}
 
-div.pagecontent table td.input { 
-	padding : 6px; 
-	text-align : left; 
-	}
-
-div.pagecontent input[type="text"] {
-	font-size : 14pt; 
-	height : 25px; 
-	letter-spacing : 2px; 
-	line-height : 25px; 
-	}
-
-div.pagecontent input[type="submit"] {
-	font-size : 13pt; 
-	height : 36px; 
-	letter-spacing : 2px; 
-	line-height : 29px; 
-	}
-</style>
-<style type="text/css">
-body { 
-	background: url(<?php echo $bimage; ?>) repeat; 
-	background-position : 50% 140px; 
-	}
+div.pagecontent table td.input {
+padding: 6px;
+text-align: left;
+}
 </style>
 </head>
 
 <body>
-<?php
-include ("hd.inc.php");
-?>
+<?php include ("hd.inc.php"); ?>
 <!-- Begin page content -->
 <div class="pagecontent">
-<h1>Create A Group.</h1>
+<div id="pageheader" class="pageheader2"><div class="heading">
+Create A Group.
+</div></div>
 <a href="groups.php">View All Groups</a>
 <form action="<?php $_SERVER['PHP_SELF']; ?>" method="post">
-<fieldset style="margin : 0 auto; width : 65%; ">
+<fieldset style="margin: 0 auto; width: 65%;">
 <legend>Group Info&nbsp;</legend>
-<table style="margin : 0 auto; margin-bottom : 10px; margin-top : 10px; ">
+<table style="margin: 0 auto; margin-bottom: 10px; margin-top: 10px;">
 <tr>
 <td class="label"><label for="username">Group Name:</label></td>
 <td class="input"><input type="text" name="groupname" id="groupname" size="25" maxlength="20" value="<?php echo $groupname; ?>" /></td>

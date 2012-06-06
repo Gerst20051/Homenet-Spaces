@@ -5,7 +5,6 @@ require ("lang.inc.php");
 include ("auth.inc.php");
 include ("admin.inc.php");
 include ("db.member.inc.php");
-include ("bimage.inc.php");
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//<?php echo $TEXT['global-dtdlang']; ?>" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?php echo $TEXT['global-lang']; ?>" lang="<?php echo $TEXT['global-lang']; ?>" dir="<?php echo $TEXT['global-text_dir']; ?>">
@@ -13,93 +12,74 @@ include ("bimage.inc.php");
 <head>
 <title><?php echo $TEXT['global-headertitle'] . " | " . $TEXT['homepage-headertitle']; ?></title>
 <meta http-equiv="content-type" content="text/html; charset=<?php echo $TEXT['global-charset']; ?>" />
-<meta name="author" content="Homenet Spaces Andrew Gerst" />
-<meta name="copyright" content="© Homenet Spaces" />
-<meta name="keywords" content="Homenet, Spaces, The, Place, To, Be, Creative, Andrew, Gerst, Free, Profiles, Information, Facts" />
-<meta name="description" content="Welcome to Homenet Spaces we offer you a free profile with many cool and interesting things! This is the place to be creative!" />
-<meta name="revisit-after" content="7 days" />
-<meta name="googlebot" content="index, follow, all" />
-<meta name="robots" content="index, follow, all" />
-<link rel="stylesheet" type="text/css" href="css/global.css" media="all" />
-<script type="text/javascript" src="cs.js"></script>
-<script type="text/javascript" src="nav.js"></script>
-<script type="text/javascript" src="suggest.js"></script>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="javascript.php"></script>
 <style type="text/css">
-table#online { 
-	margin : 0 auto; 
-	margin-top : 10px; 
-	}
+table#online {
+margin: 0 auto;
+margin-top: 10px;
+}
 
-table#online tr { 
-	margin : 0 auto; 
-	padding : 5px; 
-	width : 800px; 
-	}
+table#online tr {
+margin: 0 auto;
+padding: 5px;
+width: 800px;
+}
 
-table#online tr.header { 
-	background-color : #ccccff; 
-	margin : 0 auto; 
-	padding : 5px; 
-	width : 800px; 
-	}
+table#online tr.header {
+background-color: #ccf;
+margin: 0 auto;
+padding: 5px;
+width: 800px;
+}
 
-table#online tr.header th { 
-	padding : 5px; 
-	text-align : center; 
-	width : 160px; 
-	}
+table#online tr.header th {
+padding: 5px;
+text-align: center;
+width: 160px;
+}
 
-table#online tr.header th.file { 
-	padding : 5px; 
-	text-align : center; 
-	width : 320px; 
-	}
+table#online tr.header th.file {
+padding: 5px;
+text-align: center;
+width: 320px;
+}
 
-table#online tr td { 
-	background-color : #ccffff; 
-	padding : 5px; 
-	text-align : center; 
-	width : 160px; 
-	}
+table#online tr td {
+background-color: #cff;
+padding: 5px;
+text-align: center;
+width: 160px;
+}
 
-table#online tr td.file { 
-	background-color : #ccffff; 
-	padding : 5px; 
-	text-align : center; 
-	width : 320px; 
-	}
-</style>
-<style type="text/css">
-body { 
-	background: url(<?php echo $bimage; ?>) repeat; 
-	background-position : 50% 140px; 
-	}
+table#online tr td.file {
+background-color: #cff;
+padding: 5px;
+text-align: center;
+width: 320px;
+}
 </style>
 </head>
 
 <body>
-<?php
-include ("hd.inc.php");
-?>
+<?php include ("hd.inc.php"); ?>
 <!-- Begin page content -->
 <div class="pagecontent">
-<h1>Guests &amp; Members Online</h1>
-<div style="margin : 0 auto; width : 75%; ">
-<span style="float : left; text-align : left; width : 300px; ">
+<div id="pageheader" class="pageheader2"><div class="heading">
+Guests &amp; Members Online
+</div></div>
+<div style="margin: 0 auto; width: 75%;">
+<span style="float: left; text-align: left; width: 300px;">
 There are 
 <?php
-// number of members online
 $oresult = mysql_db_query($om, "SELECT DISTINCT username FROM users_online") or die("Database SELECT Error");
 $online = mysql_num_rows($oresult);
 
-// list of members online
 $uresult = mysql_db_query($om, "SELECT DISTINCT username FROM users_online ORDER BY timestamp DESC") or die("Database SELECT Error");
 
-// number of members
 $mresult = mysql_query('SELECT user_id FROM login');
 $members = mysql_num_rows($mresult);
 
-// number of guests online
 $goresult = mysql_db_query($om, "SELECT DISTINCT ip FROM guests_online") or die("Database SELECT Error");
 $gonline = mysql_num_rows($goresult);
 
@@ -110,11 +90,8 @@ if ($gonline > 0) {
 echo "<br />";
 echo "<b>$gonline</b>";
 
-if ($gonline < 2) {
-echo " Guest ";
-} else {
-echo " Guests ";
-}
+if ($gonline < 2) echo " Guest ";
+else echo " Guests ";
 echo "Online";
 }
 } else {
@@ -124,22 +101,19 @@ if ($gonline > 0) {
 echo "<br />";
 echo "<b>$gonline</b>";
 
-if ($gonline < 2) {
-echo " Guest ";
-} else {
-echo " Guests ";
-}
+if ($gonline < 2) echo " Guest ";
+else echo " Guests ";
 echo "Online";
 }
 }
 ?>
 </span>
-<span style="float : right; text-align : right; width : 300px; ">
+<span style="float: right; text-align: right; width: 300px;">
 <?php
-$ssort = (isset($_GET['sort'])) ? $_GET['sort'] : null;
-$sorder = (isset($_GET['order'])) ? $_GET['order'] : null;
+$ssort = (isset($_GET['sort'])) ? $_GET['sort']: null;
+$sorder = (isset($_GET['order'])) ? $_GET['order']: null;
 ?>
-<select name="sortingorder" size="1" id="selectsort" style="padding : 4px; " onchange="window.location = document.all.selectsort.value">
+<select name="sortingorder" size="1" id="selectsort" style="padding: 4px;" onchange="window.location = document.all.selectsort.value">
 <option <?php if ($ssort == 0 || null) { echo 'selected="selected"'; } ?>>Select Your Sorting Order:&nbsp;</option>
 <option value="<?php echo $_SERVER['PHP_SELF']; ?>?sort=timestamp&order=asc" <?php if ($ssort == "timestamp" && $sorder == "asc") { echo 'selected="selected"'; } ?>>Timestamp ASC</option>
 <option value="<?php echo $_SERVER['PHP_SELF']; ?>?sort=timestamp&order=desc" <?php if ($ssort == "timestamp" && $sorder == "desc") { echo 'selected="selected"'; } ?>>Timestamp DESC</option>
@@ -165,18 +139,12 @@ switch ($_GET['sort']) {
 case 'timestamp':
 switch ($_GET['order']) {
 case 'asc':
-$query = 'SELECT * FROM
-guests_online
-ORDER BY
-timestamp ASC';
+$query = 'SELECT * FROM guests_online ORDER BY timestamp ASC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 
 case 'desc':
-$query = 'SELECT * FROM
-guests_online
-ORDER BY
-timestamp DESC';
+$query = 'SELECT * FROM guests_online ORDER BY timestamp DESC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 }
@@ -185,18 +153,12 @@ break;
 case 'ip':
 switch ($_GET['order']) {
 case 'asc':
-$query = 'SELECT * FROM
-guests_online
-ORDER BY
-ip ASC';
+$query = 'SELECT * FROM guests_online ORDER BY ip ASC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 
 case 'desc':
-$query = 'SELECT * FROM
-guests_online
-ORDER BY
-ip DESC';
+$query = 'SELECT * FROM guests_online ORDER BY ip DESC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 }
@@ -205,18 +167,12 @@ break;
 case 'username':
 switch ($_GET['order']) {
 case 'asc':
-$query = 'SELECT * FROM
-guests_online
-ORDER BY
-username ASC';
+$query = 'SELECT * FROM guests_online ORDER BY username ASC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 
 case 'desc':
-$query = 'SELECT * FROM
-guests_online
-ORDER BY
-username DESC';
+$query = 'SELECT * FROM guests_online ORDER BY username DESC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 }
@@ -225,18 +181,12 @@ break;
 case 'fileviewed':
 switch ($_GET['order']) {
 case 'asc':
-$query = 'SELECT * FROM
-guests_online
-ORDER BY
-file ASC';
+$query = 'SELECT * FROM guests_online ORDER BY file ASC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 
 case 'desc':
-$query = 'SELECT * FROM
-guests_online
-ORDER BY
-file DESC';
+$query = 'SELECT * FROM guests_online ORDER BY file DESC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 }
@@ -265,28 +215,19 @@ echo "</table>";
 mysql_free_result($result);
 }
 
-$query = 'SELECT * FROM
-users_online
-ORDER BY
-timestamp DESC';
+$query = 'SELECT * FROM users_online ORDER BY timestamp DESC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 
 switch ($_GET['sort']) {
 case 'timestamp':
 switch ($_GET['order']) {
 case 'asc':
-$query = 'SELECT * FROM
-users_online
-ORDER BY
-timestamp ASC';
+$query = 'SELECT * FROM users_online ORDER BY timestamp ASC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 
 case 'desc':
-$query = 'SELECT * FROM
-users_online
-ORDER BY
-timestamp DESC';
+$query = 'SELECT * FROM users_online ORDER BY timestamp DESC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 }
@@ -295,18 +236,12 @@ break;
 case 'ip':
 switch ($_GET['order']) {
 case 'asc':
-$query = 'SELECT * FROM
-users_online
-ORDER BY
-ip ASC';
+$query = 'SELECT * FROM users_online ORDER BY ip ASC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 
 case 'desc':
-$query = 'SELECT * FROM
-users_online
-ORDER BY
-ip DESC';
+$query = 'SELECT * FROM users_online ORDER BY ip DESC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 }
@@ -315,18 +250,12 @@ break;
 case 'username':
 switch ($_GET['order']) {
 case 'asc':
-$query = 'SELECT * FROM
-users_online
-ORDER BY
-username ASC';
+$query = 'SELECT * FROM users_online ORDER BY username ASC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 
 case 'desc':
-$query = 'SELECT * FROM
-users_online
-ORDER BY
-username DESC';
+$query = 'SELECT * FROM users_online ORDER BY username DESC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 }
@@ -335,18 +264,12 @@ break;
 case 'fileviewed':
 switch ($_GET['order']) {
 case 'asc':
-$query = 'SELECT * FROM
-users_online
-ORDER BY
-file ASC';
+$query = 'SELECT * FROM users_online ORDER BY file ASC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 
 case 'desc':
-$query = 'SELECT * FROM
-users_online
-ORDER BY
-file DESC';
+$query = 'SELECT * FROM users_online ORDER BY file DESC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 }
@@ -375,12 +298,10 @@ echo "</table>";
 mysql_free_result($result);
 mysql_close($db);
 ?>
-<div style="clear : both; width : 100%; ">&nbsp;</div>
+<div style="clear: both; width: 100%;">&nbsp;</div>
 </div>
 <!-- End page content -->
-<?php
-include ("ft.inc.php");
-?>
+<?php include ("ft.inc.php"); ?>
 </body>
 
 </html>

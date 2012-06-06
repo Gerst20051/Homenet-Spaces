@@ -4,8 +4,6 @@ session_start();
 require ("lang.inc.php");
 include ("db.member.inc.php");
 include ("login.inc.php");
-include ("bimage.inc.php");
-
 
 function ucname($string) {
 $string = ucwords(strtolower($string));
@@ -19,28 +17,11 @@ $string = implode($delimiter, array_map('ucfirst', explode($delimiter, $string))
 return $string;
 }
 
-/*
-$names = array(
-'JEAN-LUC PICARD',
-'MILES O\'BRIEN',
-'WILLIAM RIKER',
-'geordi la forge',
-'bEvErly CRuSHeR'
-);
-
-foreach ($names as $name) {
-print ucname("$name\n");
-}
-*/
-
-$hobbies_list = array('Biking', 'Computers', 'Cooking', 'Dancing', 'Exercise', 'Flying', 'Gaming', 'Golfing', 'Hiking', 'Hunting', 'Internet', 'Reading', 'Running', 'School', 'Singing', 'Skiing', 'Swimming', 'Traveling', 'Other than listed', 'Websites');
-
 if (isset($_POST['register']) && $_POST['register'] == 'Register') {
-// filter incoming values
 $username_reg = (isset($_POST['username_reg'])) ? trim($_POST['username_reg']) : '';
-$user_id = (isset($_POST['user_id'])) ? $_POST['user_id'] : '';
-$password = (isset($_POST['password'])) ? $_POST['password'] : '';
-$password_ver = (isset($_POST['password_ver'])) ? $_POST['password_ver'] : '';
+$user_id = (isset($_POST['user_id'])) ? trim($_POST['user_id']) : '';
+$password = (isset($_POST['password'])) ? trim($_POST['password']) : '';
+$password_ver = (isset($_POST['password_ver'])) ? trim($_POST['password_ver']) : '';
 $fullname = (isset($_POST['fullname'])) ? trim(ucname($_POST['fullname'])) : '';
 $email = (isset($_POST['email'])) ? trim($_POST['email']) : '';
 $gender = (isset($_POST['gender'])) ? trim($_POST['gender']) : '';
@@ -58,28 +39,12 @@ $txtsecuritycode = (isset($_POST['txtsecuritycode'])) ? trim($_POST['txtsecurity
 
 $header_registererrors = array();
 
-// make sure manditory fields have been entered
-if (empty($username_reg)) {
-$header_registererrors[] = 'Username cannot be blank.';
-}
+if (empty($username_reg)) $header_registererrors[] = 'Username cannot be blank.';
+if (preg_match('/[,]/', $username_reg)) $header_registererrors[] = 'Username cannot have commas.';
+if (preg_match('/[ ]/', $username_reg)) $header_registererrors[] = 'Username cannot have spaces.';
+if (preg_match('/[-]/', $username_reg)) $header_registererrors[] = 'Username cannot have dashes.';
+if (preg_match('/[.]/', $username_reg)) $header_registererrors[] = 'Username cannot have periods.';
 
-if (preg_match('/[,]/', $username_reg)) {
-$header_registererrors[] = 'Username cannot have commas.';
-}
-
-if (preg_match('/[ ]/', $username_reg)) {
-$header_registererrors[] = 'Username cannot have spaces.';
-}
-
-if (preg_match('/[-]/', $username_reg)) {
-$header_registererrors[] = 'Username cannot have dashes.';
-}
-
-if (preg_match('/[.]/', $username_reg)) {
-$header_registererrors[] = 'Username cannot have periods.';
-}
-
-// check if username is already registered
 $query = 'SELECT username FROM login WHERE username = "' . $username_reg . '"';
 $result = mysql_query($query, $db) or die(mysql_error());
 
@@ -89,33 +54,18 @@ $username_reg = '';
 }
 mysql_free_result($result);
 
-if (empty($password) && !empty($password_ver)) {
-$header_registererrors[] = 'Password cannot be blank.';
-}
-
-if (empty($password) && empty($password_ver)) {
-$header_registererrors[] = 'Passwords cannot be blank.';
-}
+if (empty($password) && !empty($password_ver)) $header_registererrors[] = 'Password cannot be blank.';
+if (empty($password) && empty($password_ver)) $header_registererrors[] = 'Passwords cannot be blank.';
 
 if (!empty($password)) {
-if (empty($password_ver)) {
-$header_registererrors[] = 'Please confirm your password.';
-}
-
+if (empty($password_ver)) $header_registererrors[] = 'Please confirm your password.';
 if (!empty($password_ver)) {
-if ($password != $password_ver) {
-$header_registererrors[] = 'Both of your passwords need to match.';
+if ($password != $password_ver) $header_registererrors[] = 'Both of your passwords need to match.';
 }
-}
-
-if ($username == $password) {
-$header_registererrors[] = 'Username & Password Cannot Be The Same.';
-}
+if ($username == $password) $header_registererrors[] = 'Username & Password Cannot Be The Same.';
 }
 
-if (empty($fullname)) {
-$header_registererrors[] = 'Full Name cannot be blank.';
-}
+if (empty($fullname)) $header_registererrors[] = 'Full Name cannot be blank.';
 
 if (empty($email)) {
 $header_registererrors[] = 'Email Address cannot be blank.';
@@ -126,60 +76,29 @@ $header_registererrors[] = 'Email Address should be in correct form.';
 }
 }
 
-if (empty($gender)) {
-$header_registererrors[] = 'Gender cannot be blank.';
-}
+if (empty($gender)) $header_registererrors[] = 'Gender cannot be blank.';
 
-if ($birth_month == 0 && $birth_day == 0 && $birth_year == 0) {
-$header_registererrors[] = 'Birth Date cannot be blank.';
-} elseif ($birth_month == 0) {
-$header_registererrors[] = 'Birth Month cannot be blank.';
-} elseif ($birth_day == 0) {
-$header_registererrors[] = 'Birth Day cannot be blank.';
-} elseif ($birth_year == 0) {
-$header_registererrors[] = 'Birth Year cannot be blank.';
-}
+if ($birth_month == 0 && $birth_day == 0 && $birth_year == 0) $header_registererrors[] = 'Birth Date cannot be blank.';
+elseif ($birth_month == 0) $header_registererrors[] = 'Birth Month cannot be blank.';
+elseif ($birth_day == 0) $header_registererrors[] = 'Birth Day cannot be blank.';
+elseif ($birth_year == 0) $header_registererrors[] = 'Birth Year cannot be blank.';
 
-if (empty($hometown)) {
-$header_registererrors[] = 'Hometown cannot be blank.';
-}
+if (empty($hometown)) $header_registererrors[] = 'Hometown cannot be blank.';
+if (empty($hobbies)) $header_registererrors[] = 'Hobbies cannot be blank.';
+if ($security_question1 == $security_question2) $header_registererrors[] = 'Security Questions cannot be the same.';
+if (empty($security_question1) || ($security_question1 == 0)) $header_registererrors[] = 'Security Question 1 cannot be blank.';
+if (empty($security_answer1)) $header_registererrors[] = 'Security Answer 1 cannot be blank.';
+if (empty($security_question2) || ($security_question2 == 0)) $header_registererrors[] = 'Security Question 2 cannot be blank.';
+if (empty($security_answer2)) $header_registererrors[] = 'Security Answer 2 cannot be blank.';
 
-if (empty($hobbies)) {
-$header_registererrors[] = 'Hobbies cannot be blank.';
-}
-
-if ($security_question1 == $security_question2) {
-$header_registererrors[] = 'Security Questions cannot be the same.';
-}
-
-if (empty($security_question1) || ($security_question1 == 0)) {
-$header_registererrors[] = 'Security Question 1 cannot be blank.';
-}
-
-if (empty($security_answer1)) {
-$header_registererrors[] = 'Security Answer 1 cannot be blank.';
-}
-
-if (empty($security_question2) || ($security_question2 == 0)) {
-$header_registererrors[] = 'Security Question 2 cannot be blank.';
-}
-
-if (empty($security_answer2)) {
-$header_registererrors[] = 'Security Answer 2 cannot be blank.';
-}
-
-// check to see if security codes match
-if ($_POST['txtsecuritycode'] == $_SESSION['SECURITY_CODE']) {
-} else {
-$header_registererrors[] = 'Security Code cannot be incorrect.';
-$footer_error = '<p><strong style="color : #ff3333; weight : bold; ">Security Code cannot be incorrect.</strong></p>';
+if ($_POST['txtsecuritycode'] != $_SESSION['SECURITY_CODE']) {
+$header_registererrors[] = 'Security Code is case-sensitive and cannot be incorrect.';
+$footer_error = '<p><strong style="color: #f33; weight: bold;">Security Code is case-sensitive and cannot be incorrect.</strong></p>';
 }
 
 if (count($header_registererrors) > 0) {
-} else { // no errors so enter the data into the database
-if (empty($community)) {
-$community = $hometown;
-}
+} else {
+if (empty($community)) $community = $hometown;
 
 list($firstname, $middlename, $lastname) = split(' ', $fullname);
 if (!$lastname) {
@@ -212,14 +131,14 @@ VALUES
 '"' . mysql_real_escape_string($birth_year, $db)  . '", ' .
 '"' . mysql_real_escape_string($hometown, $db)  . '", ' .
 '"' . mysql_real_escape_string($community, $db)  . '", ' .
-'"' . mysql_real_escape_string(join(', ', $hobbies), $db)  . '", ' . 
+'"' . mysql_real_escape_string(join(',', $hobbies), $db)  . '", ' . 
 '"' . mysql_real_escape_string($security_question1, $db)  . '", ' .
 '"' . mysql_real_escape_string($security_answer1, $db)  . '", ' .
 '"' . mysql_real_escape_string($security_question2, $db)  . '", ' .
 '"' . mysql_real_escape_string($security_answer2, $db)  . '")';
 mysql_query($query, $db) or die(mysql_error());
 
-$query = "CREATE TABLE " . $username_reg . " (
+$query = "CREATE TABLE $username_reg (
 message_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
 type VARCHAR(20) NOT NULL DEFAULT 0,
 user VARCHAR(20) NOT NULL,
@@ -235,7 +154,7 @@ PRIMARY KEY (message_id)
 ENGINE=MyISAM";
 mysql_query($query, $message_db) or die(mysql_error($message_db));
 
-$query = "CREATE TABLE " . $username_reg . " (
+$query = "CREATE TABLE $username_reg (
 comment_id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
 type VARCHAR(20) NOT NULL DEFAULT 0,
 user VARCHAR(20) NOT NULL,
@@ -255,22 +174,12 @@ VALUES
 (' . $user_id . ')';
 mysql_query($query, $db) or die(mysql_error());
 
-$query = 'SELECT * FROM
-login u
-JOIN
-info i
-ON
-u.user_id = i.user_id
-WHERE ' .
-'username = "' . mysql_real_escape_string($username_reg, $db) .
-'" AND ' .
-'password = PASSWORD("' . mysql_real_escape_string($password, $db) . '")';
+$query = 'SELECT * FROM login u JOIN info i ON u.user_id = i.user_id WHERE username = "' . mysql_real_escape_string($username_reg, $db) . '" AND password = PASSWORD("' . mysql_real_escape_string($password, $db) . '")';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 $row = mysql_fetch_array($result);
 extract($row);
 mysql_free_result($result);
 
-// clear misc session variables if registering user was logged in
 $_SESSION['last_login'] = null;
 $_SESSION['last_login_ip'] = null;
 $_SESSION['status'] = null;
@@ -284,8 +193,6 @@ $_SESSION['pref_upview'] = null;
 $_SESSION['setting_vmode'] = null;
 $_SESSION['setting_theme'] = null;
 $_SESSION['setting_language'] = null;
-
-// set new variables over existing if user was logged in
 $_SESSION['logged'] = 1;
 $_SESSION['username'] = $row['username'];
 $_SESSION['access_level'] = 1;
@@ -297,15 +204,10 @@ $_SESSION['email'] = $row['email'];
 $_SESSION['user_id'] = $row['user_id'];
 $user_id = null;
 $username = null;
-
 $logins = 1;
 
-$query = 'UPDATE info SET
-logins = ' . $logins . '
-WHERE
-user_id = ' . $_SESSION['user_id'];
+$query = 'UPDATE info SET logins = ' . $logins . ' WHERE user_id = ' . $_SESSION['user_id'];
 mysql_query($query, $db) or die(mysql_error());
-
 header('refresh: 8; url=user_personal.php?login=1');
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//<?php echo $TEXT['global-dtdlang']; ?>" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -314,41 +216,23 @@ header('refresh: 8; url=user_personal.php?login=1');
 <head>
 <title><?php echo $TEXT['global-headertitle'] . " | " . $TEXT['homepage-headertitle']; ?></title>
 <meta http-equiv="content-type" content="text/html; charset=<?php echo $TEXT['global-charset']; ?>" />
-<meta name="author" content="Homenet Spaces Andrew Gerst" />
-<meta name="copyright" content="© Homenet Spaces" />
-<meta name="keywords" content="Homenet, Spaces, The, Place, To, Be, Creative, Andrew, Gerst, Free, Profiles, Information, Facts" />
-<meta name="description" content="Welcome to Homenet Spaces we offer you a free profile with many cool and interesting things! This is the place to be creative!" />
-<meta name="revisit-after" content="7 days" />
-<meta name="googlebot" content="index, follow, all" />
-<meta name="robots" content="index, follow, all" />
-<link rel="stylesheet" type="text/css" href="css/global.css" media="all" />
-<script type="text/javascript" src="cs.js"></script>
-<script type="text/javascript" src="nav.js"></script>
-<script type="text/javascript" src="suggest.js"></script>
-<style type="text/css">
-body { 
-	background: url(<?php echo $bimage; ?>) repeat; 
-	background-position : 50% 140px; 
-	}
-</style>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="javascript.php"></script>
 </head>
 
 <body>
 <?php
 include ("hd.inc.php");
 
-$query = 'UPDATE login SET
-last_login_ip = "' . $ip . '"
-WHERE
-user_id = ' . $_SESSION['user_id'];
+$query = 'UPDATE login SET last_login_ip = "' . $ip . '" WHERE user_id = ' . $_SESSION['user_id'];
 mysql_query($query, $db) or die(mysql_error());
 ?>
 <!-- Begin page content -->
 <div class="pagecontent">
 <p><strong>Thank you <?php echo $_SESSION['username']; ?> for registering!</strong></p>
-<p><strong style="color : #ff3333; font-weight : bold; ">Your registration is complete! You are being sent to your personal page.</strong></p>
-<form name="counter" style="margin : 0px; "><p>If your browser doesn't redirect properly after
-<input type="text" size="1" name="cd" style="background-color : transparent; border : 0px; font-weight : bold; width : 12px; ">
+<p><strong style="color: #f33; font-weight: bold;">Your registration is complete! You are being sent to your personal page.</strong></p>
+<form name="counter" style="margin: 0;"><p>If your browser doesn't redirect properly after
+<input type="text" size="1" name="cd" style="background-color: transparent; border: 0; font-weight: bold; width: 12px;">
 seconds, <a href="user_personal.php?login=1">click here</a>.</strong></p></form>
 </div>
 <script type="text/javascript"> 
@@ -394,92 +278,42 @@ die();
 <head>
 <title><?php echo $TEXT['global-headertitle'] . " | " . $TEXT['homepage-headertitle']; ?></title>
 <meta http-equiv="content-type" content="text/html; charset=<?php echo $TEXT['global-charset']; ?>" />
-<meta name="author" content="Homenet Spaces Andrew Gerst" />
-<meta name="copyright" content="© Homenet Spaces" />
-<meta name="keywords" content="Homenet, Spaces, The, Place, To, Be, Creative, Andrew, Gerst, Free, Profiles, Information, Facts" />
-<meta name="description" content="Welcome to Homenet Spaces we offer you a free profile with many cool and interesting things! This is the place to be creative!" />
-<meta name="revisit-after" content="7 days" />
-<meta name="googlebot" content="index, follow, all" />
-<meta name="robots" content="index, follow, all" />
-<link rel="stylesheet" type="text/css" href="css/global.css" media="all" />
-<script type="text/javascript" src="cs.js"></script>
-<script type="text/javascript" src="nav.js"></script>
-<script type="text/javascript" src="suggest.js"></script>
-<script type="text/javascript">
-<!--
-function updatecaptchaimg() {
-document.captchaimg.src = document.captchaimg.src + '?';
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="javascript.php"></script>
+<style type="text/css">
+td {
+vertical-align: top;
 }
--->
-</script>
-<style type="text/css">
-td { 
-	vertical-align : top; 
-	}
 
-div.pagecontent table td.label { 
-	padding : 6px; 
-	text-align : right; 
-	}
+div.pagecontent table td.label {
+padding: 6px;
+text-align: right;
+}
 
-div.pagecontent table td.input { 
-	padding : 6px; 
-	text-align : left; 
-	}
+div.pagecontent table td.input {
+padding: 6px;
+text-align: left;
+}
 
-div.pagecontent input[type="text"] {
-	font-size : 14pt; 
-	height : 25px; 
-	letter-spacing : 2px; 
-	line-height : 25px; 
-	}
-
-div.pagecontent input[type="password"] {
-	font-size : 14pt; 
-	height : 25px; 
-	letter-spacing : 2px; 
-	line-height : 25px; 
-	}
-
-div.pagecontent input[type="radio"] {
-	font-size : 14pt; 
-	height : 25px; 
-	letter-spacing : 2px; 
-	line-height : 25px; 
-	}
-
-div.pagecontent input[type="submit"] {
-	font-size : 13pt; 
-	height : 36px; 
-	letter-spacing : 2px; 
-	line-height : 29px; 
-	}
-
-div.pagecontent table td.input span.radio { 
-	left : 2px; 
-	position : relative; 
-	top : -6.5px; 
-	}
-</style>
-<style type="text/css">
-body { 
-	background: url(<?php echo $bimage; ?>) repeat; 
-	background-position : 50% 140px; 
-	}
+div.pagecontent table td.input span.radio {
+left: 2px;
+position: relative;
+top: -6.5px;
+}
 </style>
 </head>
 
 <body>
-<?php
-include ("hd.inc.php");
-?>
+<?php include ("hd.inc.php"); ?>
 <!-- Begin page content -->
 <div class="pagecontent">
-<h1>Register</h1>
+<div id="pageheader" class="pageheader2"><div class="heading">
+Register
+</div></div>
 <form action="<?php $_SERVER['PHP_SELF']; ?>" method="post" name="register">
-<fieldset style="margin : 0 auto; width : 75%; ">
+<fieldset style="margin: 0 auto; width: 75%;">
 <legend>Login Credentials&nbsp;</legend>
-<table style="margin-bottom : 10px; margin-top : 10px; ">
+<table style="margin-bottom: 10px; margin-top: 10px;">
 <tr>
 <td class="label"><label for="username_reg">Username:</label></td>
 <td class="input"><input type="text" name="username_reg" id="username_reg" size="26" maxlength="20" value="<?php echo $username_reg; ?>" />
@@ -497,9 +331,9 @@ include ("hd.inc.php");
 </table>
 </fieldset>
 <br /><br />
-<fieldset style="margin : 0 auto; width : 75%; ">
+<fieldset style="margin: 0 auto; width: 75%;">
 <legend>Personal Information&nbsp;</legend>
-<table style="margin-bottom : 10px; margin-top : 10px; ">
+<table style="margin-bottom: 10px; margin-top: 10px;">
 <tr>
 <td class="label"><label for="fullname">Full Name:</label></td>
 <td class="input"><input type="text" name="fullname" id="fullname" size="26" maxlength="40" value="<?php echo $fullname; ?>" /></td>
@@ -694,12 +528,17 @@ include ("hd.inc.php");
 <td class="label"><label for="hobbies">Hobbies / Interests:</label></td>
 <td class="input"><select name="hobbies[]" id="hobbies" size="10" multiple="multiple">
 <?php
+$hobbies_list = array('Aircraft Spotting','Airbrushing','Airsofting','Acting','Aeromodeling','Amateur Astronomy','Amateur Radio','Animals/Pets/Dogs','Arts','Astrology','Astronomy','Backgammon','Badminton','Baseball','Basketball','Beach/Sun Tanning','Beachcombing','Beadwork','Beatboxing','Becoming A Child Advocate','Bell Ringing','Belly Dancing','Bicycling','Billiards','Biology','Bird Watching','Birding','BMX','Blacksmithing','Blogging','Board Games','Boating','Body Building','Bonsai Tree','Boomerangs','Bowling','Brewing Beer','Bridge Building','Bringing Food To The Disabled','Building A House For Habitat For Humanity','Building Dollhouses','Bungee Jumping','Butterfly Watching','Button Collecting',
+'Cake Decorating','Calculus','Call of Duty','Calligraphy','Camping','Candle Making','Canoeing','Car Racing','Casino Gambling','Cave Diving','Celebrating Your Favorite Pastimes/Collections','Checkers','Cheerleading','Chemistry','Chess','Church/Church Activities','Cigar Smoking','Cloud Watching','Coin Collecting','Collecting','Collecting Antiques','Collecting Artwork','Collecting Music Albums','Compose Music','Computer Activities','Cooking','Cosplay','Crafts','Crafts (Unspecified)','Crochet','Crocheting','Cross-Stitch','Crossword Puzzles','Dancing','Darts','Dating','Dating Online','Diecast Collectibles','Digital Photography','Dolls','Dominoes','Drawing','Dumpster Diving','Eating Out','Educational Courses','Electronics','Embroidery','Entertaining','Exercise (Aerobics, Weights)',
+'Fast Cars','Fencing','Fishing','Flying','Football','Four Wheeling','Freecell','Freshwater Aquariums','Frisbee Golf (Frolf)','Games','Gardening','Garage Saleing','Genealogy','Geocaching','Ghost Hunting','Glowsticking','Going To Movies','Golfing','Go Kart Racing','Grip Strength','Guitar','Handwriting Analysis','Hang Gliding','Hiking','History','Home Brewing','Home Repair','Home Theater','Horseback Riding','Hot Air Ballooning','Hula Hooping','Hunting','Illusion','Internet','Jet Engines','Jewelry Making','Jigsaw Puzzles','Juggling','Keep A Journal','Kayaking','Kitchen Chemistry','Kites','Kite Boarding','Knitting','Knotting',
+'Lasers','Lawn Darts','Learning A Foreign Language','Learning An Instrument','Learning To Pilot A Plane','Leathercrafting','Legos','Listening To Music','Macram&eacute;','Magic','Making Model Cars','Matchstick Modeling','Mathematics','Meditation','Microscopy','Minesweeper','Mixed Martial Arts','Metal Detecting','Model Rockets','Modeling Ships','Models','Motorcycle Racing','Motorcycles','Mountain Biking','Mountain Climbing','Musical Instruments','Needlepoint',
+'Online Gambling','Origami','Other than listed','Owning An Antique Car','Pac-Man','Painting','Paintball','Papermaking','Papermache','Parachuting','People Watching','Photography','Piano','Pinball','Pinochle','Playing Cards','Playing Music','Playing Poker','Playing Team Sports','Pottery','Puppetry','Pyrotechnics','Quilting','Rafting','Railfans','R/C Boats','R/C Cars','R/C Helicopters','R/C Planes','Read Ghost Stories','Reading','Reading To The Elderly','Relaxing','Renting Movies','Rescuing Abused Or Abandoned Animals','Reviving Old Interests','Robotics','Rock Climbing','Rock Collecting','Rockets','Rocking AIDS Babies','Rubik&apos;s Cubes','Running',
+'Saltwater Aquariums','School','Scrapbooking','Scuba Diving','Sewing','Shark Fishing','Shopping','Singing','Singing In Choir','Skateboarding','Sketching','Skeet Shooting','Skiing','Sky Diving','Sleeping','Smoking Pipes','Snorkeling','Soap Making','Soccer','Socializing With Friends/Neighbors','Solitaire','Spelunkering','Spending Time With Family/Kids','Spider Solitaire','Stamp Collecting','Storytelling','String Figures','Surf Fishing','Swimming',
+'Tea Tasting','Tennis','Tesla Coils','Tetris','Texting','Textiles','Theater','Tic-Tac-Toe','Tombstone Rubbing','Tool Collecting','Toy Collecting','Train Collecting','Train Spotting','Traveling','Treasure Hunting','Trekkie','Tug Of War','Tutoring Children','Urban Exploration','Vacation','Video Games','Volunteer','Walking','Warhammer','Watching Sporting Events','Watching TV','Websites','Windsurfing','Wine Making','Woodworking','Working','Working In A Food Pantry','Working On Cars','Writing','Writing Music','Writing Songs','Yoga','YoYo');
+
 foreach ($hobbies_list as $hobby) {
-if (in_array($hobby, $hobbies)) {
-echo '<option value="' . $hobby . '" selected="selected">' . $hobby . '</option>';
-} else {
-echo '<option value="' . $hobby . '">' . $hobby . '</option>';
-}
+if (in_array($hobby, $hobbies)) echo '<option value="' . $hobby . '" selected="selected">' . $hobby . '</option>';
+else echo '<option value="' . $hobby . '">' . $hobby . '</option>';
 }
 ?>
 </select>
@@ -709,12 +548,12 @@ echo '<option value="' . $hobby . '">' . $hobby . '</option>';
 <br /><br />
 </fieldset>
 <br /><br />
-<fieldset style="margin : 0 auto; width : 75%; ">
+<fieldset style="margin: 0 auto; width: 75%;">
 <legend>Security Questions&nbsp;</legend>
-<div style="margin : 0 auto; margin-bottom : 10px; margin-top : 10px; ">
-<fieldset style="margin : 0 auto; width : 90%; ">
+<div style="margin: 0 auto; margin-bottom: 10px; margin-top: 10px;">
+<fieldset style="margin: 0 auto; width: 90%;">
 <legend>Question 1&nbsp;</legend>
-<table style="margin : 0 auto; margin-bottom : 10px; margin-top : 10px; ">
+<table style="margin: 0 auto; margin-bottom: 10px; margin-top: 10px;">
 <tr>
 <td class="label"><label for="security_question1">Question:</label></td>
 <td class="input">
@@ -742,9 +581,9 @@ echo '<option value="' . $hobby . '">' . $hobby . '</option>';
 </table>
 </fieldset>
 <br />
-<fieldset style="margin : 0 auto; width : 90%; ">
+<fieldset style="margin: 0 auto; width: 90%;">
 <legend>Question 2&nbsp;</legend>
-<table style="margin : 0 auto; margin-bottom : 10px; margin-top : 10px; ">
+<table style="margin: 0 auto; margin-bottom: 10px; margin-top: 10px;">
 <tr>
 <td class="label"><label for="security_question2">Question:</label></td>
 <td class="input">
@@ -772,18 +611,18 @@ echo '<option value="' . $hobby . '">' . $hobby . '</option>';
 </table>
 </fieldset>
 </div>
-<div style="margin-bottom : 10px; ">
+<div style="margin-bottom: 10px;">
 <small class="formreminder">( If you ever forget your password you will need to answer these questions to get it reset )</small>
 </div>
 </fieldset>
 <br /><br />
-<fieldset style="margin : 0 auto; width : 75%; ">
+<fieldset style="margin: 0 auto; width: 75%;">
 <legend>Security Code&nbsp;</legend>
-<table style="margin : 0 auto; margin-bottom : 10px; margin-top : 10px; ">
+<table style="margin: 0 auto; margin-bottom: 10px; margin-top: 10px;">
 <tr>
-<td><input type="text" name="txtsecuritycode" size="14" maxlength="7" value="" style="font-size : 18pt; height : 30px; letter-spacing : 2px; line-height : 30px; margin-right : 5px; text-align : center; " /></td>
+<td><input type="text" name="txtsecuritycode" size="14" maxlength="7" value="" style="font-size: 18pt; height: 30px; letter-spacing: 2px; line-height: 30px; margin-right: 5px; text-align: center;" /></td>
 <td><img name="captchaimg" alt="Security Code" src="captcha_securityimage.php" /></td>
-<td><a onclick="javascript:updatecaptchaimg();"><img src="i/captcha/arrow_refresh.png" alt="Refresh Code" style="border-width : 0px; margin-left : 5px; margin-top : 7px; " /></a></td>
+<td><a onclick="javascript:updatecaptchaimg();"><img src="i/captcha/refresh.png" alt="Refresh Code" style="border-width: 0; margin-left: 5px; margin-top: 7px;" /></a></td>
 </tr>
 </table>
 <br />
@@ -805,6 +644,4 @@ include ("tracking_scripts.inc.php");
 </body>
 
 </html>
-<?php
-mysql_close($db);
-?>
+<?php mysql_close($db); ?>

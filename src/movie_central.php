@@ -1,4 +1,4 @@
-<div style="text-align : center; ">
+<div style="text-align: center;">
 <h1>Movie Central</h1>
 <select name="selecta" size="1" id="videoa" onchange="document.all.playera.Filename=document.all.videoa.value; ">
 <option selected="selected">Movies</option>

@@ -6,7 +6,7 @@ header("Content-Type: application/x-javascript");
 if (isset($_SESSION['logged']) && ($_SESSION['logged'] == 1)) {
 include ("db.member.inc.php");
 
-$query = 'SELECT * FROM hns_desktop u JOIN info i ON u.user_id = i.user_id WHERE u.user_id = "' . mysql_real_escape_string($_SESSION['user_id'], $db) . '"';
+$query = 'SELECT * FROM hnsdesktop u JOIN info i ON u.user_id = i.user_id WHERE u.user_id = "' . mysql_real_escape_string($_SESSION['user_id'], $db) . '"';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 
 if (mysql_num_rows($result) > 0) {

@@ -4,10 +4,10 @@ use HTML::Perlinfo;
 use CGI qw(header);
 
 $q = new CGI;
-print $q->header;
+print $q -> header;
 
 $p = new HTML::Perlinfo;
-$p->info_general;
-$p->info_variables;
-$p->info_modules;
-$p->info_license;
+$p -> info_general;
+$p -> info_variables;
+$p -> info_modules;
+$p -> info_license;

@@ -1,43 +1,21 @@
 <?php
 $user_id = (isset($_GET['id'])) ? $_GET['id'] : 0;
-
-if ($user_id == 0) {
-header('location: members.php');
-die();
-}
+if ($user_id == 0) { header('location: members.php'); die(); }
 
 session_start();
-
 require ("lang.inc.php");
 include ("db.member.inc.php");
 include ("db.om.inc.php");
 include ("login.inc.php");
-include ("bimage.inc.php");
 
-// check if user id is registered
-$query = 'SELECT
-user_id
-FROM
-login
-WHERE
-user_id = ' . $user_id;
+$query = 'SELECT user_id FROM login WHERE user_id = ' . $user_id;
 $result = mysql_query($query, $db) or die(mysql_error());
 
-if (mysql_num_rows($result) == 0) {
-header('location: members.php');
-}
+if (mysql_num_rows($result) == 0) header('location: members.php');
 
 $user_id = $_GET['id'];
-$query = 'SELECT * FROM
-login u
-JOIN
-info i
-ON
-u.user_id = i.user_id
-WHERE
-u.user_id = ' . $user_id;
+$query = 'SELECT * FROM login u JOIN info i ON u.user_id = i.user_id WHERE u.user_id = ' . $user_id;
 $result = mysql_query($query, $db) or die(mysql_error($db));
-
 $row = mysql_fetch_array($result);
 extract($row);
 mysql_free_result($result);
@@ -54,34 +32,17 @@ header('refresh: 3; url=login.php?redirect=' . $_SERVER['PHP_SELF'] . "?" . $_SE
 <head>
 <title><?php echo $TEXT['global-headertitle'] . " | " . $TEXT['homepage-headertitle']; ?></title>
 <meta http-equiv="content-type" content="text/html; charset=<?php echo $TEXT['global-charset']; ?>" />
-<meta name="author" content="Homenet Spaces Andrew Gerst" />
-<meta name="copyright" content="© Homenet Spaces" />
-<meta name="keywords" content="Homenet, Spaces, The, Place, To, Be, Creative, Andrew, Gerst, Free, Profiles, Information, Facts" />
-<meta name="description" content="Welcome to Homenet Spaces | This is the place to be creative! Feel free to add yourself to our wonderful community by registering! " />
-<meta name="revisit-after" content="7 days" />
-<meta name="googlebot" content="index, follow, all" />
-<meta name="robots" content="index, follow, all" />
-<link rel="stylesheet" type="text/css" href="css/global.css" media="all" />
-<script type="text/javascript" src="cs.js"></script>
-<script type="text/javascript" src="nav.js"></script>
-<script type="text/javascript" src="suggest.js"></script>
-<style type="text/css">
-body { 
-	background: url(<?php echo $bimage; ?>) repeat; 
-	background-position : 50% 140px; 
-	}
-</style>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="javascript.php"></script>
 </head>
 
 <body>
-<?php
-include ("hd.inc.php");
-?>
+<?php include ("hd.inc.php"); ?>
 <!-- Begin page content -->
 <div class="pagecontent">
 <?php
-echo '<form name="counter" style="margin : 0px; "><p><strong style="color : #ff3333; font-weight : bold; ">You will be redirected to the login page in
-<input type="text" size="1" name="cd" style="background-color : transparent; border : 0px; color : #ff3333; font-weight : bold; width : 12px; ">
+echo '<form name="counter" style="margin: 0;"><p><strong style="color: #f33; font-weight: bold;">You will be redirected to the login page in
+<input type="text" size="1" name="cd" style="background-color: transparent; border: 0px; color: #f33; font-weight: bold; width: 12px;">
 seconds.</strong></p></form>';
 echo '<p>If your browser doesn\'t redirect you properly automatically, ' . '<a href="login.php?redirect=' . $_SERVER['PHP_SELF'] . "?" . $_SERVER['QUERY_STRING'] . '">click here</a>.</p>';
 ?>
@@ -130,70 +91,28 @@ die();
 <head>
 <title><?php echo $username . " ( " . $first_name . " " . $last_name . " ) | " . $TEXT['global-headertitle'] . " | Song History"; ?></title>
 <meta http-equiv="content-type" content="text/html; charset=<?php echo $TEXT['global-charset']; ?>" />
-<meta name="author" content="Homenet Spaces Andrew Gerst" />
-<meta name="copyright" content="© Homenet Spaces" />
-<meta name="keywords" content="Homenet, Spaces, The, Place, To, Be, Creative, Andrew, Gerst, Free, Profiles, Information, Facts" />
-<meta name="description" content="Welcome to Homenet Spaces we offer you a free profile with many cool and interesting things! This is the place to be creative!" />
-<meta name="revisit-after" content="7 days" />
-<meta name="googlebot" content="index, follow, all" />
-<meta name="robots" content="index, follow, all" />
-<link rel="stylesheet" type="text/css" href="css/global.css" media="all" />
-<script type="text/javascript" src="cs.js"></script>
-<script type="text/javascript" src="nav.js"></script>
-<script type="text/javascript" src="suggest.js"></script>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="javascript.php"></script>
 <style type="text/css">
-div#profileheader { 
-	background-color : #ff9; 
-	border : 2px solid #fc0; 
-	border-radius : 8px; 
-	border-radius-bottomleft : 0px; 
-	border-radius-bottomright : 0px; 
-	-moz-border-radius-topleft : 8px; 
-	-webkit-border-top-left-radius : 8px; 
-	-moz-border-radius-topright : 8px; 
-	-webkit-border-top-right-radius : 8px; 
-	display : block; 
-	height : auto; 
-	line-height : 110px; 
-	margin : 0 auto; 
-	margin-left : 20px; 
-	margin-right : 20px; 
-	text-align : left; 
-	width : 915px; 
-	}
-
-div#profileheader .heading { 
-	font-size : 40px; 
-	left : 20px; 
-	letter-spacing : 1px; 
-	position : relative; 
-	}
-
 div#rightpanel { 
-	float : right; 
-	margin-right : 20px; 
-	width : 45%; 
-	}
+float : right; 
+margin-right : 20px; 
+width : 45%; 
+}
 
 div#rightpanel div#profilepic { 
-	position : relative; 
-	right : -90px; 
-	top : -85px;
-	}
+position : relative; 
+right : -90px; 
+top : -85px;
+}
 
 div#songhistory { 
-	background-color : #ffffff; 
-	margin-left : 20px; 
-	margin-right : 20px; 
-	padding : 10px; 
-	text-align : left; 
-	}
-</style>
-<style type="text/css">
-body { 
-	background: url(<?php echo $bimage; ?>) repeat; 
-	background-position : 50% 140px; 
-	}
+background-color : #ffffff; 
+margin-left : 20px; 
+margin-right : 20px; 
+padding : 10px; 
+text-align : left; 
+}
 </style>
 <?php
 if (isset($_SESSION['logged']) && ($_SESSION['pref_upstyle'] == 1)) {
@@ -212,32 +131,25 @@ if ($user_style != null) {
 </head>
 
 <body id="usersonghistory_body">
-<?php
-include ("hd.inc.php");
-?>
+<?php include ("hd.inc.php"); ?>
 <!-- Begin page content -->
 <div id="usersonghistory_pagecontent" class="pagecontent">
-<div id="profileheader">
-<div class="heading">
+<div id="pageheader" class="pageheader2"><div class="heading">
 Song History
-</div>
-</div>
+</div></div>
 <!-- Begin right panel -->
 <div id="rightpanel">
 <!-- Begin profile pic -->
 <div id="profilepic">
 <?php
-if ($row['default_image'] != null) {
-echo '<a href="user_pictures.php?id=' . $user_id . '"><img src="uploads/' . $row['username'] . '/images/thumb/' . $row['default_image'] . '" id="defaultuserimage" title="View ' . $first_name . ' ' . $last_name . '\'s Picture Gallery" /></a><br />' . "\n";
-} else {
-echo '<img src="i/mem/default.jpg" id="defaultuserimage" /><br />' . "\n";
-}
+if ($row['default_image'] != null) echo '<a href="user_pictures.php?id=' . $user_id . '"><img src="uploads/' . $row['username'] . '/images/thumb/' . $row['default_image'] . '" id="defaultuserimage" title="View ' . $first_name . ' ' . $last_name . '\'s Picture Gallery" /></a><br />' . "\n";
+else echo '<img src="i/mem/default.jpg" id="defaultuserimage" /><br />' . "\n";
 ?>
 </div>
 <!-- End profile pic -->
 </div>
 <!-- End right panel -->
-<div style="clear : both; width : 100%; ">&nbsp;</div>
+<div style="clear: both; width: 100%;">&nbsp;</div>
 <!-- Begin song history -->
 <div id="songhistory">
 <?php
@@ -251,7 +163,7 @@ echo "<br />";
 ?>
 </div>
 <!-- End song history -->
-<div style="clear : both; width : 100%; ">&nbsp;</div>
+<div style="clear: both; width: 100%;">&nbsp;</div>
 </div>
 <!-- End page content -->
 <?php

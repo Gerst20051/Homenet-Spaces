@@ -19,7 +19,7 @@ if (isset($ref) && !empty($ref) && isset($_GET['apikey']) && !empty($_GET['apike
 	if (!isset($_GET['apikey']) || empty($_GET['apikey'])) die(error("API Key Error!",true));
 	elseif (!isset($ref) || empty($ref)) die(error("HTTP Referer Error!",true));
 }
-$mysql = mysql_connect('localhost','root','');
+$mysql = mysql_connect('localhost','root','comwiz05');
 if (!$mysql) die(error(mysql_error(),true));
 mysql_select_db('hns');
 

@@ -5,7 +5,6 @@ session_start();
 require ("nolang.inc.php");
 include ("db.member.inc.php");
 include ("login.inc.php");
-include ("bimage.inc.php");
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//<?php echo $TEXT['global-dtdlang']; ?>" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?php echo $TEXT['global-lang']; ?>" lang="<?php echo $TEXT['global-lang']; ?>" dir="<?php echo $TEXT['global-text_dir']; ?>">
@@ -23,202 +22,29 @@ include ("bimage.inc.php");
 <meta name="googlebot" content="index, follow, all" />
 <meta name="robots" content="index, follow, all" />
 <link rel="alternate" type="application/rss+xml" title="<?php echo $TEXT['homepage-rssfeed_monthlyupdates']; ?>" href="/rss/rss.xml" />
-<link rel="stylesheet" type="text/css" href="/css/global.css" media="all" />
-<script type="text/javascript" src="/cs.js"></script>
-<script type="text/javascript" src="/nav.js"></script>
-<script type="text/javascript" src="/suggest.js"></script>
-<script type="text/javascript" src="/nothing.js"></script>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="javascript.php"></script>
 <base target="_top" />
-<style type="text/css">
-body { 
-	background: url(<?php echo $bimage; ?>) repeat; 
-	background-position : 50% 140px; 
-	}
-</style>
-<style type="text/css">
-div#homepage_content { 
-	margin : 0 auto; 
-	width : 98%; 
-	}
-
-div#homepage_header { 
-	background-color : #ebf4fb; 
-	border : 1px solid #acd8f0; 
-	display : block; 
-	}
-
-div#homepage_header div { 
-	font-size : 40pt; 
-	margin : 24px; 
-	}
-
-div#panels { 
-	clear : both; 
-	display : block; 
-	margin-top : 10px; 
-	}
-
-div#panels div#stats { 
-	background-color : #ebf4fb; 
-	border : 1px solid #acd8f0; 
-	clear : right; 
-	display : block; 
-	float : left; 
-	min-height : 320px; 
-	width : 40%; 
-	}
-
-div#panels div#stats div.header { 
-	font-size : 30pt; 
-	margin : 10px; 
-	}
-
-div#panels div#stats div.content { 
-	background-color : #ebf4fb; 
-	clear : both; 
-	font-size : 22pt; 
-	line-height : 2.2em; 
-	margin : 0 auto; 
-	margin : 10px; 
-	}
-
-div#panels div#members_online { 
-	background-color : #ebf4fb; 
-	border : 1px solid #acd8f0; 
-	display : block; 
-	float : left; 
-	margin-left : 1%; 
-	min-height : 320px; 
-	text-align : center; 
-	width : 27.5%;
-	}
-
-div#panels div#members_online div.header { 
-	font-size : 20pt; 
-	margin : 10px; 
-	}
-
-div#panels div#members_online div.content { 
-	background-color : #ebf4fb; 
-	clear : both; 
-	margin : 0 auto; 
-	margin : 10px; 
-	}
-
-div#panels div#updates { 
-	background-color : #ebf4fb; 
-	border : 1px solid #acd8f0; 
-	clear : right; 
-	display : block; 
-	float : right; 
-	min-height : 320px; 
-	width : 30%; 
-	}
-
-div#panels div#updates div.header { 
-	font-size : 26pt; 
-	margin : 10px; 
-	}
-
-div#panels div#updates div.content { 
-	background-color : #ebf4fb; 
-	clear : both; 
-	margin : 0 auto; 
-	margin : 10px; 
-	text-align : left; 
-	width : 90%; 
-	}
-
-div#panels div#updates div.content a { 
-	text-decoration : none; 
-	}
-
-div#fmembers { 
-	background-color : #ebf4fb; 
-	border : 1px solid #acd8f0; 
-	clear : both; 
-	display : block; 
-	text-align : center; 
-	}
-
-div#fmembers div.header { 
-	font-size : 26pt; 
-	margin : 10px; 
-	}
-
-div#fmembers div.content { 
-	background-color : #ebf4fb; 
-	clear : both; 
-	margin : 0 auto; 
-	margin : 10px; 
-	text-align : center; 
-	}
-
-div#fmembers div.content a { 
-	text-decoration : none; 
-	}
-
-div#fmembers div.content div.container { 
-	margin : 0 auto; 
-	text-align : center; 
-	width : 100%; 
-	}
-
-div.friendsection { 
-	background-color : #ffffff; 
-	border-radius : 6px; 
-	-moz-border-radius : 6px; 
-	-webkit-border-radius : 6px; 
-	clear : right; 
-	display : block; 
-	float : left; 
-	margin : 0 auto; 
-	margin : 5px; 
-	padding : 5px; 
-	text-align : center; 
-	width : 17.8%; 
-	}
-
-div.friendsection img.friend { 
-	border-radius : 6px; 
-	-moz-border-radius : 6px; 
-	-webkit-border-radius : 6px; 
-	border-width : 0px; 
-	height : auto; 
-	margin-top : 4px; 
-	width : 100px; 
-	}
-
-div.friendsection div.name { 
-	margin-top : 4px; 
-	}
-</style>
 </head>
 
 <body>
-<?php
-include ("hd.inc.php");
-?>
+<?php include ("hd.inc.php"); ?>
 <!-- Begin page content -->
 <div id="home_pagecontent" class="pagecontent">
 <div id="homepage_content">
 <?php
-// number of members online
-$oresult = mysql_db_query($om, "SELECT DISTINCT username FROM users_online") or die("Database SELECT Error");
+$oresult = mysql_db_query($om, "SELECT DISTINCT username FROM users_online") or die("Database SELECT Error1");
 $online = mysql_num_rows($oresult);
 
-// list of members online
-$uresult = mysql_db_query($om, "SELECT DISTINCT username FROM users_online ORDER BY timestamp DESC") or die("Database SELECT Error");
+$uresult = mysql_db_query($om, "SELECT DISTINCT username FROM users_online ORDER BY timestamp DESC") or die("Database SELECT Error2");
 
-// number of members
 $mresult = mysql_query('SELECT user_id FROM login');
 $members = mysql_num_rows($mresult);
 
-// number of guests online
-$goresult = mysql_db_query($om, "SELECT DISTINCT ip FROM guests_online") or die("Database SELECT Error");
+$goresult = mysql_db_query($om, "SELECT DISTINCT ip FROM users_online WHERE username = 'guest'") or die("Database SELECT Error3");
 $gonline = mysql_num_rows($goresult);
 
-if (isset($_SESSION['logged']) && $_SESSION['logged'] == 1) { // user is logged in
+if (isset($_SESSION['logged']) && $_SESSION['logged'] == 1) {
 ?>
 <div id="homepage_header">
 <div><?php echo $TEXT['homepage-content_header']; ?></div>
@@ -234,28 +60,20 @@ if ($online == 0) {
 echo "$members  Members<br />No Members Online";
 
 if ($gonline > 0) {
-echo "<br />";
-echo "<b>$gonline</b>";
+echo "<br /><b>$gonline</b>";
 
-if ($gonline < 2) {
-echo " Guest ";
-} else {
-echo " Guests ";
-}
+if ($gonline < 2) echo " Guest ";
+else echo " Guests ";
 echo "Online";
 }
 } else {
 echo "<b>$online</b> out of $members  Members Online";
 
 if ($gonline > 0) {
-echo "<br />";
-echo "<b>$gonline</b>";
+echo "<br /><b>$gonline</b>";
 
-if ($gonline < 2) {
-echo " Guest ";
-} else {
-echo " Guests ";
-}
+if ($gonline < 2) echo " Guest ";
+else echo " Guests ";
 echo "Online";
 }
 }
@@ -270,27 +88,15 @@ echo '<div class="content">';
 
 while ($onlineusers = mysql_fetch_array($uresult, MYSQL_ASSOC)) {
 foreach ($onlineusers as $users) {
-// get user id of members online
-$query = 'SELECT user_id, username FROM
-login
-WHERE
-username = "' . $users . '"';
+$query = 'SELECT user_id, username FROM login WHERE username = "' . $users . '"';
 $result = mysql_query($query, $db) or die(mysql_error($db));
-
 $row = mysql_fetch_array($result);
 extract($row);
 mysql_free_result($result);
 
 $users_id = $row['user_id'];
 
-$query = 'SELECT * FROM
-login u
-JOIN
-info i
-ON
-u.user_id = i.user_id
-WHERE
-u.user_id = ' . $users_id;
+$query = 'SELECT * FROM login u JOIN info i ON u.user_id = i.user_id WHERE u.user_id = ' . $users_id;
 $result = mysql_query($query, $db) or die(mysql_error($db));
 $row = mysql_fetch_array($result);
 extract($row);
@@ -298,11 +104,8 @@ mysql_free_result($result);
 
 $fullname = $row['firstname'] . ' ' . $row['middlename'] . ' ' . $row['lastname'];
 
-if ($default_image != null) {
-echo '<div style="clear : both; margin : 0 auto; margin : 15px; text-align : center; "><a href="/user_profile.php?id=' . $users_id . '" title="View ' . $users . '\'s Profile!"><img src="uploads/' . $users . '/images/thumb/' . $default_image . '" id="defaultuserimage" alt="View ' . $fullname . '\'s Profile!" /></a></div>';
-} else {
-echo '<div style="clear : both; margin : 0 auto; margin : 15px; text-align : center; "><a href="/user_profile.php?id=' . $users_id . '" title="View ' . $users . '\'s Profile!"><img src="i/mem/default.jpg" id="defaultuserimage" alt="View ' . $fullname . '\'s Profile!" /></a></div>';
-}
+if ($default_image != null) echo '<div style="clear: both; margin: 0 auto; margin: 15px; text-align: center;"><a href="user_profile.php?id=' . $users_id . '" title="View ' . $users . '\'s Profile!"><img src="/uploads/' . $users . '/images/thumb/' . $default_image . '" id="defaultuserimage" alt="View ' . $fullname . '\'s Profile!" /></a></div>';
+else echo '<div style="clear: both; margin: 0 auto; margin: 15px; text-align: center;"><a href="user_profile.php?id=' . $users_id . '" title="View ' . $users . '\'s Profile!"><img src="i/mem/default.jpg" id="defaultuserimage" alt="View ' . $fullname . '\'s Profile!" /></a></div>';
 }
 }
 
@@ -315,14 +118,14 @@ echo "</div>";
 HnS Updates
 </div>
 <div class="content">
-<div><a href="/old/mc/misc/hsp/2009/p/february/changes.txt">February</a></div>
-<div><a href="/old/mc/misc/hsp/2009/p/april/changes.txt">April</a></div>
-<div><a href="/old/mc/misc/hsp/2009/p/may/changes.txt">May</a></div>
-<div><a href="/old/mc/misc/hsp/2009/p/june/changes.txt">June</a></div>
-<div><a href="/old/mc/misc/hsp/2009/p/july/changes.txt">July</a></div>
-<div><a href="/old/mc/misc/hsp/2009/p/august/changes.txt">August</a></div>
-<div><a href="/old/mc/misc/hsp/2009/p/september/changes.txt">September</a></div>
-<div><a href="/old/mc/misc/hsp/2009/p/october/changes.txt">October</a></div>
+<div><a href="old/mc/misc/hsp/2009/p/february/changes.txt">February</a></div>
+<div><a href="old/mc/misc/hsp/2009/p/april/changes.txt">April</a></div>
+<div><a href="old/mc/misc/hsp/2009/p/may/changes.txt">May</a></div>
+<div><a href="old/mc/misc/hsp/2009/p/june/changes.txt">June</a></div>
+<div><a href="old/mc/misc/hsp/2009/p/july/changes.txt">July</a></div>
+<div><a href="old/mc/misc/hsp/2009/p/august/changes.txt">August</a></div>
+<div><a href="old/mc/misc/hsp/2009/p/september/changes.txt">September</a></div>
+<div><a href="old/mc/misc/hsp/2009/p/october/changes.txt">October</a></div>
 </div>
 </div>
 </div>
@@ -337,30 +140,16 @@ Featured Members
 $rorder = mt_rand(0, 3);
 
 switch ($rorder) {
-case 0:
-$order = "u.user_id";
-break;
-
-case 1:
-$order = "u.username";
-break;
-
-case 2:
-$order = "i.firstname";
-break;
-
-case 3:
-$order = "i.lastname";
-break;
+case 0: $order = "u.user_id"; break;
+case 1: $order = "u.username"; break;
+case 2: $order = "i.firstname"; break;
+case 3: $order = "i.lastname"; break;
 }
 
 $rsort = mt_rand(0, 1);
 
-if ($rsort == 0) {
-$sort = "ASC";
-} else {
-$sort = "DESC";
-}
+if ($rsort == 0) $sort = "ASC";
+else $sort = "DESC";
 
 $result = mysql_query("SELECT u.user_id, u.username, i.firstname, i.middlename, i.lastname, i.default_image FROM login u JOIN info i WHERE u.user_id = i.user_id ORDER BY $order $sort");
 $members = mysql_num_rows($result);
@@ -375,17 +164,11 @@ if ($row2['default_image'] != null) {
 if ($count < $range) {
 ?>
 <!-- Begin <?php echo $row2['fullname']; ?>'s section -->
-<?php
-echo '<a href="/user_profile.php?id=' . $row2['user_id'] . '" title="View ' . $row2['username'] . '\'s Profile">' . "\n";
-?>
+<?php echo '<a href="user_profile.php?id=' . $row2['user_id'] . '" title="View ' . $row2['username'] . '\'s Profile">' . "\n"; ?>
 <div class="friendsection">
 <?php
-if ($row2['default_image'] != null) {
-echo '<img src="/uploads/' . $row2['username'] . '/images/thumb/' . $row2['default_image'] . '" class="friend" /><br />' . "\n";
-} else {
-echo '<img src="/i/mem/default.jpg" class="friend" /><br />' . "\n";
-}
-
+if ($row2['default_image'] != null) echo '<img src="/uploads/' . $row2['username'] . '/images/thumb/' . $row2['default_image'] . '" class="friend" /><br />' . "\n";
+else echo '<img src="i/mem/default.jpg" class="friend" /><br />' . "\n";
 echo "<div class='name'>" . $fullname . "</div>\n";
 ?>
 </div>
@@ -398,7 +181,7 @@ $count++;
 }
 }
 ?>
-<div style="clear : both; width : 100%; ">&nbsp;</div>
+<div style="clear: both; width: 100%;">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -419,28 +202,20 @@ if ($online == 0) {
 echo "$members  Members<br />No Members Online";
 
 if ($gonline > 0) {
-echo "<br />";
-echo "<b>$gonline</b>";
+echo "<br /><b>$gonline</b>";
 
-if ($gonline < 2) {
-echo " Guest ";
-} else {
-echo " Guests ";
-}
+if ($gonline < 2) echo " Guest ";
+else echo " Guests ";
 echo "Online";
 }
 } else {
 echo "<b>$online</b> out of $members  Members Online";
 
 if ($gonline > 0) {
-echo "<br />";
-echo "<b>$gonline</b>";
+echo "<br /><b>$gonline</b>";
 
-if ($gonline < 2) {
-echo " Guest ";
-} else {
-echo " Guests ";
-}
+if ($gonline < 2) echo " Guest ";
+else echo " Guests ";
 echo "Online";
 }
 }
@@ -455,27 +230,15 @@ echo '<div class="content">';
 
 while ($onlineusers = mysql_fetch_array($uresult, MYSQL_ASSOC)) {
 foreach ($onlineusers as $users) {
-// get user id of members online
-$query = 'SELECT user_id, username FROM
-login
-WHERE
-username = "' . $users . '"';
+$query = 'SELECT user_id, username FROM login WHERE username = "' . $users . '"';
 $result = mysql_query($query, $db) or die(mysql_error($db));
-
 $row = mysql_fetch_array($result);
 extract($row);
 mysql_free_result($result);
 
 $users_id = $row['user_id'];
 
-$query = 'SELECT * FROM
-login u
-JOIN
-info i
-ON
-u.user_id = i.user_id
-WHERE
-u.user_id = ' . $users_id;
+$query = 'SELECT * FROM login u JOIN info i ON u.user_id = i.user_id WHERE u.user_id = ' . $users_id;
 $result = mysql_query($query, $db) or die(mysql_error($db));
 $row = mysql_fetch_array($result);
 extract($row);
@@ -483,11 +246,8 @@ mysql_free_result($result);
 
 $fullname = $row['firstname'] . ' ' . $row['middlename'] . ' ' . $row['lastname'];
 
-if ($default_image != null) {
-echo '<div style="clear : both; margin : 0 auto; margin : 15px; text-align : center; "><a href="/user_profile.php?id=' . $users_id . '" title="View ' . $users . '\'s Profile!"><img src="/uploads/' . $users . '/images/thumb/' . $default_image . '" id="defaultuserimage" alt="View ' . $fullname . '\'s Profile!" /></a></div>';
-} else {
-echo '<div style="clear : both; margin : 0 auto; margin : 15px; text-align : center; "><a href="/user_profile.php?id=' . $users_id . '" title="View ' . $users . '\'s Profile!"><img src="/i/mem/default.jpg" id="defaultuserimage" alt="View ' . $fullname . '\'s Profile!" /></a></div>';
-}
+if ($default_image != null) echo '<div style="clear: both; margin: 0 auto; margin: 15px; text-align: center; "><a href="user_profile.php?id=' . $users_id . '" title="View ' . $users . '\'s Profile!"><img src="/uploads/' . $users . '/images/thumb/' . $default_image . '" id="defaultuserimage" alt="View ' . $fullname . '\'s Profile!" /></a></div>';
+else echo '<div style="clear: both; margin: 0 auto; margin: 15px; text-align: center; "><a href="user_profile.php?id=' . $users_id . '" title="View ' . $users . '\'s Profile!"><img src="i/mem/default.jpg" id="defaultuserimage" alt="View ' . $fullname . '\'s Profile!" /></a></div>';
 }
 }
 
@@ -500,18 +260,18 @@ echo "</div>";
 HnS Updates
 </div>
 <div class="content">
-<div><a href="/old/mc/misc/hsp/2009/p/february/changes.txt">February</a></div>
-<div><a href="/old/mc/misc/hsp/2009/p/april/changes.txt">April</a></div>
-<div><a href="/old/mc/misc/hsp/2009/p/may/changes.txt">May</a></div>
-<div><a href="/old/mc/misc/hsp/2009/p/june/changes.txt">June</a></div>
-<div><a href="/old/mc/misc/hsp/2009/p/july/changes.txt">July</a></div>
-<div><a href="/old/mc/misc/hsp/2009/p/august/changes.txt">August</a></div>
-<div><a href="/old/mc/misc/hsp/2009/p/september/changes.txt">September</a></div>
-<div><a href="/old/mc/misc/hsp/2009/p/october/changes.txt">October</a></div>
+<div><a href="old/mc/misc/hsp/2009/p/february/changes.txt">February</a></div>
+<div><a href="old/mc/misc/hsp/2009/p/april/changes.txt">April</a></div>
+<div><a href="old/mc/misc/hsp/2009/p/may/changes.txt">May</a></div>
+<div><a href="old/mc/misc/hsp/2009/p/june/changes.txt">June</a></div>
+<div><a href="old/mc/misc/hsp/2009/p/july/changes.txt">July</a></div>
+<div><a href="old/mc/misc/hsp/2009/p/august/changes.txt">August</a></div>
+<div><a href="old/mc/misc/hsp/2009/p/september/changes.txt">September</a></div>
+<div><a href="old/mc/misc/hsp/2009/p/october/changes.txt">October</a></div>
 </div>
 </div>
 </div>
-<div style="clear : both; width : 100%; ">&nbsp;</div>
+<div style="clear: both; width: 100%;">&nbsp;</div>
 <div id="fmembers">
 <div class="header">
 Featured Members
@@ -522,30 +282,16 @@ Featured Members
 $rorder = mt_rand(0, 3);
 
 switch ($rorder) {
-case 0:
-$order = "u.user_id";
-break;
-
-case 1:
-$order = "u.username";
-break;
-
-case 2:
-$order = "i.firstname";
-break;
-
-case 3:
-$order = "i.lastname";
-break;
+case 0: $order = "u.user_id"; break;
+case 1: $order = "u.username"; break;
+case 2: $order = "i.firstname"; break;
+case 3: $order = "i.lastname"; break;
 }
 
 $rsort = mt_rand(0, 1);
 
-if ($rsort == 0) {
-$sort = "ASC";
-} else {
-$sort = "DESC";
-}
+if ($rsort == 0) $sort = "ASC";
+else $sort = "DESC";
 
 $result = mysql_query("SELECT u.user_id, u.username, i.firstname, i.middlename, i.lastname, i.default_image FROM login u JOIN info i WHERE u.user_id = i.user_id ORDER BY $order $sort");
 $members = mysql_num_rows($result);
@@ -560,18 +306,12 @@ if ($row2['default_image'] != null) {
 if ($count < $range) {
 ?>
 <!-- Begin <?php echo $row2['fullname']; ?>'s section -->
-<?php
-echo '<a href="/user_profile.php?id=' . $row2['user_id'] . '" title="View ' . $friend . '\'s Profile">';
-?>
+<?php echo '<a href="/user_profile.php?id=' . $row2['user_id'] . '" title="View ' . $friend . '\'s Profile">'; ?>
 <div class="friendsection">
 <?php
-if ($row2['default_image'] != null) {
-echo '<img src="/uploads/' . $row2['username'] . '/images/thumb/' . $row2['default_image'] . '" class="friend" /><br />' . "\n";
-} else {
-echo '<img src="/i/mem/default.jpg" class="friend" /><br />' . "\n";
-}
-
-echo "<div style='margin-top : 4px; '>" . $fullname . "</div>";
+if ($row2['default_image'] != null) echo '<img src="/uploads/' . $row2['username'] . '/images/thumb/' . $row2['default_image'] . '" class="friend" /><br />' . "\n";
+else echo '<img src="i/mem/default.jpg" class="friend" /><br />' . "\n";
+echo "<div style='margin-top: 4px;'>" . $fullname . "</div>";
 ?>
 </div>
 </a>
@@ -583,15 +323,13 @@ $count++;
 }
 }
 ?>
-<div style="clear : both; width : 100%; ">&nbsp;</div>
+<div style="clear: both; width: 100%;">&nbsp;</div>
 </div>
 </div>
 </div>
-<?php
-}
-?>
+<?php } ?>
 </div>
-<div style='clear : both; width : 100%; '></div>
+<div style="clear: both; width: 100%;"></div>
 </div>
 <!-- End page content -->
 <?php
@@ -601,6 +339,4 @@ include ("tracking_scripts.inc.php");
 </body>
 
 </html>
-<?php
-mysql_close($db);
-?>
+<?php mysql_close($db); ?>

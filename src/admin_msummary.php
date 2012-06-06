@@ -5,7 +5,15 @@ require ("lang.inc.php");
 include ("auth.inc.php");
 include ("admin.inc.php");
 include ("db.member.inc.php");
-include ("bimage.inc.php");
+
+/*
+Average Age, Files, Pictures, Logins, Hits, Friends, Comments, Messages, Votes, Rating
+Hometowns
+Profile Songs List
+Number of Privacy Changes
+Profile View Choice
+Ratio Gender, Email, Website, About Me, SAM, Full Name
+*/
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//<?php echo $TEXT['global-dtdlang']; ?>" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?php echo $TEXT['global-lang']; ?>" lang="<?php echo $TEXT['global-lang']; ?>" dir="<?php echo $TEXT['global-text_dir']; ?>">
@@ -13,37 +21,20 @@ include ("bimage.inc.php");
 <head>
 <title><?php echo $TEXT['global-headertitle'] . " | " . $TEXT['homepage-headertitle']; ?></title>
 <meta http-equiv="content-type" content="text/html; charset=<?php echo $TEXT['global-charset']; ?>" />
-<meta name="author" content="Homenet Spaces Andrew Gerst" />
-<meta name="copyright" content="© Homenet Spaces" />
-<meta name="keywords" content="Homenet, Spaces, The, Place, To, Be, Creative, Andrew, Gerst, Free, Profiles, Information, Facts" />
-<meta name="description" content="Welcome to Homenet Spaces we offer you a free profile with many cool and interesting things! This is the place to be creative!" />
-<meta name="revisit-after" content="7 days" />
-<meta name="googlebot" content="index, follow, all" />
-<meta name="robots" content="index, follow, all" />
-<link rel="stylesheet" type="text/css" href="css/global.css" media="all" />
-<script type="text/javascript" src="cs.js"></script>
-<script type="text/javascript" src="nav.js"></script>
-<script type="text/javascript" src="suggest.js"></script>
-<style type="text/css">
-body { 
-	background: url(<?php echo $bimage; ?>) repeat; 
-	background-position : 50% 140px; 
-	}
-</style>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="javascript.php"></script>
 </head>
 
 <body>
-<?php
-include ("hd.inc.php");
-?>
+<?php include ("hd.inc.php"); ?>
 <!-- Begin page content -->
 <div class="pagecontent">
 <h1>Welcome to the Admin Member Summary.</h1>
 <a href="admin_page_editor.php">Page Editor</a> | <a href="admin_view_files.php">Browse Files</a> | <a href="admin_msummary.php">Member Summary</a>
 <br />
 <br />
-<div style="margin : 0 auto; width : 75%; ">
-<span style="float : left; text-align : left; width : 300px; ">Here you can edit member information!
+<div style="margin: 0 auto;width: 75%;">
+<span style="float: left; text-align: left; width: 300px;">Here you can edit member information!
 <br />There are 
 <?php
 $result = mysql_query('SELECT user_id FROM login');
@@ -51,12 +42,12 @@ $members = mysql_num_rows($result);
 echo $members;
 ?>
  members.</span>
-<span style="float : right; text-align : right; width : 300px; ">
+<span style="float: right; text-align: right; width: 300px;">
 <?php
 $ssort = (isset($_GET['sort'])) ? $_GET['sort'] : null;
 $sorder = (isset($_GET['order'])) ? $_GET['order'] : null;
 ?>
-<select name="sortingorder" size="1" id="selectsort" style="padding : 4px; " onchange="window.location = document.all.selectsort.value">
+<select name="sortingorder" size="1" id="selectsort" style="padding: 4px;" onchange="window.location = document.all.selectsort.value">
 <option <?php if ($ssort == 0 || null) { echo 'selected="selected"'; } ?>>Select Your Sorting Order:&nbsp;</option>
 <option value="<?php echo $_SERVER['PHP_SELF']; ?>?sort=username&order=asc" <?php if ($ssort == "username" && $sorder == "asc") { echo 'selected="selected"'; } ?>>Username ASC</option>
 <option value="<?php echo $_SERVER['PHP_SELF']; ?>?sort=username&order=desc" <?php if ($ssort == "username" && $sorder == "desc") { echo 'selected="selected"'; } ?>>Username DESC</option>
@@ -87,40 +78,19 @@ $sorder = (isset($_GET['order'])) ? $_GET['order'] : null;
 </div>
 <br /><br />
 <?php
-$query = 'SELECT * FROM
-login u
-JOIN
-info i
-ON
-u.user_id = i.user_id
-ORDER BY
-date_joined ASC';
+$query = 'SELECT * FROM login u JOIN info i ON u.user_id = i.user_id ORDER BY date_joined ASC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 
 switch ($_GET['sort']) {
 case 'username':
 switch ($_GET['order']) {
 case 'asc':
-$query = 'SELECT * FROM
-login u
-JOIN
-info i
-ON
-u.user_id = i.user_id
-ORDER BY
-username ASC';
+$query = 'SELECT * FROM login u JOIN info i ON u.user_id = i.user_id ORDER BY username ASC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 
 case 'desc':
-$query = 'SELECT * FROM
-login u
-JOIN
-info i
-ON
-u.user_id = i.user_id
-ORDER BY
-username DESC';
+$query = 'SELECT * FROM login u JOIN info i ON u.user_id = i.user_id ORDER BY username DESC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 }
@@ -129,26 +99,12 @@ break;
 case 'firstname':
 switch ($_GET['order']) {
 case 'asc':
-$query = 'SELECT * FROM
-login u
-JOIN
-info i
-ON
-u.user_id = i.user_id
-ORDER BY
-first_name ASC';
+$query = 'SELECT * FROM login u JOIN info i ON u.user_id = i.user_id  ORDER BY firstname ASC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 
 case 'desc':
-$query = 'SELECT * FROM
-login u
-JOIN
-info i
-ON
-u.user_id = i.user_id
-ORDER BY
-first_name DESC';
+$query = 'SELECT * FROM login u JOIN info i ON u.user_id = i.user_id ORDER BY firstname DESC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 }
@@ -157,26 +113,12 @@ break;
 case 'lastname':
 switch ($_GET['order']) {
 case 'asc':
-$query = 'SELECT * FROM
-login u
-JOIN
-info i
-ON
-u.user_id = i.user_id
-ORDER BY
-last_name ASC';
+$query = 'SELECT * FROM login u JOIN info i ON u.user_id = i.user_id ORDER BY lastname ASC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 
 case 'desc':
-$query = 'SELECT * FROM
-login u
-JOIN
-info i
-ON
-u.user_id = i.user_id
-ORDER BY
-last_name DESC';
+$query = 'SELECT * FROM login u JOIN info i ON u.user_id = i.user_id ORDER BY lastname DESC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 }
@@ -185,26 +127,12 @@ break;
 case 'datejoined':
 switch ($_GET['order']) {
 case 'asc':
-$query = 'SELECT * FROM
-login u
-JOIN
-info i
-ON
-u.user_id = i.user_id
-ORDER BY
-date_joined ASC';
+$query = 'SELECT * FROM login u JOIN info i ON u.user_id = i.user_id ORDER BY date_joined ASC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 
 case 'desc':
-$query = 'SELECT * FROM
-login u
-JOIN
-info i
-ON
-u.user_id = i.user_id
-ORDER BY
-date_joined DESC';
+$query = 'SELECT * FROM login u JOIN info i ON u.user_id = i.user_id ORDER BY date_joined DESC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 }
@@ -212,26 +140,12 @@ break;
 case 'lastlogin':
 switch ($_GET['order']) {
 case 'asc':
-$query = 'SELECT * FROM
-login u
-JOIN
-info i
-ON
-u.user_id = i.user_id
-ORDER BY
-last_login ASC';
+$query = 'SELECT * FROM login u JOIN info i ON u.user_id = i.user_id ORDER BY last_login ASC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 
 case 'desc':
-$query = 'SELECT * FROM
-login u
-JOIN
-info i
-ON
-u.user_id = i.user_id
-ORDER BY
-last_login DESC';
+$query = 'SELECT * FROM login u JOIN info i ON u.user_id = i.user_id ORDER BY last_login DESC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 }
@@ -239,26 +153,12 @@ break;
 case 'rank':
 switch ($_GET['order']) {
 case 'asc':
-$query = 'SELECT * FROM
-login u
-JOIN
-info i
-ON
-u.user_id = i.user_id
-ORDER BY
-rank ASC';
+$query = 'SELECT * FROM login u JOIN info i ON u.user_id = i.user_id ORDER BY rank ASC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 
 case 'desc':
-$query = 'SELECT * FROM
-login u
-JOIN
-info i
-ON
-u.user_id = i.user_id
-ORDER BY
-rank DESC';
+$query = 'SELECT * FROM login u JOIN info i ON u.user_id = i.user_id ORDER BY rank DESC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 }
@@ -266,26 +166,12 @@ break;
 case 'xrank':
 switch ($_GET['order']) {
 case 'asc':
-$query = 'SELECT * FROM
-login u
-JOIN
-info i
-ON
-u.user_id = i.user_id
-ORDER BY
-xrank ASC';
+$query = 'SELECT * FROM login u JOIN info i ON u.user_id = i.user_id ORDER BY xrank ASC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 
 case 'desc':
-$query = 'SELECT * FROM
-login u
-JOIN
-info i
-ON
-u.user_id = i.user_id
-ORDER BY
-xrank DESC';
+$query = 'SELECT * FROM login u JOIN info i ON u.user_id = i.user_id ORDER BY xrank DESC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 }
@@ -293,26 +179,12 @@ break;
 case 'votes':
 switch ($_GET['order']) {
 case 'asc':
-$query = 'SELECT * FROM
-login u
-JOIN
-info i
-ON
-u.user_id = i.user_id
-ORDER BY
-xratings ASC';
+$query = 'SELECT * FROM login u JOIN info i ON u.user_id = i.user_id ORDER BY xratings ASC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 
 case 'desc':
-$query = 'SELECT * FROM
-login u
-JOIN
-info i
-ON
-u.user_id = i.user_id
-ORDER BY
-xratings DESC';
+$query = 'SELECT * FROM login u JOIN info i ON u.user_id = i.user_id ORDER BY xratings DESC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 }
@@ -320,26 +192,12 @@ break;
 case 'rating':
 switch ($_GET['order']) {
 case 'asc':
-$query = 'SELECT * FROM
-login u
-JOIN
-info i
-ON
-u.user_id = i.user_id
-ORDER BY
-rating ASC';
+$query = 'SELECT * FROM login u JOIN info i ON u.user_id = i.user_id ORDER BY rating ASC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 
 case 'desc':
-$query = 'SELECT * FROM
-login u
-JOIN
-info i
-ON
-u.user_id = i.user_id
-ORDER BY
-rating DESC';
+$query = 'SELECT * FROM login u JOIN info i ON u.user_id = i.user_id ORDER BY rating DESC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 }
@@ -347,26 +205,12 @@ break;
 case 'hits':
 switch ($_GET['order']) {
 case 'asc':
-$query = 'SELECT * FROM
-login u
-JOIN
-info i
-ON
-u.user_id = i.user_id
-ORDER BY
-hits ASC';
+$query = 'SELECT * FROM login u JOIN info i ON u.user_id = i.user_id ORDER BY hits ASC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 
 case 'desc':
-$query = 'SELECT * FROM
-login u
-JOIN
-info i
-ON
-u.user_id = i.user_id
-ORDER BY
-hits DESC';
+$query = 'SELECT * FROM login u JOIN info i ON u.user_id = i.user_id ORDER BY hits DESC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 }
@@ -374,26 +218,12 @@ break;
 case 'logins':
 switch ($_GET['order']) {
 case 'asc':
-$query = 'SELECT * FROM
-login u
-JOIN
-info i
-ON
-u.user_id = i.user_id
-ORDER BY
-logins ASC';
+$query = 'SELECT * FROM login u JOIN info i ON u.user_id = i.user_id ORDER BY logins ASC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 
 case 'desc':
-$query = 'SELECT * FROM
-login u
-JOIN
-info i
-ON
-u.user_id = i.user_id
-ORDER BY
-logins DESC';
+$query = 'SELECT * FROM login u JOIN info i ON u.user_id = i.user_id ORDER BY logins DESC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 }
@@ -401,26 +231,12 @@ break;
 case 'age': // order should be switched
 switch ($_GET['order']) {
 case 'asc':
-$query = 'SELECT * FROM
-login u
-JOIN
-info i
-ON
-u.user_id = i.user_id
-ORDER BY
-birth_year DESC';
+$query = 'SELECT * FROM login u JOIN info i ON u.user_id = i.user_id ORDER BY birth_year DESC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 
 case 'desc':
-$query = 'SELECT * FROM
-login u
-JOIN
-info i
-ON
-u.user_id = i.user_id
-ORDER BY
-birth_year ASC';
+$query = 'SELECT * FROM login u JOIN info i ON u.user_id = i.user_id ORDER BY birth_year ASC';
 $result = mysql_query($query, $db) or die(mysql_error($db));
 break;
 }
@@ -456,9 +272,9 @@ $colorarray = array('ccffff', 'ccccff');
 $o = rand(0, count($colorarray) - 1);
 $randcolor = "{$colorarray[$o]}";
 ?>
-<span style="background-color : #ffffff; float : left; width : 33.333%; ">
-<fieldset style="clear : right; padding : 10px; margin : 0 auto; width : 300px; ">
-<legend><a href="admin_update_user.php?id=<?php echo $row['user_id']; ?>" style="text-decoration : none; "><?php
+<span style="background-color: #ffffff; float: left; width: 33.333%;">
+<fieldset style="clear: right; padding: 10px; margin: 0 auto; width: 300px;">
+<legend><a href="admin_update_user.php?id=<?php echo $row['user_id']; ?>" style="text-decoration: none;"><?php
 $uresult = mysql_db_query($om, "SELECT DISTINCT username FROM users_online ORDER BY username ASC") or die("Database SELECT Error");
 
 echo $row['username'] . " | " . $row['first_name'] . " " . $row['last_name'];
@@ -477,20 +293,8 @@ if ($current_month == $row['birth_month'] && $current_day == $row['birth_day']) 
 echo " Happy Birthday!";
 }
 ?>&nbsp;</legend>
-<script type="text/javascript">
-<!-- 
-function showMe5 (it) {
-var vis = document.getElementById(it).style.visibility
-if (vis == "hidden") {
-document.getElementById(it).style.visibility = "visible";
-} else {
-document.getElementById(it).style.visibility = "hidden";
-}
-}
-//-->
-</script>
 <!-- Begin moreinfo -->
-<div id="<?php echo $row['username'] . $row['user_id']; ?>" class="moreinfo" style="visibility : hidden; display : block; ">
+<div id="<?php echo $row['username'] . $row['user_id']; ?>" class="moreinfo" style="visibility: hidden; display: block;">
 <span class="closespan">
 <span class="header">
 More Info
@@ -498,61 +302,38 @@ More Info
 <a title="Close" accesskey="8" onclick="showMe5('<?php echo $row['username'] . $row['user_id']; ?>')" class="close">Close</a>
 </span>
 <div class="splash">
-<ul style="list-style-type : none; margin : 0px; text-align : left; ">
+<ul style="list-style-type: none; margin: 0; text-align: left;">
 <li>
 <?php
-echo "<small>";
 $votes = ($row['xratings'] > 0) ? $row['xratings'] : 'No';
-echo $votes;
 $vtense = ($row['xratings'] == 0 || $row['xratings'] > 1) ? ' Votes' : ' Vote';
-echo $vtense;
-echo "</small>";
+echo "<small>$votes$vtense</small>";
 ?>
 <small>
 &nbsp;&nbsp;|&nbsp;&nbsp;xRank:
 <?php
-if ($row['website'] != null) {
-$ifexists_website = 1000;
-}
-
-if ($row['user_style'] != null) {
-$ifexists_user_style = 1000;
-}
-
-if ($row['default_image'] != null) {
-$ifexists_defualt_image = 1000;
-}
+if ($row['website'] != null) $ifexists_website = 1000;
+if ($row['user_style'] != null) $ifexists_user_style = 1000;
+if ($row['default_image'] != null) $ifexists_defualt_image = 1000;
 
 $xrank = ($row['rank'] + ($row['hits'] * 2) + ($row['logins'] * 5) + ($ifexists_website) + ($ifexists_user_style) + ($ifexists_default_image));
 
 if ($row['logins'] > 5) {
-if ($row['logins'] > 100) {
-$xrank = ($xrank * 5);
-if ($row['logins'] > 200) {
-$xrank = ($xrank * 10);
-if ($row['logins'] > 300) {
-$xrank = ($xrank * 15);
-if ($row['logins'] > 400) {
-$xrank = ($xrank * 20);
-if ($row['logins'] > 500) {
-$xrank = ($xrank * 25);
+if ($row['logins'] > 100) { $xrank = ($xrank * 5);
+if ($row['logins'] > 200) { $xrank = ($xrank * 10);
+if ($row['logins'] > 300) { $xrank = ($xrank * 15);
+if ($row['logins'] > 400) { $xrank = ($xrank * 20);
+if ($row['logins'] > 500) { $xrank = ($xrank * 25);
 }}}}}
 $xrank = ($xrank * 1.0586951);
-} elseif ($row['logins'] == 4) {
-$xrank = ($xrank / 2.2452);
-} elseif ($row['logins'] == 3) {
-$xrank = ($xrank / 3.1385);
-} elseif ($row['logins'] == 2) {
-$xrank = ($xrank / 4.3698);
-} elseif ($row['logins'] == 1) {
-$xrank = 0;
-} else {
-$xrank = 0;
 }
+elseif ($row['logins'] == 4) $xrank = ($xrank / 2.2452);
+elseif ($row['logins'] == 3) $xrank = ($xrank / 3.1385);
+elseif ($row['logins'] == 2) $xrank = ($xrank / 4.3698);
+elseif ($row['logins'] == 1) $xrank = 0;
+else $xrank = 0;
 
-echo " ";
-echo $xrank;
-echo " ";
+echo " $xrank ";
 ?></small>
 </li>
 <li>
@@ -565,17 +346,10 @@ Profile Views:
 <small>
 Logged On
 <?php
-echo " ";
-echo $row['logins'];
-echo " ";
-
-if ($row['logins'] > 1) {
-echo "Times";
-} elseif ($row['logins'] == 1) {
-echo "Time";
-} else {
-echo "Times & Was Hacked :P";
-}
+echo " $row['logins'] ";
+if ($row['logins'] > 1) echo "Times";
+elseif ($row['logins'] == 1) echo "Time";
+else echo "Times & Was Hacked :P";
 ?>
 </small>
 </li>
@@ -593,50 +367,39 @@ Date Joined: <?php echo $row['date_joined']; ?>
 </div>
 </div>
 <!-- End moreinfo -->
-<div style="background-color : #<?php echo $randcolor; ?>; height : 150px; margin-top : 5px; padding : 10px; ">
-<span style="float : left; width : 150px; ">
+<div style="background-color: #<?php echo $randcolor; ?>; height: 150px; margin-top: 5px; padding: 10px;">
+<span style="float: left; width: 150px;">
 <?php
-if ($row['default_image'] != null) {
-echo '<a title="View More Info!" onclick="showMe5(\'' . $row['username'] . $row['user_id'] . '\')"><img src="uploads/' . $row['username'] . '/images/thumb/' . $row['default_image'] . '" id="defaultuserimage" /></a><br />' . "\n";
-} else {
-echo '<a title="View More Info!" onclick="showMe5(\'' . $row['username'] . $row['user_id'] . '\')"><img src="i/mem/default.jpg" id="defaultuserimage" /></a><br />' . "\n";
-}
+if ($row['default_image'] != null) echo '<a title="View More Info!" onclick="showMe5(\'' . $row['username'] . $row['user_id'] . '\')"><img src="uploads/' . $row['username'] . '/images/thumb/' . $row['default_image'] . '" id="defaultuserimage" /></a><br />' . "\n";
+else echo '<a title="View More Info!" onclick="showMe5(\'' . $row['username'] . $row['user_id'] . '\')"><img src="i/mem/default.jpg" id="defaultuserimage" /></a><br />' . "\n";
 ?>
 </span>
-<span style="float : right; text-align : left; width : 120px; ">
-<div style="margin-bottom : 16px; ">
+<span style="float: right; text-align: left; width: 120px;">
+<div style="margin-bottom: 16px;">
 Status:
 <br />
 <?php
-if ($row['status'] != null) {
-echo $row['status'];
-} else {
-echo "<br />";
-}
+if ($row['status'] != null) echo $row['status'];
+else echo "<br />";
 ?>
 </div>
-<div style="margin-bottom : 16px; ">
+<div style="margin-bottom: 16px;">
 Mood:
 <br />
 <?php
-if ($row['mood'] != null) {
-echo $row['mood'];
-} else {
-echo "<br />";
-}
+if ($row['mood'] != null) echo $row['mood'];
+else echo "<br />";
 ?>
 </div>
 <div>
 Gender:
 <?php echo $row['gender']; ?>
 </div>
-<div style="margin-bottom : 6px; ">
+<div style="margin-bottom: 6px;">
 Age:
 <?php
 $birth_date = $row['birth_month'] . "/" . $row['birth_day'] . "/" . $row['birth_year'];
-
 $age = determine_age($birth_date);
-
 echo $age;
 ?>
 </div>
@@ -652,9 +415,7 @@ mysql_close($db);
 ?>
 </div>
 <!-- End page content -->
-<?php
-include ("ft.inc.php");
-?>
+<?php include ("ft.inc.php"); ?>
 </body>
 
 </html>
